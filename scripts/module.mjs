@@ -41,24 +41,25 @@ Hooks.once("init", () => {
 });
 
 /* ─── Scene Control Button ─── */
+// In V13, controls is a plain object (record keyed by name), not an array.
 Hooks.on("getSceneControlButtons", (controls) => {
   if (!game.user.isGM) return;
-  controls.push({
+  controls["battle-of-mytros"] = {
     name: "battle-of-mytros",
-    title: "BOM.dashboard.title",
+    title: game.i18n.localize("BOM.dashboard.title"),
     icon: "fas fa-swords",
-    layer: "controls",
-    visible: true,
-    tools: [
-      {
+    layer: "tokens",
+    activeTool: "open-dashboard",
+    tools: {
+      "open-dashboard": {
         name: "open-dashboard",
-        title: "BOM.dashboard.title",
+        title: game.i18n.localize("BOM.dashboard.title"),
         icon: "fas fa-swords",
         button: true,
         onClick: () => BattleDashboard.getInstance().render(true)
       }
-    ]
-  });
+    }
+  };
 });
 
 /* ─── Socket Handling ─── */
