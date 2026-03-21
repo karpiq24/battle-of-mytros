@@ -88,6 +88,9 @@ function _registerHelpers() {
   // {{sum a b}} — addition
   Handlebars.registerHelper("sum", (a, b) => Number(a) + Number(b));
 
+  // {{sub a b}} — subtraction
+  Handlebars.registerHelper("sub", (a, b) => Number(a) - Number(b));
+
   // {{concat a b ...}} — string concatenation
   Handlebars.registerHelper("concat", (...args) => {
     // Last arg is the Handlebars options object

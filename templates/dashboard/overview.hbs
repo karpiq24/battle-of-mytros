@@ -18,9 +18,12 @@
     {{#each (array "allied" "enemy") }}
     <div class="bom-miracle-pool bom-faction-{{this}}">
       <strong>{{localize (concat "BOM.faction." this)}} {{localize "BOM.label.miraclePoints"}}</strong>
-      <span>{{lookup (lookup @root.state.miracles this) "used"}} / {{lookup (lookup @root.state.miracles this) "pool"}}</span>
-      <button type="button" data-action="spendMiracle" data-faction="{{this}}"><i class="fas fa-minus"></i></button>
-      <button type="button" data-action="refundMiracle" data-faction="{{this}}"><i class="fas fa-plus"></i></button>
+      <button type="button" data-action="refundMiracle" data-faction="{{this}}" title="Refund miracle"><i class="fas fa-plus"></i></button>
+      <span class="bom-miracle-count">
+        {{sub (lookup (lookup @root.state.miracles this) "pool") (lookup (lookup @root.state.miracles this) "used")}}
+        / {{lookup (lookup @root.state.miracles this) "pool"}}
+      </span>
+      <button type="button" data-action="spendMiracle" data-faction="{{this}}" title="Spend miracle"><i class="fas fa-minus"></i></button>
       <span class="bom-advantages">
         {{localize "BOM.label.advantages"}}: {{lookup (lookup @root.state.miracles this) "advantagesUsed"}} / {{lookup (lookup @root.state.miracles this) "advantagesTotal"}}
       </span>
