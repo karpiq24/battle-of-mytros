@@ -30,29 +30,29 @@
 .bom-tabs {
   display: flex;
   gap: 0;
-  border-bottom: 2px solid var(--color-border, #999);
-  background: var(--color-bg, #f0f0e0);
+  border-bottom: 2px solid var(--color-frame-outline, var(--color-border, #999));
+  background: var(--color-frame-bg, var(--color-bg-option, transparent));
   padding: 0 0.5rem;
+  flex-shrink: 0;
 }
 
 .bom-tabs .item {
   padding: 0.5rem 1rem;
   cursor: pointer;
   border-bottom: 3px solid transparent;
-  color: var(--color-text-secondary, #666);
+  color: var(--color-text-secondary, var(--color-light-5, #999));
   text-decoration: none;
   font-size: 0.85rem;
   font-weight: 600;
-  transition: all 0.2s;
+  transition: color 0.15s, border-color 0.15s;
 }
 
 .bom-tabs .item:hover {
-  color: var(--color-text-primary, #191813);
-  background: var(--color-hover, rgba(0,0,0,0.05));
+  color: var(--color-text-primary, var(--color-light-1, #eee));
 }
 
 .bom-tabs .item.active {
-  color: var(--color-text-primary, #191813);
+  color: var(--color-text-primary, var(--color-light-1, #eee));
   border-bottom-color: var(--bom-gold);
 }
 
@@ -61,14 +61,17 @@
 }
 
 /* ── Tab Content ── */
+.bom-dashboard .window-content {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+
 .bom-dashboard section.tab {
   padding: 0.75rem;
   overflow-y: auto;
-  max-height: calc(100% - 3rem);
-}
-
-section.tab.hidden {
-  display: none !important;
+  flex: 1;
 }
 
 /* ── Round Tracker ── */
