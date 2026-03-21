@@ -405,8 +405,8 @@
   color: #fff;
 }
 
-.bom-winner-badge.bom-faction-allied { background: var(--bom-allied); }
-.bom-winner-badge.bom-faction-enemy { background: var(--bom-enemy); }
+.bom-winner-badge.bom-faction-allied { background: var(--bom-allied); color: #fff; }
+.bom-winner-badge.bom-faction-enemy { background: var(--bom-enemy); color: #fff; }
 
 .bom-phase-results {
   margin-top: 0.4rem;

@@ -4,6 +4,52 @@ import { BattleState } from "../data/battle-state.mjs";
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /**
+ * Show benefit picker dialog(s) for a legion that passed its salvage check.
+ * Nat 20 grants a second pick (excluding the first choice).
+ * Returns an array of chosen benefit labels for display.
+ *
+ * @param {object} legion
+ * @param {{ passed: boolean, nat20: boolean }} salvage
+ * @param {string} enemyLegionId
+ * @param {Function} applyFn - bound applyAftermathEffects
+ * @returns {Promise<string[]>}
+ */
+async function _pickSalvageBenefits(legion, salvage, enemyLegionId, applyFn) {
+  if (!salvage.passed) return [];
+
+  const pick = async (excludeIds = []) => {
+    const available = BOM.salvageBenefits.filter(b => !excludeIds.includes(b.id));
+    return foundry.applications.api.DialogV2.wait({
+      window: { title: game.i18n.localize("BOM.aftermath.salvage") },
+      content: `<p>Choose a salvage benefit for <strong>${legion.name}</strong>:</p>`,
+      buttons: available.map(b => ({
+        label: `${game.i18n.localize(b.label)} — ${game.i18n.localize(b.desc)}`,
+        action: b.id
+      })),
+      rejectClose: false
+    });
+  };
+
+  const labels = [];
+
+  const first = await pick();
+  if (first) {
+    labels.push(game.i18n.localize(BOM.salvageBenefits.find(b => b.id === first)?.label ?? ""));
+    await applyFn(legion.id, { salvageBenefit: first, enemyLegionId });
+  }
+
+  if (salvage.nat20 && first) {
+    const second = await pick([first]);
+    if (second) {
+      labels.push(game.i18n.localize(BOM.salvageBenefits.find(b => b.id === second)?.label ?? ""));
+      await applyFn(legion.id, { salvageBenefit: second, enemyLegionId });
+    }
+  }
+
+  return labels;
+}
+
+/**
  * Main Battle Dashboard — persistent, resizable, tabbed ApplicationV2 window.
  * Provides Overview, Battle, Aftermath, and Setup tabs for managing mass combat.
  */
@@ -401,29 +447,19 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
         hope: { ...enemyHope.result, effect: morLabel(enemyHope.moraleChange) } });
 
     } else if (check === "salvage") {
-      const salvageOpts = { manualBonus: _num("modWinner_salvage"), advantage: _chk("advWinner_salvage"), disadvantage: _chk("disadvWinner_salvage") };
-      const salvage = await salvageCheck(winLegion, salvageOpts);
-      let benefitId = null;
-      let benefitLabel = null;
+      const alliedOpts = { manualBonus: _num("modAllied_salvage"), advantage: _chk("advAllied_salvage"), disadvantage: _chk("disadvAllied_salvage") };
+      const enemyOpts  = { manualBonus: _num("modEnemy_salvage"),  advantage: _chk("advEnemy_salvage"),  disadvantage: _chk("disadvEnemy_salvage") };
 
-      if (salvage.passed) {
-        benefitId = await foundry.applications.api.DialogV2.wait({
-          window: { title: game.i18n.localize("BOM.aftermath.salvage") },
-          content: `<p>Choose a salvage benefit for <strong>${winLegion.name}</strong>:</p>`,
-          buttons: BOM.salvageBenefits.map(b => ({
-            label: `${game.i18n.localize(b.label)} — ${game.i18n.localize(b.desc)}`,
-            action: b.id
-          })),
-          rejectClose: false
-        });
-        if (benefitId) {
-          benefitLabel = game.i18n.localize(BOM.salvageBenefits.find(b => b.id === benefitId)?.label ?? "");
-          await applyAftermathEffects(winLegion.id, { salvageBenefit: benefitId, enemyLegionId: loseLegion.id });
-        }
-      }
+      const alliedSalvage = await salvageCheck(alliedLegion, alliedOpts);
+      const enemySalvage  = await salvageCheck(enemyLegion, enemyOpts);
 
-      await sendAftermathCard({ legionName: winLegion.name, isWinner: true,
-        salvage: { ...salvage.result, benefit: benefitLabel } });
+      const alliedLabels = await _pickSalvageBenefits(alliedLegion, alliedSalvage, enemyLegion.id, applyAftermathEffects);
+      const enemyLabels  = await _pickSalvageBenefits(enemyLegion, enemySalvage, alliedLegion.id, applyAftermathEffects);
+
+      await sendAftermathCard({ legionName: alliedLegion.name, isWinner: isAlliedWinner,
+        salvage: { ...alliedSalvage.result, benefit: alliedLabels.join(", ") || null } });
+      await sendAftermathCard({ legionName: enemyLegion.name, isWinner: !isAlliedWinner,
+        salvage: { ...enemySalvage.result, benefit: enemyLabels.join(", ") || null } });
 
     } else if (check === "casualty") {
       const counterDiff = Math.abs(battle.counterAllied - battle.counterEnemy);

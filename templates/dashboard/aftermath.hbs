@@ -71,18 +71,24 @@
             {{/if}}
           </div>
 
-          {{!-- Salvage (winner only) --}}
+          {{!-- Salvage (both sides) --}}
           <div class="bom-check-row">
             <span class="bom-check-label">{{localize "BOM.aftermath.salvage"}}</span>
             {{#if this.aftermathDone.salvage}}
               <span class="bom-check-done"><i class="fas fa-check"></i> Done</span>
             {{else}}
               <div class="bom-check-inputs">
-                <div class="bom-check-input-group bom-faction-{{this.winner}}">
-                  <label>Winner Mod</label>
-                  <input type="number" name="modWinner_salvage" value="0" class="bom-mod-input" />
-                  <label class="bom-adv-label"><input type="checkbox" name="advWinner_salvage" /> Adv</label>
-                  <label class="bom-adv-label"><input type="checkbox" name="disadvWinner_salvage" /> Disadv</label>
+                <div class="bom-check-input-group bom-faction-allied">
+                  <label>Allied Mod</label>
+                  <input type="number" name="modAllied_salvage" value="0" class="bom-mod-input" />
+                  <label class="bom-adv-label"><input type="checkbox" name="advAllied_salvage" /> Adv</label>
+                  <label class="bom-adv-label"><input type="checkbox" name="disadvAllied_salvage" /> Disadv</label>
+                </div>
+                <div class="bom-check-input-group bom-faction-enemy">
+                  <label>Enemy Mod</label>
+                  <input type="number" name="modEnemy_salvage" value="0" class="bom-mod-input" />
+                  <label class="bom-adv-label"><input type="checkbox" name="advEnemy_salvage" /> Adv</label>
+                  <label class="bom-adv-label"><input type="checkbox" name="disadvEnemy_salvage" /> Disadv</label>
                 </div>
                 <button type="button" data-action="resolveAftermath" data-battle-id="{{this.id}}" data-check="salvage">
                   <i class="fas fa-dice-d20"></i> {{localize "BOM.action.roll"}}
