@@ -50,19 +50,12 @@ export const BOM = {
   // Commander Casualty
   casualtyDC: { winner: 3, loser: 5, crushed: 7 },
   casualtyCrushedThreshold: -3,
-  casualtyTagBonus: { Steadfast: 2, Veteran: 2, Duelist: 4 },
   casualtyInjuredPenalty: -2,
   casualtyInjuredAt: 5,
   commanderDeathMoraleLoss: 1,
 
-  // Tag effects
-  fanaticBonus: 4,
-  fanaticExtraInjury: 1,
-  zealotMoraleThreshold: 7,
-  zealotBonus: 1,
+  // Situational battle bonuses
   momentumBonus: 1,
-  tacticianManeuverBonus: 2,
-  mageManeuverBonus: 2,
 
   // Maneuver benefits
   maneuverFlankingBonus: 2,
@@ -72,7 +65,6 @@ export const BOM = {
   salvageInsightBonus: 2,
 
   // Recon
-  scoutTagReconBonus: 3,
   reconThresholds: [
     { max: 10, result: "BOM.recon.nothing" },
     { max: 14, result: "BOM.recon.oneLegion" },
@@ -106,6 +98,9 @@ export const BOM = {
     { id: "rest", label: "BOM.pc.rest" }
   ],
 
+  // Fortification
+  fortificationBonus: 1,
+
   // PC deployment bonuses
   pcReinforceBonus: 2,
 
@@ -121,18 +116,4 @@ export const BOM = {
     "reconnaissance", "planning", "reveal", "battle", "aftermath", "objectives"
   ],
 
-  // Vanguard
-  vanguardChargeBonus: 2,
-
-  // Terrorizer
-  terrorizerMoralePenalty: -2,
-
-  // Warden
-  wardenClashBonus: 2,
-
-  // Brutal
-  brutalExtraInjury: 1,
-
-  // Fortification
-  fortificationBonus: 1
 };

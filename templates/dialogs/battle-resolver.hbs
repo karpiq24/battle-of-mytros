@@ -38,46 +38,22 @@
     <span class="bom-counter-label">{{localize "BOM.label.counter"}}</span>
   </div>
 
-  {{!-- Manual modifier row (shown whenever a roll is pending) --}}
+  {{!-- Modifier and advantage/disadvantage inputs (shown when a roll is pending) --}}
   {{#unless (eq step "done")}}
   {{#unless (eq step "maneuverChoice")}}
   <div class="bom-manual-mods">
     <div class="bom-manual-mod bom-faction-allied">
-      <label>{{alliedLegion.name}} Mod</label>
-      <input type="number" name="manualModA" value="0" class="bom-mod-input" />
+      <label>{{alliedLegion.name}}</label>
+      <input type="number" name="manualModA" value="0" class="bom-mod-input" title="Modifier" />
+      <label class="bom-adv-label" title="Advantage"><input type="checkbox" name="advA" /> Adv</label>
+      <label class="bom-adv-label" title="Disadvantage"><input type="checkbox" name="disadvA" /> Disadv</label>
     </div>
-
-    {{!-- Tag bonuses preview --}}
-    {{#if alliedTagBonuses}}
-    <div class="bom-tag-bonuses-preview bom-faction-allied">
-      {{#each alliedTagBonuses}}<span class="bom-tag-bonus">+{{this.value}} {{this.label}}</span>{{/each}}
-    </div>
-    {{/if}}
-
-    {{#if alliedHasFanatic}}
-    <button type="button" data-action="toggleFanatic" data-side="a"
-      class="bom-fanatic-btn {{#if fanaticA}}bom-fanatic-active{{/if}}">
-      <i class="fas fa-fire"></i> Fanatic (+{{fanaticBonus}})
-    </button>
-    {{/if}}
-
     <div class="bom-manual-mod bom-faction-enemy">
-      <label>{{enemyLegion.name}} Mod</label>
-      <input type="number" name="manualModB" value="0" class="bom-mod-input" />
+      <label>{{enemyLegion.name}}</label>
+      <input type="number" name="manualModB" value="0" class="bom-mod-input" title="Modifier" />
+      <label class="bom-adv-label" title="Advantage"><input type="checkbox" name="advB" /> Adv</label>
+      <label class="bom-adv-label" title="Disadvantage"><input type="checkbox" name="disadvB" /> Disadv</label>
     </div>
-
-    {{#if enemyTagBonuses}}
-    <div class="bom-tag-bonuses-preview bom-faction-enemy">
-      {{#each enemyTagBonuses}}<span class="bom-tag-bonus">+{{this.value}} {{this.label}}</span>{{/each}}
-    </div>
-    {{/if}}
-
-    {{#if enemyHasFanatic}}
-    <button type="button" data-action="toggleFanatic" data-side="b"
-      class="bom-fanatic-btn {{#if fanaticB}}bom-fanatic-active{{/if}}">
-      <i class="fas fa-fire"></i> Fanatic (+{{fanaticBonus}})
-    </button>
-    {{/if}}
   </div>
   {{/unless}}
   {{/unless}}

@@ -9,17 +9,22 @@ import { BattleState } from "../data/battle-state.mjs";
  * @param {number} opts.bonus - Roll modifier
  * @param {number} opts.dc - Target DC
  * @param {string} opts.flavor - Chat flavor text
+ * @param {boolean} [opts.advantage=false]
+ * @param {boolean} [opts.disadvantage=false]
  * @returns {Promise<{roll: number, total: number, dc: number, passed: boolean}>}
  */
-async function _aftermathCheck({ legionName, bonus, dc, flavor }) {
-  const roll = new Roll("1d20 + @bonus", { bonus });
+async function _aftermathCheck({ legionName, bonus, dc, flavor, advantage = false, disadvantage = false }) {
+  const dice = (advantage && !disadvantage) ? "2d20kh" : (disadvantage && !advantage) ? "2d20kl" : "1d20";
+  const advStr = advantage ? " (Advantage)" : disadvantage ? " (Disadvantage)" : "";
+  const roll = new Roll(`${dice} + @bonus`, { bonus });
   await roll.evaluate();
   await roll.toMessage({
     speaker: { alias: legionName },
-    flavor
+    flavor: `${flavor}${advStr}`
   });
   return {
     roll: roll.dice[0].total,
+    bonus,
     total: roll.total,
     dc,
     passed: roll.total >= dc
@@ -32,16 +37,22 @@ async function _aftermathCheck({ legionName, bonus, dc, flavor }) {
  *
  * @param {object} legion - Legion data object
  * @param {boolean} isWinner
+ * @param {object} [opts]
+ * @param {number} [opts.manualBonus=0]
+ * @param {boolean} [opts.advantage=false]
+ * @param {boolean} [opts.disadvantage=false]
  * @returns {Promise<{passed: boolean, injuriesGained: number, result: object}>}
  */
-export async function recoveryCheck(legion, isWinner) {
+export async function recoveryCheck(legion, isWinner, { manualBonus = 0, advantage = false, disadvantage = false } = {}) {
   const stats = BattleState.computeStats(legion);
   const dc = BOM.recoveryBaseDC + legion.injuries;
   const result = await _aftermathCheck({
     legionName: legion.name,
-    bonus: stats.vit,
+    bonus: stats.vit + manualBonus,
     dc,
-    flavor: game.i18n.localize("BOM.aftermath.recovery")
+    flavor: game.i18n.localize("BOM.aftermath.recovery"),
+    advantage,
+    disadvantage
   });
 
   let injuriesGained;
@@ -60,16 +71,22 @@ export async function recoveryCheck(legion, isWinner) {
  *
  * @param {object} legion
  * @param {boolean} isWinner
+ * @param {object} [opts]
+ * @param {number} [opts.manualBonus=0]
+ * @param {boolean} [opts.advantage=false]
+ * @param {boolean} [opts.disadvantage=false]
  * @returns {Promise<{passed: boolean, moraleChange: number, result: object}>}
  */
-export async function hopeCheck(legion, isWinner) {
+export async function hopeCheck(legion, isWinner, { manualBonus = 0, advantage = false, disadvantage = false } = {}) {
   const stats = BattleState.computeStats(legion);
-  const bonus = stats.mor - BOM.hopeMoraleOffset;
+  const bonus = stats.mor - BOM.hopeMoraleOffset + manualBonus;
   const result = await _aftermathCheck({
     legionName: legion.name,
     bonus,
     dc: BOM.hopeDC,
-    flavor: game.i18n.localize("BOM.aftermath.hope")
+    flavor: game.i18n.localize("BOM.aftermath.hope"),
+    advantage,
+    disadvantage
   });
 
   let moraleChange;
@@ -83,19 +100,25 @@ export async function hopeCheck(legion, isWinner) {
 }
 
 /**
- * Salvage check for a legion after battle.
- * Only the winner rolls (or optionally both). DC = salvageDC.
+ * Salvage check for the winning legion after battle.
+ * DC = salvageDC.
  *
  * @param {object} legion
+ * @param {object} [opts]
+ * @param {number} [opts.manualBonus=0]
+ * @param {boolean} [opts.advantage=false]
+ * @param {boolean} [opts.disadvantage=false]
  * @returns {Promise<{passed: boolean, nat20: boolean, result: object}>}
  */
-export async function salvageCheck(legion) {
+export async function salvageCheck(legion, { manualBonus = 0, advantage = false, disadvantage = false } = {}) {
   const stats = BattleState.computeStats(legion);
   const result = await _aftermathCheck({
     legionName: legion.name,
-    bonus: stats.wit,
+    bonus: stats.wit + manualBonus,
     dc: BOM.salvageDC,
-    flavor: game.i18n.localize("BOM.aftermath.salvage")
+    flavor: game.i18n.localize("BOM.aftermath.salvage"),
+    advantage,
+    disadvantage
   });
 
   return {
@@ -107,13 +130,17 @@ export async function salvageCheck(legion) {
 
 /**
  * Commander Casualty check.
- * DC depends on battle outcome. Tags provide bonuses.
+ * DC depends on battle outcome. No automatic tag bonuses — use manualBonus.
  *
  * @param {object} legion
  * @param {"winner"|"loser"|"crushed"} outcome
+ * @param {object} [opts]
+ * @param {number} [opts.manualBonus=0]
+ * @param {boolean} [opts.advantage=false]
+ * @param {boolean} [opts.disadvantage=false]
  * @returns {Promise<{survived: boolean, result: object}>}
  */
-export async function casualtyCheck(legion, outcome) {
+export async function casualtyCheck(legion, outcome, { manualBonus = 0, advantage = false, disadvantage = false } = {}) {
   const cmd = BattleState.getCommander(legion.commanderId);
   if (!cmd?.alive) return { survived: true, result: null };
 
@@ -121,39 +148,20 @@ export async function casualtyCheck(legion, outcome) {
 
   let bonus = cmd.vitBonus ?? 0;
 
-  for (const tag of cmd.tags ?? []) {
-    const tagBonus = BOM.casualtyTagBonus[tag.name];
-    if (tagBonus) bonus += tagBonus;
-  }
-
   if (legion.injuries >= BOM.casualtyInjuredAt) {
     bonus += BOM.casualtyInjuredPenalty;
   }
+
+  bonus += manualBonus;
 
   const result = await _aftermathCheck({
     legionName: `${cmd.name} (${legion.name})`,
     bonus,
     dc,
-    flavor: game.i18n.localize("BOM.aftermath.casualty")
+    flavor: game.i18n.localize("BOM.aftermath.casualty"),
+    advantage,
+    disadvantage
   });
-
-  // Duelist reroll on failure — mark tag used on the commander entity
-  if (!result.passed) {
-    const duelistTag = (cmd.tags ?? []).find(t => t.name === "Duelist" && !t.used);
-    if (duelistTag) {
-      duelistTag.used = true;
-      await BattleState.updateCommander(cmd.id, { tags: cmd.tags });
-      const reroll = await _aftermathCheck({
-        legionName: `${cmd.name} (Duelist reroll)`,
-        bonus,
-        dc,
-        flavor: `${game.i18n.localize("BOM.aftermath.casualty")} — Duelist Reroll`
-      });
-      if (reroll.passed) {
-        return { survived: true, result: reroll };
-      }
-    }
-  }
 
   return { survived: result.passed, result };
 }

@@ -348,8 +348,117 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
 
   static async #onResolveAftermath(event, target) {
     const battleId = target.dataset.battleId;
-    if (!battleId) return;
-    // Will be implemented in Phase 4
-    ui.notifications.info("Aftermath resolution coming soon.");
+    const check = target.dataset.check;
+    if (!battleId || !check) return;
+
+    const state = BattleState.get();
+    const battle = state.battles.find(b => b.id === battleId);
+    if (!battle?.resolved) return;
+
+    const alliedLegion = state.legions.find(l => l.id === battle.alliedLegionId);
+    const enemyLegion = state.legions.find(l => l.id === battle.enemyLegionId);
+    if (!alliedLegion || !enemyLegion) return;
+
+    const { recoveryCheck, hopeCheck, salvageCheck, casualtyCheck, applyAftermathEffects } =
+      await import("../rolls/aftermath-rolls.mjs");
+    const { sendAftermathCard, sendCommanderDeathCard } = await import("../chat/chat-cards.mjs");
+
+    const isAlliedWinner = battle.winner === "allied";
+    const winLegion = isAlliedWinner ? alliedLegion : enemyLegion;
+    const loseLegion = isAlliedWinner ? enemyLegion : alliedLegion;
+
+    // Read per-check modifier inputs from the aftermath card UI
+    const card = target.closest(".bom-aftermath-card");
+    const _num = (name) => Number(card?.querySelector(`[name="${name}"]`)?.value) || 0;
+    const _chk = (name) => card?.querySelector(`[name="${name}"]`)?.checked ?? false;
+
+    if (check === "recovery") {
+      const alliedOpts = { manualBonus: _num("modAllied_recovery"), advantage: _chk("advAllied_recovery"), disadvantage: _chk("disadvAllied_recovery") };
+      const enemyOpts  = { manualBonus: _num("modEnemy_recovery"),  advantage: _chk("advEnemy_recovery"),  disadvantage: _chk("disadvEnemy_recovery") };
+      const alliedRec = await recoveryCheck(alliedLegion, isAlliedWinner, alliedOpts);
+      const enemyRec = await recoveryCheck(enemyLegion, !isAlliedWinner, enemyOpts);
+      await applyAftermathEffects(alliedLegion.id, { injuriesGained: alliedRec.injuriesGained });
+      await applyAftermathEffects(enemyLegion.id, { injuriesGained: enemyRec.injuriesGained });
+
+      const injLabel = (n) => n === 0 ? "No injuries" : `+${n} ${n === 1 ? "injury" : "injuries"}`;
+      await sendAftermathCard({ legionName: alliedLegion.name, isWinner: isAlliedWinner,
+        recovery: { ...alliedRec.result, effect: injLabel(alliedRec.injuriesGained) } });
+      await sendAftermathCard({ legionName: enemyLegion.name, isWinner: !isAlliedWinner,
+        recovery: { ...enemyRec.result, effect: injLabel(enemyRec.injuriesGained) } });
+
+    } else if (check === "hope") {
+      const alliedOpts = { manualBonus: _num("modAllied_hope"), advantage: _chk("advAllied_hope"), disadvantage: _chk("disadvAllied_hope") };
+      const enemyOpts  = { manualBonus: _num("modEnemy_hope"),  advantage: _chk("advEnemy_hope"),  disadvantage: _chk("disadvEnemy_hope") };
+      const alliedHope = await hopeCheck(alliedLegion, isAlliedWinner, alliedOpts);
+      const enemyHope = await hopeCheck(enemyLegion, !isAlliedWinner, enemyOpts);
+      await applyAftermathEffects(alliedLegion.id, { moraleChange: alliedHope.moraleChange });
+      await applyAftermathEffects(enemyLegion.id, { moraleChange: enemyHope.moraleChange });
+
+      const morLabel = (n) => n > 0 ? `+${n} Morale` : n < 0 ? `${n} Morale` : "No morale change";
+      await sendAftermathCard({ legionName: alliedLegion.name, isWinner: isAlliedWinner,
+        hope: { ...alliedHope.result, effect: morLabel(alliedHope.moraleChange) } });
+      await sendAftermathCard({ legionName: enemyLegion.name, isWinner: !isAlliedWinner,
+        hope: { ...enemyHope.result, effect: morLabel(enemyHope.moraleChange) } });
+
+    } else if (check === "salvage") {
+      const salvageOpts = { manualBonus: _num("modWinner_salvage"), advantage: _chk("advWinner_salvage"), disadvantage: _chk("disadvWinner_salvage") };
+      const salvage = await salvageCheck(winLegion, salvageOpts);
+      let benefitId = null;
+      let benefitLabel = null;
+
+      if (salvage.passed) {
+        benefitId = await foundry.applications.api.DialogV2.wait({
+          window: { title: game.i18n.localize("BOM.aftermath.salvage") },
+          content: `<p>Choose a salvage benefit for <strong>${winLegion.name}</strong>:</p>`,
+          buttons: BOM.salvageBenefits.map(b => ({
+            label: `${game.i18n.localize(b.label)} — ${game.i18n.localize(b.desc)}`,
+            action: b.id
+          })),
+          rejectClose: false
+        });
+        if (benefitId) {
+          benefitLabel = game.i18n.localize(BOM.salvageBenefits.find(b => b.id === benefitId)?.label ?? "");
+          await applyAftermathEffects(winLegion.id, { salvageBenefit: benefitId, enemyLegionId: loseLegion.id });
+        }
+      }
+
+      await sendAftermathCard({ legionName: winLegion.name, isWinner: true,
+        salvage: { ...salvage.result, benefit: benefitLabel } });
+
+    } else if (check === "casualty") {
+      const counterDiff = Math.abs(battle.counterAllied - battle.counterEnemy);
+      const isCrushed = counterDiff >= Math.abs(BOM.casualtyCrushedThreshold);
+      const alliedOutcome = isAlliedWinner ? "winner" : (isCrushed ? "crushed" : "loser");
+      const enemyOutcome = !isAlliedWinner ? "winner" : (isCrushed ? "crushed" : "loser");
+
+      const alliedOpts = { manualBonus: _num("modAllied_casualty"), advantage: _chk("advAllied_casualty"), disadvantage: _chk("disadvAllied_casualty") };
+      const enemyOpts  = { manualBonus: _num("modEnemy_casualty"),  advantage: _chk("advEnemy_casualty"),  disadvantage: _chk("disadvEnemy_casualty") };
+      const alliedCas = await casualtyCheck(alliedLegion, alliedOutcome, alliedOpts);
+      const enemyCas = await casualtyCheck(enemyLegion, enemyOutcome, enemyOpts);
+
+      if (alliedCas.result) {
+        await applyAftermathEffects(alliedLegion.id, { commanderDied: !alliedCas.survived });
+        if (!alliedCas.survived) {
+          const cmd = BattleState.getCommander(alliedLegion.commanderId);
+          await sendCommanderDeathCard({ commanderName: cmd?.name ?? "Unknown", legionName: alliedLegion.name });
+        }
+        await sendAftermathCard({ legionName: alliedLegion.name, isWinner: isAlliedWinner,
+          casualty: { ...alliedCas.result, survived: alliedCas.survived } });
+      }
+      if (enemyCas.result) {
+        await applyAftermathEffects(enemyLegion.id, { commanderDied: !enemyCas.survived });
+        if (!enemyCas.survived) {
+          const cmd = BattleState.getCommander(enemyLegion.commanderId);
+          await sendCommanderDeathCard({ commanderName: cmd?.name ?? "Unknown", legionName: enemyLegion.name });
+        }
+        await sendAftermathCard({ legionName: enemyLegion.name, isWinner: !isAlliedWinner,
+          casualty: { ...enemyCas.result, survived: enemyCas.survived } });
+      }
+    }
+
+    // Mark this check as done on the battle
+    const aftermathDone = { ...(battle.aftermathDone ?? {}), [check]: true };
+    await BattleState.updateBattle(battleId, { aftermathDone });
+    this.render();
   }
 }

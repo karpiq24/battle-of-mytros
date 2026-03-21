@@ -8,7 +8,7 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 /**
  * Step-by-step battle resolution dialog.
  * Walks through Maneuver → Charge → Clash phases.
- * Supports commander tag bonuses, manual terrain modifiers, and Fanatic activation.
+ * Modifiers and advantage/disadvantage are entered manually per roll.
  */
 export class BattleResolver extends HandlebarsApplicationMixin(ApplicationV2) {
 
@@ -27,7 +27,6 @@ export class BattleResolver extends HandlebarsApplicationMixin(ApplicationV2) {
       rollClash: BattleResolver.#onRollClash,
       rollTiebreaker: BattleResolver.#onRollTiebreaker,
       finalize: BattleResolver.#onFinalize,
-      toggleFanatic: BattleResolver.#onToggleFanatic
     }
   };
 
@@ -39,10 +38,6 @@ export class BattleResolver extends HandlebarsApplicationMixin(ApplicationV2) {
     maneuver: null, charge: null, clash: null,
     maneuverBenefit: null, counterA: 0, counterB: 0, winner: null
   };
-
-  // Whether Fanatic tag is being activated for this phase
-  _fanaticA = false;
-  _fanaticB = false;
 
   constructor({ dashboard, battleId } = {}, options = {}) {
     super(options);
@@ -63,12 +58,6 @@ export class BattleResolver extends HandlebarsApplicationMixin(ApplicationV2) {
 
     const step = this._currentStep();
 
-    // Pre-compute tag bonuses for the current phase so the template can show them
-    const alliedTagBonuses = alliedCmd ? this._tagBonuses(alliedCmd, step, alliedStats) : [];
-    const enemyTagBonuses = enemyCmd ? this._tagBonuses(enemyCmd, step, enemyStats) : [];
-    const alliedHasFanatic = !!(alliedCmd?.tags?.find(t => t.name === "Fanatic" && !t.used));
-    const enemyHasFanatic = !!(enemyCmd?.tags?.find(t => t.name === "Fanatic" && !t.used));
-
     return {
       battle,
       alliedLegion,
@@ -77,15 +66,8 @@ export class BattleResolver extends HandlebarsApplicationMixin(ApplicationV2) {
       enemyStats,
       alliedCmd,
       enemyCmd,
-      alliedTagBonuses,
-      enemyTagBonuses,
-      alliedHasFanatic,
-      enemyHasFanatic,
-      fanaticA: this._fanaticA,
-      fanaticB: this._fanaticB,
       results: this._results,
       maneuverBenefits: BOM.maneuverBenefits,
-      fanaticBonus: BOM.fanaticBonus,
       step
     };
   }
@@ -100,52 +82,13 @@ export class BattleResolver extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   /**
-   * Compute automatic tag bonuses for a commander for the given phase.
-   * Returns array of {label, value, tagName} items.
-   * @param {object} cmd - Commander entity
-   * @param {string} phase - "maneuver"|"charge"|"clash"|"tiebreaker"
-   * @param {object} stats - Computed stats {vit,mor,wit}
-   */
-  _tagBonuses(cmd, phase, stats) {
-    const bonuses = [];
-    if (!cmd) return bonuses;
-    const tags = cmd.tags ?? [];
-    const hasTag = (name) => tags.find(t => t.name === name && !t.used);
-
-    if (phase === "maneuver") {
-      if (hasTag("Tactician")) bonuses.push({ label: "Tactician", value: BOM.tacticianManeuverBonus, tagName: "Tactician" });
-      if (hasTag("Mage")) bonuses.push({ label: "Mage", value: BOM.mageManeuverBonus, tagName: "Mage" });
-    }
-    if (phase === "charge") {
-      if (hasTag("Vanguard")) bonuses.push({ label: "Vanguard", value: BOM.vanguardChargeBonus, tagName: "Vanguard" });
-    }
-    if (phase === "clash" || phase === "tiebreaker") {
-      if (hasTag("Warden")) bonuses.push({ label: "Warden", value: BOM.wardenClashBonus, tagName: "Warden" });
-    }
-    // Zealot: +1 to all combat phases if morale is high enough (not consumed on use)
-    if (["maneuver", "charge", "clash"].includes(phase)) {
-      if (stats && stats.mor >= BOM.zealotMoraleThreshold && hasTag("Zealot")) {
-        bonuses.push({ label: "Zealot", value: BOM.zealotBonus, tagName: null });
-      }
-    }
-
-    return bonuses;
-  }
-
-  /**
    * Build the full modifier breakdown for one side, including base stat,
-   * situational bonuses, tag bonuses, and manual modifier.
+   * situational bonuses, and manual modifier.
    */
-  _buildBreakdown(baseStat, baseLabel, situational, tagBonuses, manualMod, fanaticActive) {
+  _buildBreakdown(baseStat, baseLabel, situational, manualMod) {
     const items = [{ label: baseLabel, value: baseStat }];
     for (const s of situational) {
       if (s.value !== 0) items.push(s);
-    }
-    for (const t of tagBonuses) {
-      items.push({ label: t.label, value: t.value });
-    }
-    if (fanaticActive) {
-      items.push({ label: "Fanatic", value: BOM.fanaticBonus });
     }
     if (manualMod !== 0) {
       items.push({ label: "Modifier", value: manualMod });
@@ -154,39 +97,26 @@ export class BattleResolver extends HandlebarsApplicationMixin(ApplicationV2) {
     return { items, total };
   }
 
-  /** Mark tag names as used on the commander, persisting to state. */
-  async _markTagsUsed(commanderId, tagNames) {
-    if (!commanderId || !tagNames.length) return;
-    const state = BattleState.get();
-    const cmd = state.commanders?.find(c => c.id === commanderId);
-    if (!cmd) return;
-    for (const name of tagNames) {
-      const tag = cmd.tags?.find(t => t.name === name);
-      if (tag) tag.used = true;
-    }
-    await BattleState.set(state);
+  /** Read modifier inputs and advantage/disadvantage checkboxes from the form. */
+  _readRollInputs(form) {
+    return {
+      manualA: Number(form.querySelector('[name="manualModA"]')?.value) || 0,
+      manualB: Number(form.querySelector('[name="manualModB"]')?.value) || 0,
+      advA: form.querySelector('[name="advA"]')?.checked ?? false,
+      advB: form.querySelector('[name="advB"]')?.checked ?? false,
+      disadvA: form.querySelector('[name="disadvA"]')?.checked ?? false,
+      disadvB: form.querySelector('[name="disadvB"]')?.checked ?? false,
+    };
   }
 
   /* ─── Action Handlers ─── */
 
-  static async #onToggleFanatic(event, target) {
-    const side = target.dataset.side;
-    if (side === "a") this._fanaticA = !this._fanaticA;
-    else if (side === "b") this._fanaticB = !this._fanaticB;
-    this.render();
-  }
-
   static async #onRollManeuver(event, target) {
-    const form = this.element;
-    const manualA = Number(form.querySelector('[name="manualModA"]')?.value) || 0;
-    const manualB = Number(form.querySelector('[name="manualModB"]')?.value) || 0;
-
+    const { manualA, manualB, advA, advB, disadvA, disadvB } = this._readRollInputs(this.element);
     const ctx = await this._prepareContext();
-    const tagBonusesA = this._tagBonuses(ctx.alliedCmd, "maneuver", ctx.alliedStats);
-    const tagBonusesB = this._tagBonuses(ctx.enemyCmd, "maneuver", ctx.enemyStats);
 
-    const bdA = this._buildBreakdown(ctx.alliedStats.wit, "Wit", [], tagBonusesA, manualA, this._fanaticA);
-    const bdB = this._buildBreakdown(ctx.enemyStats.wit, "Wit", [], tagBonusesB, manualB, this._fanaticB);
+    const bdA = this._buildBreakdown(ctx.alliedStats.wit, "Wit", [], manualA);
+    const bdB = this._buildBreakdown(ctx.enemyStats.wit, "Wit", [], manualB);
 
     const result = await contestedRoll({
       nameA: ctx.alliedLegion.name,
@@ -195,16 +125,10 @@ export class BattleResolver extends HandlebarsApplicationMixin(ApplicationV2) {
       bonusB: bdB.total,
       breakdownA: bdA.items,
       breakdownB: bdB.items,
+      advantageA: advA, disadvantageA: disadvA,
+      advantageB: advB, disadvantageB: disadvB,
       flavor: game.i18n.localize("BOM.battle.maneuver")
     });
-
-    // Mark tags used
-    await this._markTagsUsed(ctx.alliedLegion.commanderId, tagBonusesA.filter(t => t.tagName).map(t => t.tagName));
-    await this._markTagsUsed(ctx.enemyLegion.commanderId, tagBonusesB.filter(t => t.tagName).map(t => t.tagName));
-    if (this._fanaticA) await this._markTagsUsed(ctx.alliedLegion.commanderId, ["Fanatic"]);
-    if (this._fanaticB) await this._markTagsUsed(ctx.enemyLegion.commanderId, ["Fanatic"]);
-    this._fanaticA = false;
-    this._fanaticB = false;
 
     this._results.maneuver = result;
     this._results.counterA += result.counterA;
@@ -220,13 +144,8 @@ export class BattleResolver extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   static async #onRollCharge(event, target) {
-    const form = this.element;
-    const manualA = Number(form.querySelector('[name="manualModA"]')?.value) || 0;
-    const manualB = Number(form.querySelector('[name="manualModB"]')?.value) || 0;
-
+    const { manualA, manualB, advA, advB, disadvA, disadvB } = this._readRollInputs(this.element);
     const ctx = await this._prepareContext();
-    const tagBonusesA = this._tagBonuses(ctx.alliedCmd, "charge", ctx.alliedStats);
-    const tagBonusesB = this._tagBonuses(ctx.enemyCmd, "charge", ctx.enemyStats);
 
     // Situational: maneuver benefit, momentum
     const situationalA = [], situationalB = [];
@@ -242,8 +161,8 @@ export class BattleResolver extends HandlebarsApplicationMixin(ApplicationV2) {
     if (ctx.alliedLegion.wonLastRound) situationalA.push({ label: "Momentum", value: BOM.momentumBonus });
     if (ctx.enemyLegion.wonLastRound) situationalB.push({ label: "Momentum", value: BOM.momentumBonus });
 
-    const bdA = this._buildBreakdown(ctx.alliedStats.mor, "Morale", situationalA, tagBonusesA, manualA, this._fanaticA);
-    const bdB = this._buildBreakdown(ctx.enemyStats.mor, "Morale", situationalB, tagBonusesB, manualB, this._fanaticB);
+    const bdA = this._buildBreakdown(ctx.alliedStats.mor, "Morale", situationalA, manualA);
+    const bdB = this._buildBreakdown(ctx.enemyStats.mor, "Morale", situationalB, manualB);
 
     const result = await contestedRoll({
       nameA: ctx.alliedLegion.name,
@@ -252,15 +171,10 @@ export class BattleResolver extends HandlebarsApplicationMixin(ApplicationV2) {
       bonusB: bdB.total,
       breakdownA: bdA.items,
       breakdownB: bdB.items,
+      advantageA: advA, disadvantageA: disadvA,
+      advantageB: advB, disadvantageB: disadvB,
       flavor: game.i18n.localize("BOM.battle.charge")
     });
-
-    await this._markTagsUsed(ctx.alliedLegion.commanderId, tagBonusesA.filter(t => t.tagName).map(t => t.tagName));
-    await this._markTagsUsed(ctx.enemyLegion.commanderId, tagBonusesB.filter(t => t.tagName).map(t => t.tagName));
-    if (this._fanaticA) await this._markTagsUsed(ctx.alliedLegion.commanderId, ["Fanatic"]);
-    if (this._fanaticB) await this._markTagsUsed(ctx.enemyLegion.commanderId, ["Fanatic"]);
-    this._fanaticA = false;
-    this._fanaticB = false;
 
     this._results.charge = result;
     this._results.counterA += result.counterA;
@@ -269,13 +183,8 @@ export class BattleResolver extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   static async #onRollClash(event, target) {
-    const form = this.element;
-    const manualA = Number(form.querySelector('[name="manualModA"]')?.value) || 0;
-    const manualB = Number(form.querySelector('[name="manualModB"]')?.value) || 0;
-
+    const { manualA, manualB, advA, advB, disadvA, disadvB } = this._readRollInputs(this.element);
     const ctx = await this._prepareContext();
-    const tagBonusesA = this._tagBonuses(ctx.alliedCmd, "clash", ctx.alliedStats);
-    const tagBonusesB = this._tagBonuses(ctx.enemyCmd, "clash", ctx.enemyStats);
 
     const situationalA = [], situationalB = [];
     if (this._results.charge?.winner === "a") situationalA.push({ label: "Charge Win", value: BOM.chargeWinClashBonus });
@@ -288,8 +197,8 @@ export class BattleResolver extends HandlebarsApplicationMixin(ApplicationV2) {
       else if (mWinner === "b") situationalB.push({ label: "Defensive", value: BOM.maneuverDefensiveBonus });
     }
 
-    const bdA = this._buildBreakdown(ctx.alliedStats.vit, "Vitality", situationalA, tagBonusesA, manualA, this._fanaticA);
-    const bdB = this._buildBreakdown(ctx.enemyStats.vit, "Vitality", situationalB, tagBonusesB, manualB, this._fanaticB);
+    const bdA = this._buildBreakdown(ctx.alliedStats.vit, "Vitality", situationalA, manualA);
+    const bdB = this._buildBreakdown(ctx.enemyStats.vit, "Vitality", situationalB, manualB);
 
     const result = await contestedRoll({
       nameA: ctx.alliedLegion.name,
@@ -298,15 +207,10 @@ export class BattleResolver extends HandlebarsApplicationMixin(ApplicationV2) {
       bonusB: bdB.total,
       breakdownA: bdA.items,
       breakdownB: bdB.items,
+      advantageA: advA, disadvantageA: disadvA,
+      advantageB: advB, disadvantageB: disadvB,
       flavor: game.i18n.localize("BOM.battle.clash")
     });
-
-    await this._markTagsUsed(ctx.alliedLegion.commanderId, tagBonusesA.filter(t => t.tagName).map(t => t.tagName));
-    await this._markTagsUsed(ctx.enemyLegion.commanderId, tagBonusesB.filter(t => t.tagName).map(t => t.tagName));
-    if (this._fanaticA) await this._markTagsUsed(ctx.alliedLegion.commanderId, ["Fanatic"]);
-    if (this._fanaticB) await this._markTagsUsed(ctx.enemyLegion.commanderId, ["Fanatic"]);
-    this._fanaticA = false;
-    this._fanaticB = false;
 
     this._results.clash = result;
     this._results.counterA += result.counterA;

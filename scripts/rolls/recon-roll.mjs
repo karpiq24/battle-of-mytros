@@ -3,7 +3,7 @@ import { BattleState } from "../data/battle-state.mjs";
 
 /**
  * Perform a reconnaissance roll for the allied side.
- * Uses the best allied Wit + Scout tag bonuses.
+ * Uses the highest allied Wit as the base modifier.
  * Sends result to chat.
  */
 export async function reconRoll() {
@@ -22,20 +22,7 @@ export async function reconRoll() {
     if (stats.wit > bestWit) bestWit = stats.wit;
   }
 
-  // Count Scout tag bonuses
-  let scoutBonus = 0;
-  for (const legion of alliedLegions) {
-    if (!legion.commander?.alive) continue;
-    for (const tag of legion.commander.tags ?? []) {
-      if (tag.name === "Scout" && !tag.used) {
-        scoutBonus += BOM.scoutTagReconBonus;
-      }
-    }
-  }
-
-  const totalBonus = bestWit + scoutBonus;
-
-  const roll = new Roll("1d20 + @bonus", { bonus: totalBonus });
+  const roll = new Roll("1d20 + @bonus", { bonus: bestWit });
   await roll.evaluate();
 
   // Determine result
@@ -53,19 +40,13 @@ export async function reconRoll() {
   // Send to chat
   const content = await renderTemplate(
     "modules/battle-of-mytros/templates/chat/recon-result.hbs",
-    { total, bonus: totalBonus, scoutBonus, bestWit, resultText }
+    { total, bonus: bestWit, bestWit, resultText }
   );
 
   await ChatMessage.create({
     speaker: { alias: game.i18n.localize("BOM.recon.title") },
     content,
     rolls: [roll]
-  });
-
-  // Send roll to chat as well
-  await roll.toMessage({
-    speaker: { alias: game.i18n.localize("BOM.recon.title") },
-    flavor: game.i18n.localize("BOM.recon.title")
   });
 
   return { total, resultKey, resultText };

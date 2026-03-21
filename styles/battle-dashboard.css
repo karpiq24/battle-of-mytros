@@ -405,6 +405,9 @@
   color: #fff;
 }
 
+.bom-winner-badge.bom-faction-allied { background: var(--bom-allied); }
+.bom-winner-badge.bom-faction-enemy { background: var(--bom-enemy); }
+
 .bom-phase-results {
   margin-top: 0.4rem;
   font-size: 0.8rem;
@@ -452,9 +455,10 @@
 
 .bom-check-row {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.25rem 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3rem;
+  padding: 0.4rem 0;
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -687,6 +691,7 @@
   align-items: center;
   gap: 0.3rem;
   font-size: 0.8rem;
+  flex-wrap: wrap;
 }
 
 .bom-mod-input {
@@ -696,33 +701,33 @@
   padding: 0.15rem 0.25rem;
 }
 
-.bom-tag-bonuses-preview {
+.bom-adv-label {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* ── Aftermath Check Inputs ── */
+.bom-check-inputs {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.2rem;
+  gap: 0.4rem;
+  align-items: center;
+  margin-top: 0.3rem;
 }
 
-.bom-tag-bonus {
-  font-size: 0.7rem;
-  padding: 0.1rem 0.3rem;
-  border-radius: 3px;
-  background: rgba(107, 114, 128, 0.2);
-  font-weight: 600;
-}
-
-.bom-fanatic-btn {
-  font-size: 0.75rem;
-  padding: 0.15rem 0.4rem;
-  background: rgba(245, 158, 11, 0.15);
-  border: 1px solid var(--bom-gold);
-  border-radius: 3px;
-  color: var(--bom-gold);
-  cursor: pointer;
-}
-
-.bom-fanatic-btn.bom-fanatic-active {
-  background: var(--bom-gold);
-  color: #000;
+.bom-check-input-group {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.78rem;
+  padding: 0.25rem 0.4rem;
+  background: var(--color-bg-option, rgba(0,0,0,0.08));
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
 }
 
 /* ── Roll Result Grid ── */
@@ -947,8 +952,7 @@
 .bom-fail { color: var(--bom-danger); font-weight: 600; }
 .bom-death { color: var(--bom-danger); }
 
-.bom-winner-badge { color: var(--bom-green); font-weight: 600; }
-.bom-loser-badge { color: var(--bom-danger); font-weight: 600; }
+.bom-loser-badge { font-size: 0.8rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 3px; background: var(--bom-danger); color: #fff; }
 
 .bom-recon-detail {
   margin-bottom: 0.3rem;
