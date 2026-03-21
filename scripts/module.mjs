@@ -56,7 +56,7 @@ Hooks.on("getSceneControlButtons", (controls) => {
         title: game.i18n.localize("BOM.dashboard.title"),
         icon: "fas fa-swords",
         button: true,
-        onClick: () => BattleDashboard.getInstance().render(true)
+        onChange: () => BattleDashboard.getInstance().render(true)
       }
     }
   };

@@ -1,6 +1,6 @@
-<nav class="bom-tabs sheet-tabs" data-group="sheet">
-  {{#each @root.constructor.TABS.sheet.tabs}}
-  <a class="item {{#if (eq ../tab this.id)}}active{{/if}}"
+<nav class="bom-tabs" data-group="sheet">
+  {{#each tabDefs}}
+  <a class="item {{#if (eq this.id ../activeTab)}}active{{/if}}"
      data-tab="{{this.id}}" data-group="sheet">
     <i class="{{this.icon}}"></i> {{localize this.label}}
   </a>

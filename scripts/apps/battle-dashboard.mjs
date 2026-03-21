@@ -53,18 +53,16 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
     setup: { template: "modules/battle-of-mytros/templates/dashboard/setup.hbs", scrollable: [""] }
   };
 
-  static TABS = {
-    sheet: {
-      tabs: [
-        { id: "overview", group: "sheet", icon: "fas fa-eye", label: "BOM.tab.overview" },
-        { id: "battle", group: "sheet", icon: "fas fa-swords", label: "BOM.tab.battle" },
-        { id: "aftermath", group: "sheet", icon: "fas fa-heart-crack", label: "BOM.tab.aftermath" },
-        { id: "setup", group: "sheet", icon: "fas fa-gear", label: "BOM.tab.setup" }
-      ],
-      initial: "overview",
-      labelPrefix: ""
-    }
-  };
+  // Tab definitions passed through context — not used by the framework directly
+  static TAB_DEFS = [
+    { id: "overview", group: "sheet", icon: "fas fa-eye", label: "BOM.tab.overview" },
+    { id: "battle", group: "sheet", icon: "fas fa-swords", label: "BOM.tab.battle" },
+    { id: "aftermath", group: "sheet", icon: "fas fa-heart-crack", label: "BOM.tab.aftermath" },
+    { id: "setup", group: "sheet", icon: "fas fa-gear", label: "BOM.tab.setup" }
+  ];
+
+  // V13: tabGroups tracks the active tab per group; initialized here as instance property
+  tabGroups = { sheet: "overview" };
 
   /** Get or create the singleton dashboard instance */
   static getInstance() {
@@ -82,6 +80,8 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
       statusKey: l.destroyed ? "destroyed" : l.routed ? "routed" : "active"
     }));
 
+    const activeTab = this.tabGroups.sheet ?? "overview";
+
     return {
       state,
       legions,
@@ -95,24 +95,30 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
       pcActions: BOM.pcActions,
       maxInjuries: BOM.maxInjuries,
       moraleCap: BOM.moraleCap,
-      tabs: this.tabGroups
+      activeTab,
+      tabDefs: BattleDashboard.TAB_DEFS
     };
   }
 
   _preparePartContext(partId, context) {
-    context.tab = this.tabGroups.sheet;
+    // activeTab is already in context from _prepareContext
     return context;
   }
 
-  /** Only render the visible tab */
-  _configureRenderParts(options) {
-    const parts = super._configureRenderParts(options);
-    const activeTab = this.tabGroups.sheet;
-    for (const [key, part] of Object.entries(parts)) {
-      if (key === "tabs") continue;
-      part.hidden = key !== activeTab;
-    }
-    return parts;
+  /* ─── Tab Handling ─── */
+
+  /** Wire up tab clicks after render */
+  _onRender(context, options) {
+    super._onRender?.(context, options);
+    this.element.querySelectorAll(".bom-tabs .item[data-tab]").forEach(el => {
+      el.addEventListener("click", (ev) => {
+        const tab = ev.currentTarget.dataset.tab;
+        if (tab && tab !== this.tabGroups.sheet) {
+          this.tabGroups.sheet = tab;
+          this.render();
+        }
+      });
+    });
   }
 
   /* ─── Action Handlers ─── */

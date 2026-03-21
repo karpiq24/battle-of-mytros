@@ -2,7 +2,7 @@
   "id": "battle-of-mytros",
   "title": "Battle of Mytros",
   "description": "A DM workflow assistant for running mass combat in Odyssey of the Dragonlords.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "compatibility": {
     "minimum": "12",
     "verified": "13"
