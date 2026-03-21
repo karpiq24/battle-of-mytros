@@ -192,7 +192,7 @@
 .bom-legion-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 0.4rem;
   margin-bottom: 0.3rem;
 }
 
@@ -309,9 +309,10 @@
 
 /* ── Legion Actions ── */
 .bom-legion-actions {
-  position: absolute;
-  top: 0.3rem;
-  right: 0.3rem;
+  display: flex;
+  gap: 0.1rem;
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
 .bom-legion-actions button {
@@ -319,11 +320,43 @@
   border: none;
   cursor: pointer;
   color: var(--color-text-secondary);
-  padding: 0.2rem;
+  padding: 0.15rem 0.2rem;
 }
 
 .bom-legion-actions button:hover {
   color: var(--color-text-primary);
+}
+
+/* ── Commander Row (badge + assign dropdown) ── */
+.bom-commander-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  margin-bottom: 0.3rem;
+  flex-wrap: wrap;
+}
+
+.bom-commander-row .bom-commander-badge {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.bom-commander-select {
+  font-size: 0.75rem;
+  padding: 0.1rem 0.25rem;
+  height: 1.6rem;
+  align-self: center;
+  flex-shrink: 0;
+  max-width: 130px;
+}
+
+.bom-commander-alive { color: var(--bom-gold); }
+.bom-commander-dead { color: var(--bom-danger); }
+
+.bom-tags-summary {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  flex: 1;
 }
 
 /* ── Battle Tab ── */
@@ -602,17 +635,166 @@
   font-size: 0.9rem;
 }
 
-.bom-roll-result {
-  font-size: 0.85rem;
+.bom-resolver-stat-row {
+  font-size: 0.8rem;
   font-family: monospace;
+  opacity: 0.85;
+}
+
+.bom-resolver-cmd {
+  font-size: 0.75rem;
+  font-style: italic;
+  opacity: 0.8;
+}
+
+.bom-resolver-cmd i.fa-crown { color: var(--bom-gold); }
+.bom-resolver-cmd i.fa-skull { color: var(--bom-danger); }
+
+.bom-step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 50%;
+  background: var(--color-border);
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-right: 0.2rem;
+}
+
+.bom-step-stat {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}
+
+/* ── Manual Modifiers Row ── */
+.bom-manual-mods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+  padding: 0.4rem 0.5rem;
+  background: var(--color-bg-option, rgba(0,0,0,0.1));
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  border: 1px solid var(--color-border);
+}
+
+.bom-manual-mod {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+}
+
+.bom-mod-input {
+  width: 3.5rem;
+  text-align: center;
+  font-size: 0.85rem;
+  padding: 0.15rem 0.25rem;
+}
+
+.bom-tag-bonuses-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem;
+}
+
+.bom-tag-bonus {
+  font-size: 0.7rem;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  background: rgba(107, 114, 128, 0.2);
+  font-weight: 600;
+}
+
+.bom-fanatic-btn {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.4rem;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid var(--bom-gold);
+  border-radius: 3px;
+  color: var(--bom-gold);
+  cursor: pointer;
+}
+
+.bom-fanatic-btn.bom-fanatic-active {
+  background: var(--bom-gold);
+  color: #000;
+}
+
+/* ── Roll Result Grid ── */
+.bom-roll-result-grid {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.bom-roll-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 3.5rem;
+}
+
+.bom-roll-total {
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.bom-roll-formula {
+  font-size: 0.7rem;
+  font-family: monospace;
+  opacity: 0.8;
+}
+
+.bom-step-winner {
+  font-weight: 700;
+  font-size: 0.8rem;
+  margin-left: auto;
+}
+
+.bom-counter-sep, .bom-score-sep {
+  color: var(--color-text-secondary);
+  font-size: 1.1rem;
+}
+
+.bom-counter-label {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  margin-left: 0.3rem;
 }
 
 .bom-resolver-winner {
   text-align: center;
-  padding: 0.75rem;
-  background: var(--bom-green);
-  color: #fff;
+  padding: 0.6rem 0.75rem;
   border-radius: 4px;
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.bom-resolver-winner.bom-faction-allied {
+  background: var(--bom-allied-bg);
+  border: 1px solid var(--bom-allied-border);
+  color: var(--bom-allied);
+}
+
+.bom-resolver-winner.bom-faction-enemy {
+  background: var(--bom-enemy-bg);
+  border: 1px solid var(--bom-enemy-border);
+  color: var(--bom-enemy);
+}
+
+.bom-counter-score {
+  font-size: 0.9rem;
+  opacity: 0.85;
 }
 
 .bom-benefit-btn {
@@ -670,6 +852,91 @@
 
 .bom-chat-winner.bom-faction-allied { background: var(--bom-allied-bg); }
 .bom-chat-winner.bom-faction-enemy { background: var(--bom-enemy-bg); }
+
+/* ── Battle Result Chat Card ── */
+.bom-phase-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  margin-bottom: 0.4rem;
+}
+
+.bom-phase-table th {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.3rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.bom-phase-table td {
+  padding: 0.25rem 0.3rem;
+  vertical-align: top;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.bom-phase-table .bom-col-phase {
+  font-weight: 600;
+  white-space: nowrap;
+  font-size: 0.75rem;
+}
+
+.bom-roll-val {
+  font-size: 1rem;
+  font-weight: 700;
+  display: block;
+}
+
+.bom-roll-sub {
+  font-size: 0.65rem;
+  font-family: monospace;
+  opacity: 0.75;
+  display: block;
+}
+
+.bom-roll-breakdown {
+  font-size: 0.6rem;
+  opacity: 0.7;
+  display: block;
+  font-style: italic;
+}
+
+.bom-phase-winner-badge {
+  font-weight: 700;
+  font-size: 0.75rem;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.bom-phase-winner-badge.bom-faction-allied { background: var(--bom-allied-bg); color: var(--bom-allied); }
+.bom-phase-winner-badge.bom-faction-enemy { background: var(--bom-enemy-bg); color: var(--bom-enemy); }
+.bom-phase-winner-badge.bom-faction-neutral { background: rgba(156,163,175,0.15); color: var(--color-text-secondary); }
+
+.bom-chat-score {
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0.3rem 0;
+}
+
+/* Issue 2 fix: winner box uses full-opacity text color distinct from translucent bg */
+.bom-chat-winner-box {
+  text-align: center;
+  padding: 0.3rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.9rem;
+  color: var(--color-text-primary);
+}
+
+.bom-chat-winner-box.bom-faction-allied {
+  background: var(--bom-allied);
+  color: #fff;
+}
+
+.bom-chat-winner-box.bom-faction-enemy {
+  background: var(--bom-enemy);
+  color: #fff;
+}
 
 .bom-chat-check {
   padding: 0.2rem 0;

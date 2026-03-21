@@ -32,6 +32,10 @@
   "BOM.action.addLegion": "Add Legion",
   "BOM.action.editLegion": "Edit Legion",
   "BOM.action.deleteLegion": "Delete Legion",
+  "BOM.action.addCommander": "Add Commander",
+  "BOM.action.editCommander": "Edit Commander",
+  "BOM.action.deleteCommander": "Delete Commander",
+  "BOM.action.assignCommander": "Assign Commander",
   "BOM.action.addBattle": "Add Battle",
   "BOM.action.roll": "Roll",
   "BOM.action.resolve": "Resolve",
@@ -116,6 +120,7 @@
 
   "BOM.confirm.reset": "Reset all battle data? This cannot be undone.",
   "BOM.confirm.deleteLegion": "Delete this legion?",
+  "BOM.confirm.deleteCommander": "Delete this commander? They will be unassigned from any legion.",
 
   "BOM.tag.Tactician": "Tactician",
   "BOM.tag.Mage": "Mage",

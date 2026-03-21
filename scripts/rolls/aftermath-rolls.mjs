@@ -114,21 +114,18 @@ export async function salvageCheck(legion) {
  * @returns {Promise<{survived: boolean, result: object}>}
  */
 export async function casualtyCheck(legion, outcome) {
-  const cmd = legion.commander;
+  const cmd = BattleState.getCommander(legion.commanderId);
   if (!cmd?.alive) return { survived: true, result: null };
 
   const dc = BOM.casualtyDC[outcome] ?? BOM.casualtyDC.loser;
 
-  // Base bonus is commander's personal vit bonus
   let bonus = cmd.vitBonus ?? 0;
 
-  // Tag bonuses
   for (const tag of cmd.tags ?? []) {
     const tagBonus = BOM.casualtyTagBonus[tag.name];
     if (tagBonus) bonus += tagBonus;
   }
 
-  // Injury penalty
   if (legion.injuries >= BOM.casualtyInjuredAt) {
     bonus += BOM.casualtyInjuredPenalty;
   }
@@ -140,11 +137,12 @@ export async function casualtyCheck(legion, outcome) {
     flavor: game.i18n.localize("BOM.aftermath.casualty")
   });
 
-  // Duelist reroll on failure
+  // Duelist reroll on failure — mark tag used on the commander entity
   if (!result.passed) {
     const duelistTag = (cmd.tags ?? []).find(t => t.name === "Duelist" && !t.used);
     if (duelistTag) {
       duelistTag.used = true;
+      await BattleState.updateCommander(cmd.id, { tags: cmd.tags });
       const reroll = await _aftermathCheck({
         legionName: `${cmd.name} (Duelist reroll)`,
         bonus,
@@ -189,8 +187,9 @@ export async function applyAftermathEffects(legionId, effects) {
   }
 
   // Commander death
-  if (effects.commanderDied) {
-    legion.commander.alive = false;
+  if (effects.commanderDied && legion.commanderId) {
+    const cmd = state.commanders?.find(c => c.id === legion.commanderId);
+    if (cmd) cmd.alive = false;
     legion.moraleMod -= BOM.commanderDeathMoraleLoss;
   }
 

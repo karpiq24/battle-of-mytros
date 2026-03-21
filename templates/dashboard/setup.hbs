@@ -2,6 +2,30 @@
 
   <h3>{{localize "BOM.tab.setup"}}</h3>
 
+  {{!-- Commander management --}}
+  <div class="bom-setup-section">
+    <h4><i class="fas fa-crown"></i> {{localize "BOM.label.commander"}}s</h4>
+    <button type="button" data-action="addCommander"><i class="fas fa-plus"></i> {{localize "BOM.action.addCommander"}}</button>
+
+    <div class="bom-legion-table">
+      {{#each commanders}}
+      <div class="bom-legion-row bom-faction-{{this.faction}}">
+        <span class="bom-legion-name">
+          {{#if this.alive}}<i class="fas fa-crown bom-commander-alive"></i>{{else}}<i class="fas fa-skull bom-commander-dead"></i>{{/if}}
+          {{this.name}}
+        </span>
+        <span class="bom-commander-name">{{localize (concat "BOM.faction." this.faction)}}</span>
+        <span class="bom-stats">+V{{this.vitBonus}} +M{{this.morBonus}} +W{{this.witBonus}}</span>
+        <span class="bom-tags-summary">{{#each this.tags}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each}}</span>
+        <button type="button" data-action="editCommander" data-commander-id="{{this.id}}"><i class="fas fa-pen"></i></button>
+        <button type="button" data-action="deleteCommander" data-commander-id="{{this.id}}"><i class="fas fa-trash"></i></button>
+      </div>
+      {{else}}
+      <p class="bom-empty">{{localize "BOM.label.none"}}</p>
+      {{/each}}
+    </div>
+  </div>
+
   {{!-- Legion management --}}
   <div class="bom-setup-section">
     <h4><i class="fas fa-shield-halved"></i> {{localize "BOM.label.legionName"}}s</h4>
@@ -11,7 +35,7 @@
       {{#each legions}}
       <div class="bom-legion-row bom-faction-{{this.faction}}">
         <span class="bom-legion-name">{{this.name}}</span>
-        <span class="bom-commander-name">{{this.commander.name}}</span>
+        <span class="bom-commander-name">{{#if this.commander}}{{this.commander.name}}{{else}}—{{/if}}</span>
         <span class="bom-stats">V{{this.stats.vit}} M{{this.stats.mor}} W{{this.stats.wit}}</span>
         <span class="bom-injuries">{{localize "BOM.stat.injuries"}}: {{this.injuries}}/{{@root.maxInjuries}}</span>
         <button type="button" data-action="editLegion" data-legion-id="{{this.id}}"><i class="fas fa-pen"></i></button>

@@ -3,12 +3,17 @@ import { BOM } from "../config.mjs";
 /**
  * Manages the full battle state stored in game.settings.
  * All mutations go through this class to ensure consistency and persistence.
+ *
+ * Data model:
+ *   state.commanders[] — independent commander entities: { id, name, faction, vitBonus, morBonus, witBonus, tags, alive }
+ *   state.legions[]    — reference commanders by commanderId (not embedded)
  */
 export class BattleState {
 
-  /** @returns {object} The current battle state from settings */
+  /** @returns {object} The current battle state from settings (auto-migrated) */
   static get() {
-    return game.settings.get(BOM.moduleId, "battleState");
+    const state = game.settings.get(BOM.moduleId, "battleState");
+    return this._migrateState(state);
   }
 
   /** @param {object} state - Full state to persist */
@@ -24,6 +29,7 @@ export class BattleState {
       day: 1,
       roundsPerDay: BOM.roundsPerDay,
       legions: [],
+      commanders: [],
       reserves: { allied: [], enemy: [] },
       battles: [],
       miracles: {
@@ -36,13 +42,89 @@ export class BattleState {
     };
   }
 
+  /**
+   * Migrate old state format (embedded legion.commander) to new format (separate commanders array).
+   * Safe to call repeatedly — only migrates legions that still have an embedded commander object.
+   * @param {object} state
+   * @returns {object}
+   */
+  static _migrateState(state) {
+    if (!state.commanders) state.commanders = [];
+    for (const legion of state.legions ?? []) {
+      if (legion.commander && !legion.commanderId) {
+        const cmd = {
+          id: foundry.utils.randomID(),
+          name: legion.commander.name ?? "Unknown",
+          faction: legion.faction,
+          vitBonus: legion.commander.vitBonus ?? 0,
+          morBonus: legion.commander.morBonus ?? 0,
+          witBonus: legion.commander.witBonus ?? 0,
+          tags: Array.isArray(legion.commander.tags) ? legion.commander.tags : [],
+          alive: legion.commander.alive !== false
+        };
+        state.commanders.push(cmd);
+        legion.commanderId = cmd.id;
+        delete legion.commander;
+      }
+    }
+    return state;
+  }
+
+  // ── Commander CRUD ──
+
+  static async addCommander(data) {
+    const state = this.get();
+    const cmd = {
+      id: foundry.utils.randomID(),
+      name: data.name ?? "Unknown",
+      faction: data.faction ?? "allied",
+      vitBonus: Number(data.vitBonus) || 0,
+      morBonus: Number(data.morBonus) || 0,
+      witBonus: Number(data.witBonus) || 0,
+      tags: this._normalizeTags(data.tags),
+      alive: data.alive !== false
+    };
+    state.commanders.push(cmd);
+    await this.set(state);
+    return cmd;
+  }
+
+  static async updateCommander(id, updates) {
+    const state = this.get();
+    const idx = state.commanders.findIndex(c => c.id === id);
+    if (idx === -1) return;
+    if (updates.tags !== undefined) updates.tags = this._normalizeTags(updates.tags);
+    foundry.utils.mergeObject(state.commanders[idx], updates);
+    await this.set(state);
+  }
+
+  static async removeCommander(id) {
+    const state = this.get();
+    // Unassign from any legion using this commander
+    for (const legion of state.legions) {
+      if (legion.commanderId === id) legion.commanderId = null;
+    }
+    state.commanders = state.commanders.filter(c => c.id !== id);
+    await this.set(state);
+  }
+
+  /** @returns {object|null} */
+  static getCommander(id) {
+    if (!id) return null;
+    return this.get().commanders?.find(c => c.id === id) ?? null;
+  }
+
+  /** Assign (or unassign) a commander to a legion. */
+  static async assignCommander(legionId, commanderId) {
+    const state = this.get();
+    const legion = state.legions.find(l => l.id === legionId);
+    if (!legion) return;
+    legion.commanderId = commanderId || null;
+    await this.set(state);
+  }
+
   // ── Legion CRUD ──
 
-  /**
-   * Create a new legion and add it to state.
-   * @param {object} data - Legion data (name, faction, vitBase, morBase, witBase, commander)
-   * @returns {object} The created legion
-   */
   static async addLegion(data) {
     const state = this.get();
     const legion = {
@@ -58,53 +140,33 @@ export class BattleState {
       destroyed: false,
       wonLastRound: false,
       witTempBonus: 0,
-      commander: this._normalizeCommander(data.commander)
+      commanderId: data.commanderId ?? null
     };
     state.legions.push(legion);
     await this.set(state);
     return legion;
   }
 
-  /**
-   * Update an existing legion by id.
-   * @param {string} id
-   * @param {object} updates - Partial legion data to merge
-   */
   static async updateLegion(id, updates) {
     const state = this.get();
     const idx = state.legions.findIndex(l => l.id === id);
     if (idx === -1) return;
-    if (updates.commander) {
-      updates.commander = this._normalizeCommander(updates.commander);
-    }
+    // Strip any legacy embedded commander from updates
+    delete updates.commander;
     foundry.utils.mergeObject(state.legions[idx], updates);
     await this.set(state);
   }
 
-  /**
-   * Remove a legion by id.
-   * @param {string} id
-   */
   static async removeLegion(id) {
     const state = this.get();
     state.legions = state.legions.filter(l => l.id !== id);
     await this.set(state);
   }
 
-  /**
-   * Get a single legion by id.
-   * @param {string} id
-   * @returns {object|undefined}
-   */
   static getLegion(id) {
     return this.get().legions.find(l => l.id === id);
   }
 
-  /**
-   * Get all legions for a faction.
-   * @param {"allied"|"enemy"} faction
-   * @returns {object[]}
-   */
   static getLegionsByFaction(faction) {
     return this.get().legions.filter(l => l.faction === faction);
   }
@@ -113,24 +175,23 @@ export class BattleState {
 
   /**
    * Compute effective stats for a legion (base + commander bonus).
+   * Looks up the assigned commander from state by legion.commanderId.
    * @param {object} legion
    * @returns {{ vit: number, mor: number, wit: number }}
    */
   static computeStats(legion) {
-    const cmd = legion.commander;
+    const commanders = this.get().commanders ?? [];
+    const cmd = commanders.find(c => c.id === legion.commanderId) ?? null;
     const alive = cmd?.alive !== false;
-    const vit = Math.max(0, legion.vitBase + (alive ? (cmd?.vitBonus ?? 0) : 0));
-    const morRaw = legion.morBase + (alive ? (cmd?.morBonus ?? 0) : 0) + (legion.moraleMod ?? 0);
+    const vit = Math.max(0, legion.vitBase + (alive && cmd ? (cmd.vitBonus ?? 0) : 0));
+    const morRaw = legion.morBase + (alive && cmd ? (cmd.morBonus ?? 0) : 0) + (legion.moraleMod ?? 0);
     const mor = Math.min(BOM.moraleCap, Math.max(0, morRaw));
-    const wit = Math.max(0, legion.witBase + (alive ? (cmd?.witBonus ?? 0) : 0) + (legion.witTempBonus ?? 0));
+    const wit = Math.max(0, legion.witBase + (alive && cmd ? (cmd.witBonus ?? 0) : 0) + (legion.witTempBonus ?? 0));
     return { vit, mor, wit };
   }
 
   // ── Round / Phase management ──
 
-  /**
-   * Advance to the next phase in the round, or next round if at end.
-   */
   static async advancePhase() {
     const state = this.get();
     const idx = BOM.phases.indexOf(state.phase);
@@ -142,23 +203,16 @@ export class BattleState {
     await this.set(state);
   }
 
-  /**
-   * Start a new round.
-   * @param {object} state - The state object (mutated in place)
-   */
   static async _advanceRound(state) {
     state.round += 1;
     state.phase = BOM.phases[0];
 
-    // Apply idle recovery to legions that didn't fight
     const foughtIds = new Set(state.battles.flatMap(b => [b.alliedLegionId, b.enemyLegionId]));
     for (const legion of state.legions) {
       if (legion.destroyed) continue;
       if (!foughtIds.has(legion.id)) {
-        // Idle or routed — heal 1 injury, gain 1 morale
         legion.injuries = Math.max(0, legion.injuries - BOM.idleInjuryRecovery);
         legion.moraleMod += BOM.idleMoraleRecovery;
-        // Check rally
         if (legion.routed) {
           const stats = this.computeStats(legion);
           if (stats.mor > BOM.routThreshold) {
@@ -166,55 +220,40 @@ export class BattleState {
           }
         }
       }
-      // Reset wit temp bonus each round
       legion.witTempBonus = 0;
     }
 
-    // Check for end of day
     if (state.round > state.roundsPerDay) {
       await this._endDay(state);
     }
 
-    // Clear battles and deployments for new round
     state.battles = [];
     state.pcDeployments = [];
   }
 
-  /**
-   * End the current battle day: overnight recovery, tag reset, new day.
-   * @param {object} state
-   */
   static async _endDay(state) {
     state.day += 1;
     state.round = 1;
 
     for (const legion of state.legions) {
       if (legion.destroyed) continue;
-      // Overnight recovery: heal 1 injury if at 5 or fewer
       if (legion.injuries <= BOM.overnightInjuryMax && legion.injuries > 0) {
         legion.injuries -= BOM.overnightInjuryRecovery;
       }
-      // Overnight morale recovery
       legion.moraleMod += BOM.overnightMoraleRecovery;
-      // Reset commander tags
-      if (legion.commander?.tags) {
-        for (const tag of legion.commander.tags) {
-          tag.used = false;
-        }
-      }
-      // Reset won last round
       legion.wonLastRound = false;
+    }
+
+    // Reset commander tags each day (not per round — tags are per-day resources)
+    for (const cmd of state.commanders ?? []) {
+      for (const tag of cmd.tags ?? []) {
+        tag.used = false;
+      }
     }
   }
 
   // ── Battle pairing ──
 
-  /**
-   * Create a battle pairing between two legions.
-   * @param {string} alliedId
-   * @param {string} enemyId
-   * @returns {object} The created battle
-   */
   static async addBattle(alliedId, enemyId) {
     const state = this.get();
     const battle = {
@@ -235,21 +274,12 @@ export class BattleState {
     return battle;
   }
 
-  /**
-   * Remove a battle pairing by id.
-   * @param {string} id
-   */
   static async removeBattle(id) {
     const state = this.get();
     state.battles = state.battles.filter(b => b.id !== id);
     await this.set(state);
   }
 
-  /**
-   * Update a battle by id.
-   * @param {string} id
-   * @param {object} updates
-   */
   static async updateBattle(id, updates) {
     const state = this.get();
     const idx = state.battles.findIndex(b => b.id === id);
@@ -345,41 +375,34 @@ export class BattleState {
 
   // ── CSV Import ──
 
-  /**
-   * Import legions and commanders from CSV text (same format as the Python sim).
-   * @param {string} legionsCsv
-   * @param {string} commandersCsv
-   */
   static async importFromCSV(legionsCsv, commandersCsv) {
     const state = this.get();
 
-    // Parse legions CSV
     const legionRows = this._parseCSV(legionsCsv);
     const cmdRows = this._parseCSV(commandersCsv);
 
-    // Build commander lookup: legion name → commander data
+    // Create commander entities; build legion-name → commanderId map
     const cmdByLegion = new Map();
-    const reservesByFaction = { allied: [], enemy: [] };
+    const newCommanders = [];
 
     for (const row of cmdRows) {
       const cmd = {
+        id: foundry.utils.randomID(),
         name: row.name,
+        faction: row.faction?.toLowerCase() === "enemy" ? "enemy" : "allied",
         vitBonus: Number(row.vitality) || 0,
         morBonus: Number(row.morale) || 0,
         witBonus: Number(row.wit) || 0,
         tags: (row.tags || "").split(",").filter(Boolean).map(t => ({ name: t.trim(), used: false })),
         alive: true
       };
+      newCommanders.push(cmd);
       const legionName = (row.legion || "").trim();
       if (legionName) {
-        cmdByLegion.set(legionName, cmd);
-      } else {
-        const faction = row.faction?.toLowerCase() === "enemy" ? "enemy" : "allied";
-        reservesByFaction[faction].push(cmd);
+        cmdByLegion.set(legionName, cmd.id);
       }
     }
 
-    // Build legions
     for (const row of legionRows) {
       const faction = row.faction?.toLowerCase() === "enemy" ? "enemy" : "allied";
       const legion = {
@@ -395,17 +418,25 @@ export class BattleState {
         destroyed: false,
         wonLastRound: false,
         witTempBonus: 0,
-        commander: cmdByLegion.get(row.name) ?? this._normalizeCommander({})
+        commanderId: cmdByLegion.get(row.name) ?? null
       };
       state.legions.push(legion);
     }
 
-    state.reserves = reservesByFaction;
+    state.commanders.push(...newCommanders);
     await this.set(state);
   }
 
   // ── Internal helpers ──
 
+  static _normalizeTags(tags) {
+    if (!Array.isArray(tags)) return [];
+    return tags.map(t =>
+      typeof t === "string" ? { name: t, used: false } : { name: t.name, used: !!t.used }
+    );
+  }
+
+  /** @deprecated Only kept for reserves which still use embedded commander objects */
   static _normalizeCommander(data) {
     if (!data) data = {};
     return {
@@ -413,25 +444,17 @@ export class BattleState {
       vitBonus: Number(data.vitBonus) || 0,
       morBonus: Number(data.morBonus) || 0,
       witBonus: Number(data.witBonus) || 0,
-      tags: Array.isArray(data.tags) ? data.tags.map(t =>
-        typeof t === "string" ? { name: t, used: false } : { name: t.name, used: !!t.used }
-      ) : [],
+      tags: this._normalizeTags(data.tags),
       alive: data.alive !== false
     };
   }
 
-  /**
-   * Parse CSV text into array of objects (header row as keys).
-   * @param {string} csv
-   * @returns {object[]}
-   */
   static _parseCSV(csv) {
     const lines = csv.trim().split("\n").map(l => l.trim()).filter(Boolean);
     if (lines.length < 2) return [];
     const headers = lines[0].split(",").map(h => h.trim().toLowerCase());
     const rows = [];
     for (let i = 1; i < lines.length; i++) {
-      // Handle quoted fields (for tags with commas)
       const fields = [];
       let current = "";
       let inQuotes = false;
@@ -441,7 +464,6 @@ export class BattleState {
         current += ch;
       }
       fields.push(current.trim());
-
       const obj = {};
       for (let j = 0; j < headers.length; j++) {
         obj[headers[j]] = fields[j] ?? "";

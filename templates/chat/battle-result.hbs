@@ -6,31 +6,60 @@
     <span class="bom-faction-enemy">{{enemyName}}</span>
   </h3>
 
-  <div class="bom-chat-phases">
+  <table class="bom-phase-table">
+    <thead>
+      <tr>
+        <th class="bom-col-phase"></th>
+        <th class="bom-col-allied bom-faction-allied">{{alliedName}}</th>
+        <th class="bom-col-enemy bom-faction-enemy">{{enemyName}}</th>
+        <th class="bom-col-winner"></th>
+      </tr>
+    </thead>
+    <tbody>
     {{#each phases}}
-    <div class="bom-chat-phase">
-      <span class="bom-phase-label">{{this.phaseName}}</span>
-      <span class="bom-chat-roll">
-        {{this.rollA}}+{{this.bonusA}}={{this.totalA}}
-        {{#if this.nat20A}}<span class="bom-nat20">20!</span>{{/if}}
-        {{#if this.nat1A}}<span class="bom-nat1">1!</span>{{/if}}
-      </span>
-      <span class="bom-vs">vs</span>
-      <span class="bom-chat-roll">
-        {{this.rollB}}+{{this.bonusB}}={{this.totalB}}
-        {{#if this.nat20B}}<span class="bom-nat20">20!</span>{{/if}}
-        {{#if this.nat1B}}<span class="bom-nat1">1!</span>{{/if}}
-      </span>
-      <span class="bom-phase-winner">{{this.winner}}</span>
-    </div>
+    {{#if this.rollA}}
+    <tr class="bom-phase-row">
+      <td class="bom-col-phase">{{this.phaseName}}</td>
+      <td class="bom-col-allied">
+        <span class="bom-roll-val {{#if this.nat20A}}bom-nat20{{/if}}{{#if this.nat1A}} bom-nat1{{/if}}">
+          {{this.totalA}}
+        </span>
+        <span class="bom-roll-sub">{{this.rollA}}+{{this.bonusA}}</span>
+        {{#if this.breakdownA.length}}
+        <span class="bom-roll-breakdown">
+          {{#each this.breakdownA}}{{this.label}} {{#if (gte this.value 0)}}+{{/if}}{{this.value}}{{#unless @last}}, {{/unless}}{{/each}}
+        </span>
+        {{/if}}
+      </td>
+      <td class="bom-col-enemy">
+        <span class="bom-roll-val {{#if this.nat20B}}bom-nat20{{/if}}{{#if this.nat1B}} bom-nat1{{/if}}">
+          {{this.totalB}}
+        </span>
+        <span class="bom-roll-sub">{{this.rollB}}+{{this.bonusB}}</span>
+        {{#if this.breakdownB.length}}
+        <span class="bom-roll-breakdown">
+          {{#each this.breakdownB}}{{this.label}} {{#if (gte this.value 0)}}+{{/if}}{{this.value}}{{#unless @last}}, {{/unless}}{{/each}}
+        </span>
+        {{/if}}
+      </td>
+      <td class="bom-col-winner">
+        <span class="bom-phase-winner-badge bom-faction-{{#if (eq this.winner "Allied")}}allied{{else}}{{#if (eq this.winner "Enemy")}}enemy{{else}}neutral{{/if}}{{/if}}">
+          {{this.winner}}
+        </span>
+      </td>
+    </tr>
+    {{/if}}
     {{/each}}
+    </tbody>
+  </table>
+
+  <div class="bom-chat-score">
+    <span class="bom-faction-allied">{{counterAllied}}</span>
+    <span class="bom-score-sep">–</span>
+    <span class="bom-faction-enemy">{{counterEnemy}}</span>
   </div>
 
-  <div class="bom-chat-counter">
-    Counter: {{counterAllied}} – {{counterEnemy}}
-  </div>
-
-  <div class="bom-chat-winner bom-faction-{{winner}}">
-    <strong>Winner: {{winner}}</strong>
+  <div class="bom-chat-winner-box bom-faction-{{winner}}">
+    <i class="fas fa-trophy"></i> <strong>{{winner}}</strong>
   </div>
 </div>

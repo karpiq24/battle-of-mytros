@@ -4,13 +4,14 @@ import { BattleState } from "../data/battle-state.mjs";
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /**
- * Dialog for adding or editing a legion and its commander.
+ * Dialog for adding or editing a legion.
+ * Commander assignment is done via dropdown (commanders are separate entities).
  */
 export class LegionEditor extends HandlebarsApplicationMixin(ApplicationV2) {
 
   static DEFAULT_OPTIONS = {
     id: "bom-legion-editor",
-    position: { width: 480, height: "auto" },
+    position: { width: 420, height: "auto" },
     window: {
       title: "BOM.action.addLegion",
       icon: "fas fa-shield-halved"
@@ -37,6 +38,7 @@ export class LegionEditor extends HandlebarsApplicationMixin(ApplicationV2) {
   async _prepareContext(options) {
     const legion = this._legionId ? BattleState.getLegion(this._legionId) : null;
     const isEdit = !!legion;
+    const state = BattleState.get();
 
     return {
       isEdit,
@@ -48,9 +50,9 @@ export class LegionEditor extends HandlebarsApplicationMixin(ApplicationV2) {
         witBase: 2,
         injuries: 0,
         moraleMod: 0,
-        commander: { name: "", vitBonus: 1, morBonus: 1, witBonus: 1, tags: [], alive: true }
+        commanderId: null
       },
-      allTags: BOM.allTags,
+      commanders: state.commanders ?? [],
       factions: [
         { id: "allied", label: "BOM.faction.allied" },
         { id: "enemy", label: "BOM.faction.enemy" }
@@ -61,14 +63,6 @@ export class LegionEditor extends HandlebarsApplicationMixin(ApplicationV2) {
   static async #onSubmit(event, form, formData) {
     const data = foundry.utils.expandObject(formData.object);
 
-    // Parse tags from checkboxes
-    const tags = [];
-    for (const tagName of BOM.allTags) {
-      if (data.tags?.[tagName]) {
-        tags.push({ name: tagName, used: false });
-      }
-    }
-
     const legionData = {
       name: data.name,
       faction: data.faction,
@@ -77,14 +71,7 @@ export class LegionEditor extends HandlebarsApplicationMixin(ApplicationV2) {
       witBase: Number(data.witBase),
       injuries: Number(data.injuries) || 0,
       moraleMod: Number(data.moraleMod) || 0,
-      commander: {
-        name: data.commanderName,
-        vitBonus: Number(data.cmdVit),
-        morBonus: Number(data.cmdMor),
-        witBonus: Number(data.cmdWit),
-        tags,
-        alive: data.cmdAlive !== false
-      }
+      commanderId: data.commanderId || null
     };
 
     if (this._legionId) {

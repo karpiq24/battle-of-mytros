@@ -27,6 +27,9 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
       addLegion: BattleDashboard.#onAddLegion,
       editLegion: BattleDashboard.#onEditLegion,
       deleteLegion: BattleDashboard.#onDeleteLegion,
+      addCommander: BattleDashboard.#onAddCommander,
+      editCommander: BattleDashboard.#onEditCommander,
+      deleteCommander: BattleDashboard.#onDeleteCommander,
       addBattle: BattleDashboard.#onAddBattle,
       removeBattle: BattleDashboard.#onRemoveBattle,
       addObjective: BattleDashboard.#onAddObjective,
@@ -74,8 +77,11 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
 
   async _prepareContext(options) {
     const state = BattleState.get();
+    const commanders = state.commanders ?? [];
+
     const legions = state.legions.map(l => ({
       ...l,
+      commander: commanders.find(c => c.id === l.commanderId) ?? null,
       stats: BattleState.computeStats(l),
       statusKey: l.destroyed ? "destroyed" : l.routed ? "routed" : "active"
     }));
@@ -85,9 +91,14 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
     return {
       state,
       legions,
+      commanders,
       alliedLegions: legions.filter(l => l.faction === "allied"),
       enemyLegions: legions.filter(l => l.faction === "enemy"),
       activeLegions: legions.filter(l => !l.destroyed),
+      commandersByFaction: {
+        allied: commanders.filter(c => c.faction === "allied"),
+        enemy: commanders.filter(c => c.faction === "enemy")
+      },
       phaseLabel: `BOM.phase.${state.phase}`,
       allTags: BOM.allTags,
       maneuverBenefits: BOM.maneuverBenefits,
@@ -107,9 +118,11 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
 
   /* ─── Tab Handling ─── */
 
-  /** Wire up tab clicks after render */
+  /** Wire up tab clicks and commander-assign dropdowns after render */
   _onRender(context, options) {
     super._onRender?.(context, options);
+
+    // Tab switching
     this.element.querySelectorAll(".bom-tabs .item[data-tab]").forEach(el => {
       el.addEventListener("click", (ev) => {
         const tab = ev.currentTarget.dataset.tab;
@@ -119,11 +132,25 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
         }
       });
     });
+
+    // Quick commander assignment dropdowns on legion cards
+    this.element.querySelectorAll(".bom-commander-select").forEach(el => {
+      el.addEventListener("change", async (ev) => {
+        const legionId = ev.currentTarget.dataset.legionId;
+        const commanderId = ev.currentTarget.value || null;
+        await BattleState.assignCommander(legionId, commanderId);
+        this.render();
+      });
+    });
   }
 
   /* ─── Action Handlers ─── */
 
   static async #onNewRound(event, target) {
+    const state = BattleState.get();
+    // Force-end the current round by jumping to the last phase, then advancePhase rolls over
+    state.phase = BOM.phases[BOM.phases.length - 1];
+    await BattleState.set(state);
     await BattleState.advancePhase();
     this.render();
   }
@@ -147,6 +174,30 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
     if (!legionId) return;
     const { LegionEditor } = await import("./legion-editor.mjs");
     new LegionEditor({ dashboard: this, legionId }).render(true);
+  }
+
+  static async #onAddCommander(event, target) {
+    const { CommanderEditor } = await import("./commander-editor.mjs");
+    new CommanderEditor({ dashboard: this }).render(true);
+  }
+
+  static async #onEditCommander(event, target) {
+    const commanderId = target.dataset.commanderId;
+    if (!commanderId) return;
+    const { CommanderEditor } = await import("./commander-editor.mjs");
+    new CommanderEditor({ dashboard: this, commanderId }).render(true);
+  }
+
+  static async #onDeleteCommander(event, target) {
+    const commanderId = target.dataset.commanderId;
+    if (!commanderId) return;
+    const confirm = await foundry.applications.api.DialogV2.confirm({
+      window: { title: game.i18n.localize("BOM.action.deleteCommander") },
+      content: `<p>${game.i18n.localize("BOM.confirm.deleteCommander")}</p>`
+    });
+    if (!confirm) return;
+    await BattleState.removeCommander(commanderId);
+    this.render();
   }
 
   static async #onDeleteLegion(event, target) {
@@ -280,8 +331,10 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
     if (!legionId || isNaN(tagIdx)) return;
     const state = BattleState.get();
     const legion = state.legions.find(l => l.id === legionId);
-    if (!legion?.commander?.tags?.[tagIdx]) return;
-    legion.commander.tags[tagIdx].used = !legion.commander.tags[tagIdx].used;
+    if (!legion) return;
+    const cmd = state.commanders?.find(c => c.id === legion.commanderId);
+    if (!cmd?.tags?.[tagIdx]) return;
+    cmd.tags[tagIdx].used = !cmd.tags[tagIdx].used;
     await BattleState.set(state);
     this.render();
   }

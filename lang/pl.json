@@ -32,6 +32,10 @@
   "BOM.action.addLegion": "Dodaj Legion",
   "BOM.action.editLegion": "Edytuj Legion",
   "BOM.action.deleteLegion": "Usuń Legion",
+  "BOM.action.addCommander": "Dodaj Dowódcę",
+  "BOM.action.editCommander": "Edytuj Dowódcę",
+  "BOM.action.deleteCommander": "Usuń Dowódcę",
+  "BOM.action.assignCommander": "Przypisz Dowódcę",
   "BOM.action.addBattle": "Dodaj Bitwę",
   "BOM.action.roll": "Rzut",
   "BOM.action.resolve": "Rozwiąż",
@@ -116,6 +120,7 @@
 
   "BOM.confirm.reset": "Zresetować wszystkie dane bitwy? Tego nie można cofnąć.",
   "BOM.confirm.deleteLegion": "Usunąć ten legion?",
+  "BOM.confirm.deleteCommander": "Usunąć tego dowódcę? Zostanie odpisany od legionu.",
 
   "BOM.nat20": "NAT 20!",
   "BOM.nat1": "NAT 1!"

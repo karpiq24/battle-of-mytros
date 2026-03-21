@@ -18,13 +18,21 @@ import { BOM } from "../config.mjs";
  * @param {number} [opts.miracleB=0] - Miracle points added to side B
  * @returns {Promise<ContestedRollResult>}
  */
+/**
+ * @typedef {object} ModBreakdown
+ * @property {string} label - Display label for this modifier
+ * @property {number} value - Modifier value (positive or negative)
+ */
+
 export async function contestedRoll({
   nameA, nameB,
   bonusA, bonusB,
   advantageA = false, advantageB = false,
   disadvantageA = false, disadvantageB = false,
   flavor = "",
-  miracleA = 0, miracleB = 0
+  miracleA = 0, miracleB = 0,
+  /** @type {ModBreakdown[]} */ breakdownA = [],
+  /** @type {ModBreakdown[]} */ breakdownB = []
 }) {
   // Build dice expressions
   const diceA = _buildDice(advantageA, disadvantageA);
@@ -32,6 +40,16 @@ export async function contestedRoll({
 
   const totalBonusA = bonusA + miracleA;
   const totalBonusB = bonusB + miracleB;
+
+  // Build full breakdowns for display
+  const fullBreakdownA = [
+    ...breakdownA,
+    ...(miracleA ? [{ label: "Miracle", value: miracleA }] : [])
+  ];
+  const fullBreakdownB = [
+    ...breakdownB,
+    ...(miracleB ? [{ label: "Miracle", value: miracleB }] : [])
+  ];
 
   const rollA = new Roll(`${diceA} + @bonus`, { bonus: totalBonusA });
   const rollB = new Roll(`${diceB} + @bonus`, { bonus: totalBonusB });
@@ -47,14 +65,24 @@ export async function contestedRoll({
   const nat1A = natA === 1;
   const nat1B = natB === 1;
 
+  // Build breakdown strings for flavor text
+  const modStrA = fullBreakdownA.length
+    ? fullBreakdownA.map(m => `${m.value >= 0 ? "+" : ""}${m.value} ${m.label}`).join(" | ")
+    : `+${totalBonusA}`;
+  const modStrB = fullBreakdownB.length
+    ? fullBreakdownB.map(m => `${m.value >= 0 ? "+" : ""}${m.value} ${m.label}`).join(" | ")
+    : `+${totalBonusB}`;
+  const advStrA = advantageA ? " (Advantage)" : disadvantageA ? " (Disadvantage)" : "";
+  const advStrB = advantageB ? " (Advantage)" : disadvantageB ? " (Disadvantage)" : "";
+
   // Send to chat
   await rollA.toMessage({
     speaker: { alias: nameA },
-    flavor: `${flavor} — ${nameA}`
+    flavor: `<strong>${flavor} — ${nameA}</strong>${advStrA}<br><em>${modStrA}</em>`
   });
   await rollB.toMessage({
     speaker: { alias: nameB },
-    flavor: `${flavor} — ${nameB}`
+    flavor: `<strong>${flavor} — ${nameB}</strong>${advStrB}<br><em>${modStrB}</em>`
   });
 
   // Determine winner
@@ -88,7 +116,9 @@ export async function contestedRoll({
     nat1B,
     winner, // "a", "b", or "tie"
     counterA,
-    counterB
+    counterB,
+    breakdownA: fullBreakdownA,
+    breakdownB: fullBreakdownB
   };
 }
 

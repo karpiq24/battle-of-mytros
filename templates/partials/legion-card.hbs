@@ -4,10 +4,25 @@
     <span class="bom-status-badge bom-status-{{legion.statusKey}}">
       {{localize (concat "BOM.status." legion.statusKey)}}
     </span>
+    <div class="bom-legion-actions">
+      <button type="button" data-action="editLegion" data-legion-id="{{legion.id}}" title="{{localize 'BOM.action.editLegion'}}">
+        <i class="fas fa-pen-to-square"></i>
+      </button>
+    </div>
   </div>
 
-  {{!-- Commander --}}
-  {{> "modules/battle-of-mytros/templates/partials/commander-badge.hbs" commander=legion.commander legionId=legion.id}}
+  {{!-- Commander assignment --}}
+  <div class="bom-commander-row">
+    {{> "modules/battle-of-mytros/templates/partials/commander-badge.hbs" commander=legion.commander legionId=legion.id}}
+    <select class="bom-commander-select" data-legion-id="{{legion.id}}" title="{{localize 'BOM.action.assignCommander'}}">
+      <option value="">— {{localize "BOM.label.none"}} —</option>
+      {{#each (lookup @root.commandersByFaction legion.faction)}}
+      <option value="{{this.id}}" {{#if (eq this.id ../legion.commanderId)}}selected{{/if}}>
+        {{this.name}}{{#unless this.alive}} ✝{{/unless}}
+      </option>
+      {{/each}}
+    </select>
+  </div>
 
   {{!-- Stats --}}
   <div class="bom-legion-stats">
@@ -28,12 +43,5 @@
     {{#times @root.maxInjuries}}
       <span class="bom-injury-pip {{#if (lte (sum @index 1) legion.injuries)}}bom-filled{{/if}}"></span>
     {{/times}}
-  </div>
-
-  {{!-- Quick edit --}}
-  <div class="bom-legion-actions">
-    <button type="button" data-action="editLegion" data-legion-id="{{legion.id}}" title="{{localize 'BOM.action.editLegion'}}">
-      <i class="fas fa-pen-to-square"></i>
-    </button>
   </div>
 </div>

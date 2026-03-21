@@ -28,6 +28,7 @@ Hooks.once("init", () => {
     "modules/battle-of-mytros/templates/partials/phase-result.hbs",
     "modules/battle-of-mytros/templates/partials/aftermath-result.hbs",
     "modules/battle-of-mytros/templates/dialogs/legion-editor.hbs",
+    "modules/battle-of-mytros/templates/dialogs/commander-editor.hbs",
     "modules/battle-of-mytros/templates/dialogs/battle-resolver.hbs",
     "modules/battle-of-mytros/templates/dialogs/maneuver-choice.hbs",
     "modules/battle-of-mytros/templates/dialogs/salvage-choice.hbs",

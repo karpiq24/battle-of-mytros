@@ -61,6 +61,8 @@ export const BOM = {
   zealotMoraleThreshold: 7,
   zealotBonus: 1,
   momentumBonus: 1,
+  tacticianManeuverBonus: 2,
+  mageManeuverBonus: 2,
 
   // Maneuver benefits
   maneuverFlankingBonus: 2,
