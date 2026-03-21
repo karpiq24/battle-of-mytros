@@ -1,0 +1,39 @@
+<div class="bom-legion-card bom-faction-{{legion.faction}} bom-status-{{legion.statusKey}}">
+  <div class="bom-legion-header">
+    <span class="bom-legion-name">{{legion.name}}</span>
+    <span class="bom-status-badge bom-status-{{legion.statusKey}}">
+      {{localize (concat "BOM.status." legion.statusKey)}}
+    </span>
+  </div>
+
+  {{!-- Commander --}}
+  {{> "modules/battle-of-mytros/templates/partials/commander-badge.hbs" commander=legion.commander legionId=legion.id}}
+
+  {{!-- Stats --}}
+  <div class="bom-legion-stats">
+    <span class="bom-stat bom-stat-vit" title="{{localize 'BOM.stat.vit'}}">
+      <i class="fas fa-heart"></i> {{legion.stats.vit}}
+    </span>
+    <span class="bom-stat bom-stat-mor" title="{{localize 'BOM.stat.mor'}}">
+      <i class="fas fa-flag"></i> {{legion.stats.mor}}
+    </span>
+    <span class="bom-stat bom-stat-wit" title="{{localize 'BOM.stat.wit'}}">
+      <i class="fas fa-brain"></i> {{legion.stats.wit}}
+    </span>
+  </div>
+
+  {{!-- Injuries --}}
+  <div class="bom-injuries" title="{{localize 'BOM.stat.injuries'}}: {{legion.injuries}} / {{@root.maxInjuries}}">
+    <i class="fas fa-band-aid"></i>
+    {{#times @root.maxInjuries}}
+      <span class="bom-injury-pip {{#if (lte (sum @index 1) legion.injuries)}}bom-filled{{/if}}"></span>
+    {{/times}}
+  </div>
+
+  {{!-- Quick edit --}}
+  <div class="bom-legion-actions">
+    <button type="button" data-action="editLegion" data-legion-id="{{legion.id}}" title="{{localize 'BOM.action.editLegion'}}">
+      <i class="fas fa-pen-to-square"></i>
+    </button>
+  </div>
+</div>

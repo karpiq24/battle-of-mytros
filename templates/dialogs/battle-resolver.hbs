@@ -1,0 +1,105 @@
+<div class="bom-battle-resolver">
+  {{#if alliedLegion}}
+  <h3>{{alliedLegion.name}} <span class="bom-vs">{{localize "BOM.label.vs"}}</span> {{enemyLegion.name}}</h3>
+
+  {{!-- Stats summary --}}
+  <div class="bom-resolver-stats">
+    <div class="bom-side bom-faction-allied">
+      <strong>{{alliedLegion.name}}</strong>
+      <span>V{{alliedStats.vit}} M{{alliedStats.mor}} W{{alliedStats.wit}}</span>
+    </div>
+    <div class="bom-side bom-faction-enemy">
+      <strong>{{enemyLegion.name}}</strong>
+      <span>V{{enemyStats.vit}} M{{enemyStats.mor}} W{{enemyStats.wit}}</span>
+    </div>
+  </div>
+
+  {{!-- Counter --}}
+  <div class="bom-counter-display">
+    {{localize "BOM.label.counter"}}: {{results.counterA}} – {{results.counterB}}
+  </div>
+
+  {{!-- Step 1: Maneuver --}}
+  <div class="bom-resolver-step {{#if results.maneuver}}bom-done{{/if}}">
+    <h4>1. {{localize "BOM.battle.maneuver"}} ({{localize "BOM.stat.wit"}})</h4>
+    {{#if results.maneuver}}
+      <div class="bom-roll-result">
+        {{results.maneuver.rollA}} + {{results.maneuver.bonusA}} = {{results.maneuver.totalA}}
+        {{localize "BOM.label.vs"}}
+        {{results.maneuver.rollB}} + {{results.maneuver.bonusB}} = {{results.maneuver.totalB}}
+        — Winner: {{results.maneuver.winner}}
+      </div>
+    {{else}}
+      {{#if (eq step "maneuver")}}
+        <button type="button" data-action="rollManeuver"><i class="fas fa-dice-d20"></i> {{localize "BOM.action.roll"}}</button>
+      {{/if}}
+    {{/if}}
+  </div>
+
+  {{!-- Maneuver benefit choice --}}
+  {{#if (eq step "maneuverChoice")}}
+  <div class="bom-resolver-step bom-choice">
+    <h4>Choose Maneuver Benefit:</h4>
+    {{#each maneuverBenefits}}
+    <button type="button" data-action="pickManeuverBenefit" data-benefit="{{this.id}}" class="bom-benefit-btn">
+      {{localize this.label}} — {{localize this.desc}}
+    </button>
+    {{/each}}
+  </div>
+  {{/if}}
+
+  {{!-- Step 2: Charge --}}
+  <div class="bom-resolver-step {{#if results.charge}}bom-done{{/if}}">
+    <h4>2. {{localize "BOM.battle.charge"}} ({{localize "BOM.stat.mor"}})</h4>
+    {{#if results.charge}}
+      <div class="bom-roll-result">
+        {{results.charge.rollA}} + {{results.charge.bonusA}} = {{results.charge.totalA}}
+        {{localize "BOM.label.vs"}}
+        {{results.charge.rollB}} + {{results.charge.bonusB}} = {{results.charge.totalB}}
+        — Winner: {{results.charge.winner}}
+      </div>
+    {{else}}
+      {{#if (eq step "charge")}}
+        <button type="button" data-action="rollCharge"><i class="fas fa-dice-d20"></i> {{localize "BOM.action.roll"}}</button>
+      {{/if}}
+    {{/if}}
+  </div>
+
+  {{!-- Step 3: Clash --}}
+  <div class="bom-resolver-step {{#if results.clash}}bom-done{{/if}}">
+    <h4>3. {{localize "BOM.battle.clash"}} ({{localize "BOM.stat.vit"}})</h4>
+    {{#if results.clash}}
+      <div class="bom-roll-result">
+        {{results.clash.rollA}} + {{results.clash.bonusA}} = {{results.clash.totalA}}
+        {{localize "BOM.label.vs"}}
+        {{results.clash.rollB}} + {{results.clash.bonusB}} = {{results.clash.totalB}}
+        — Winner: {{results.clash.winner}}
+      </div>
+    {{else}}
+      {{#if (eq step "clash")}}
+        <button type="button" data-action="rollClash"><i class="fas fa-dice-d20"></i> {{localize "BOM.action.roll"}}</button>
+      {{/if}}
+    {{/if}}
+  </div>
+
+  {{!-- Tiebreaker --}}
+  {{#if (eq step "tiebreaker")}}
+  <div class="bom-resolver-step">
+    <h4>{{localize "BOM.battle.tiebreaker"}}</h4>
+    <p>Counter tied! Sudden-death Vitality roll.</p>
+    <button type="button" data-action="rollTiebreaker"><i class="fas fa-dice-d20"></i> {{localize "BOM.action.roll"}}</button>
+  </div>
+  {{/if}}
+
+  {{!-- Winner --}}
+  {{#if (eq step "done")}}
+  <div class="bom-resolver-winner">
+    <h4>{{localize "BOM.label.winner"}}: {{results.winner}} ({{results.counterA}} – {{results.counterB}})</h4>
+    <button type="button" data-action="finalize"><i class="fas fa-check"></i> Finalize</button>
+  </div>
+  {{/if}}
+
+  {{else}}
+  <p>Battle not found.</p>
+  {{/if}}
+</div>

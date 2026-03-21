@@ -1,0 +1,22 @@
+<div class="bom-commander-badge">
+  <span class="bom-commander-name">
+    {{#if commander.alive}}
+      <i class="fas fa-crown" title="{{localize 'BOM.status.alive'}}"></i>
+    {{else}}
+      <i class="fas fa-skull" title="{{localize 'BOM.status.dead'}}"></i>
+    {{/if}}
+    {{commander.name}}
+  </span>
+  <div class="bom-tags">
+    {{#each commander.tags}}
+    <span class="bom-tag {{#if this.used}}bom-tag-used{{/if}}"
+          data-action="toggleTag"
+          data-legion-id="{{../legionId}}"
+          data-tag-index="{{@index}}"
+          title="{{this.name}}{{#if this.used}} (used){{/if}}">
+      {{this.name}}
+      {{#if this.used}}<i class="fas fa-check"></i>{{/if}}
+    </span>
+    {{/each}}
+  </div>
+</div>

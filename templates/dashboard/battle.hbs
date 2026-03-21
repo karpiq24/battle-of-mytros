@@ -1,0 +1,76 @@
+<section class="tab bom-battle-tab {{#unless (eq tab 'battle')}}hidden{{/unless}}" data-tab="battle" data-group="sheet">
+
+  <h3>{{localize "BOM.tab.battle"}}</h3>
+
+  {{!-- Create new pairing --}}
+  <div class="bom-battle-pairing-form">
+    <label>{{localize "BOM.faction.allied"}}:</label>
+    <select name="alliedLegionId">
+      <option value="">—</option>
+      {{#each alliedLegions}}
+        {{#unless this.destroyed}}{{#unless this.routed}}
+        <option value="{{this.id}}">{{this.name}}</option>
+        {{/unless}}{{/unless}}
+      {{/each}}
+    </select>
+
+    <span class="bom-vs">{{localize "BOM.label.vs"}}</span>
+
+    <label>{{localize "BOM.faction.enemy"}}:</label>
+    <select name="enemyLegionId">
+      <option value="">—</option>
+      {{#each enemyLegions}}
+        {{#unless this.destroyed}}{{#unless this.routed}}
+        <option value="{{this.id}}">{{this.name}}</option>
+        {{/unless}}{{/unless}}
+      {{/each}}
+    </select>
+
+    <button type="button" data-action="addBattle"><i class="fas fa-plus"></i> {{localize "BOM.action.addBattle"}}</button>
+  </div>
+
+  {{!-- Current battle pairings --}}
+  <div class="bom-battle-list">
+    {{#each state.battles}}
+    <div class="bom-battle-card {{#if this.resolved}}bom-resolved{{/if}}">
+      <div class="bom-battle-header">
+        {{!-- Look up legion names --}}
+        {{#with (lookup @root.legions (findIndex @root.legions "id" this.alliedLegionId))}}
+          <span class="bom-faction-allied">{{this.name}}</span>
+        {{/with}}
+        <span class="bom-vs">{{localize "BOM.label.vs"}}</span>
+        {{#with (lookup @root.legions (findIndex @root.legions "id" this.enemyLegionId))}}
+          <span class="bom-faction-enemy">{{this.name}}</span>
+        {{/with}}
+        {{#unless this.resolved}}
+          <button type="button" data-action="resolveBattle" data-battle-id="{{this.id}}">
+            <i class="fas fa-dice-d20"></i> {{localize "BOM.action.resolve"}}
+          </button>
+          <button type="button" data-action="removeBattle" data-battle-id="{{this.id}}">
+            <i class="fas fa-trash"></i>
+          </button>
+        {{else}}
+          <span class="bom-winner-badge">
+            {{localize "BOM.label.winner"}}: {{this.winner}}
+            ({{this.counterAllied}} – {{this.counterEnemy}})
+          </span>
+        {{/unless}}
+      </div>
+
+      {{!-- Phase results if resolved --}}
+      {{#if this.phases.length}}
+      <div class="bom-phase-results">
+        {{#each this.phases}}
+          {{> "modules/battle-of-mytros/templates/partials/phase-result.hbs" phase=this}}
+        {{/each}}
+      </div>
+      {{/if}}
+    </div>
+    {{/each}}
+
+    {{#unless state.battles.length}}
+    <p class="bom-empty">{{localize "BOM.label.none"}}</p>
+    {{/unless}}
+  </div>
+
+</section>

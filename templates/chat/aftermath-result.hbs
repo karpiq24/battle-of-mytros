@@ -1,0 +1,41 @@
+<div class="bom-chat-card bom-aftermath-card">
+  <h3 class="bom-chat-header">
+    <i class="fas fa-heart-crack"></i> Aftermath — {{legionName}}
+    {{#if isWinner}}<span class="bom-winner-badge">Winner</span>{{else}}<span class="bom-loser-badge">Loser</span>{{/if}}
+  </h3>
+
+  {{#if recovery}}
+  <div class="bom-chat-check">
+    <span class="bom-check-label">Recovery:</span>
+    d20({{recovery.roll}}) + {{recovery.bonus}} = {{recovery.total}} vs DC {{recovery.dc}}
+    {{#if recovery.passed}}<span class="bom-pass">Pass</span>{{else}}<span class="bom-fail">Fail</span>{{/if}}
+    — {{recovery.effect}}
+  </div>
+  {{/if}}
+
+  {{#if hope}}
+  <div class="bom-chat-check">
+    <span class="bom-check-label">Hope:</span>
+    d20({{hope.roll}}) + {{hope.bonus}} = {{hope.total}} vs DC {{hope.dc}}
+    {{#if hope.passed}}<span class="bom-pass">Pass</span>{{else}}<span class="bom-fail">Fail</span>{{/if}}
+    — {{hope.effect}}
+  </div>
+  {{/if}}
+
+  {{#if salvage}}
+  <div class="bom-chat-check">
+    <span class="bom-check-label">Salvage:</span>
+    d20({{salvage.roll}}) + {{salvage.bonus}} = {{salvage.total}} vs DC {{salvage.dc}}
+    {{#if salvage.passed}}<span class="bom-pass">Pass</span>{{else}}<span class="bom-fail">Fail</span>{{/if}}
+    {{#if salvage.benefit}}— {{salvage.benefit}}{{/if}}
+  </div>
+  {{/if}}
+
+  {{#if casualty}}
+  <div class="bom-chat-check bom-casualty">
+    <span class="bom-check-label">Casualty:</span>
+    d20({{casualty.roll}}) + {{casualty.bonus}} = {{casualty.total}} vs DC {{casualty.dc}}
+    {{#if casualty.survived}}<span class="bom-pass">Survived</span>{{else}}<span class="bom-fail bom-death">FALLEN</span>{{/if}}
+  </div>
+  {{/if}}
+</div>

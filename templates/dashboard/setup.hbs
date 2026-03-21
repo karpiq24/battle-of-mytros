@@ -1,0 +1,71 @@
+<section class="tab bom-setup-tab {{#unless (eq tab 'setup')}}hidden{{/unless}}" data-tab="setup" data-group="sheet">
+
+  <h3>{{localize "BOM.tab.setup"}}</h3>
+
+  {{!-- Legion management --}}
+  <div class="bom-setup-section">
+    <h4><i class="fas fa-shield-halved"></i> {{localize "BOM.label.legionName"}}s</h4>
+    <button type="button" data-action="addLegion"><i class="fas fa-plus"></i> {{localize "BOM.action.addLegion"}}</button>
+
+    <div class="bom-legion-table">
+      {{#each legions}}
+      <div class="bom-legion-row bom-faction-{{this.faction}}">
+        <span class="bom-legion-name">{{this.name}}</span>
+        <span class="bom-commander-name">{{this.commander.name}}</span>
+        <span class="bom-stats">V{{this.stats.vit}} M{{this.stats.mor}} W{{this.stats.wit}}</span>
+        <span class="bom-injuries">{{localize "BOM.stat.injuries"}}: {{this.injuries}}/{{@root.maxInjuries}}</span>
+        <button type="button" data-action="editLegion" data-legion-id="{{this.id}}"><i class="fas fa-pen"></i></button>
+        <button type="button" data-action="deleteLegion" data-legion-id="{{this.id}}"><i class="fas fa-trash"></i></button>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+
+  {{!-- CSV Import --}}
+  <div class="bom-setup-section bom-csv-import">
+    <h4><i class="fas fa-file-csv"></i> {{localize "BOM.action.importCSV"}}</h4>
+    <label>Legions CSV:</label>
+    <textarea name="legionsCsv" rows="4" placeholder="name,faction,vitality,morale,wit,active"></textarea>
+    <label>Commanders CSV:</label>
+    <textarea name="commandersCsv" rows="4" placeholder="name,faction,vitality,morale,wit,tags,legion"></textarea>
+    <button type="button" data-action="importCSV"><i class="fas fa-upload"></i> {{localize "BOM.action.importCSV"}}</button>
+  </div>
+
+  {{!-- Strategic Objectives --}}
+  <div class="bom-setup-section">
+    <h4><i class="fas fa-flag"></i> {{localize "BOM.label.objective"}}s</h4>
+    <div class="bom-objective-form">
+      <input type="text" name="objectiveName" placeholder="{{localize 'BOM.label.objective'}}" />
+      <input type="text" name="objectiveSection" placeholder="{{localize 'BOM.label.section'}}" />
+      <button type="button" data-action="addObjective"><i class="fas fa-plus"></i></button>
+    </div>
+    {{#each state.objectives}}
+    <div class="bom-objective-row">
+      <span>{{this.name}} ({{this.section}})</span>
+      {{#if this.destroyed}}<span class="bom-destroyed">Destroyed</span>{{/if}}
+      <button type="button" data-action="removeObjective" data-objective-id="{{this.id}}"><i class="fas fa-trash"></i></button>
+    </div>
+    {{/each}}
+  </div>
+
+  {{!-- Miracle Config --}}
+  <div class="bom-setup-section">
+    <h4><i class="fas fa-sparkles"></i> {{localize "BOM.label.miraclePoints"}}</h4>
+    <p>Allied Pool: {{state.miracles.allied.pool}} | Advantages: {{state.miracles.allied.advantagesTotal}}</p>
+    <p>Enemy Pool: {{state.miracles.enemy.pool}} | Advantages: {{state.miracles.enemy.advantagesTotal}}</p>
+  </div>
+
+  {{!-- Export / Import / Reset --}}
+  <div class="bom-setup-section">
+    <h4><i class="fas fa-database"></i> Data</h4>
+    <div class="bom-data-actions">
+      <button type="button" data-action="exportState"><i class="fas fa-download"></i> {{localize "BOM.action.export"}}</button>
+      <button type="button" data-action="resetState" class="bom-danger"><i class="fas fa-skull"></i> {{localize "BOM.action.reset"}}</button>
+    </div>
+    <div class="bom-json-import">
+      <textarea name="stateJson" rows="3" placeholder="Paste JSON..."></textarea>
+      <button type="button" data-action="importState"><i class="fas fa-upload"></i> {{localize "BOM.action.import"}}</button>
+    </div>
+  </div>
+
+</section>

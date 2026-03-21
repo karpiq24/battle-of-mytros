@@ -1,0 +1,36 @@
+<div class="bom-chat-card bom-battle-result-card">
+  <h3 class="bom-chat-header">
+    <i class="fas fa-swords"></i>
+    <span class="bom-faction-allied">{{alliedName}}</span>
+    <span class="bom-vs">vs</span>
+    <span class="bom-faction-enemy">{{enemyName}}</span>
+  </h3>
+
+  <div class="bom-chat-phases">
+    {{#each phases}}
+    <div class="bom-chat-phase">
+      <span class="bom-phase-label">{{this.phaseName}}</span>
+      <span class="bom-chat-roll">
+        {{this.rollA}}+{{this.bonusA}}={{this.totalA}}
+        {{#if this.nat20A}}<span class="bom-nat20">20!</span>{{/if}}
+        {{#if this.nat1A}}<span class="bom-nat1">1!</span>{{/if}}
+      </span>
+      <span class="bom-vs">vs</span>
+      <span class="bom-chat-roll">
+        {{this.rollB}}+{{this.bonusB}}={{this.totalB}}
+        {{#if this.nat20B}}<span class="bom-nat20">20!</span>{{/if}}
+        {{#if this.nat1B}}<span class="bom-nat1">1!</span>{{/if}}
+      </span>
+      <span class="bom-phase-winner">{{this.winner}}</span>
+    </div>
+    {{/each}}
+  </div>
+
+  <div class="bom-chat-counter">
+    Counter: {{counterAllied}} – {{counterEnemy}}
+  </div>
+
+  <div class="bom-chat-winner bom-faction-{{winner}}">
+    <strong>Winner: {{winner}}</strong>
+  </div>
+</div>

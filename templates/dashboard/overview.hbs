@@ -1,0 +1,47 @@
+<section class="tab bom-overview {{#unless (eq tab 'overview')}}hidden{{/unless}}" data-tab="overview" data-group="sheet">
+
+  {{!-- Round tracker --}}
+  <div class="bom-round-tracker">
+    <span class="bom-day">{{localize "BOM.label.day"}} {{state.day}}</span>
+    <span class="bom-round">{{localize "BOM.label.round"}} {{state.round}} {{localize "BOM.label.of"}} {{state.roundsPerDay}}</span>
+    <span class="bom-phase-badge bom-phase-{{state.phase}}">{{localize phaseLabel}}</span>
+    <div class="bom-round-actions">
+      <button type="button" data-action="advancePhase"><i class="fas fa-forward"></i> {{localize "BOM.label.phase"}}</button>
+      <button type="button" data-action="reconRoll"><i class="fas fa-binoculars"></i> {{localize "BOM.action.recon"}}</button>
+      <button type="button" data-action="newRound"><i class="fas fa-rotate-right"></i> {{localize "BOM.action.newRound"}}</button>
+      <button type="button" data-action="endDay"><i class="fas fa-moon"></i> {{localize "BOM.action.endDay"}}</button>
+    </div>
+  </div>
+
+  {{!-- Miracle points --}}
+  <div class="bom-miracles">
+    {{#each (array "allied" "enemy") }}
+    <div class="bom-miracle-pool bom-faction-{{this}}">
+      <strong>{{localize (concat "BOM.faction." this)}} {{localize "BOM.label.miraclePoints"}}</strong>
+      <span>{{lookup (lookup @root.state.miracles this) "used"}} / {{lookup (lookup @root.state.miracles this) "pool"}}</span>
+      <button type="button" data-action="spendMiracle" data-faction="{{this}}"><i class="fas fa-minus"></i></button>
+      <button type="button" data-action="refundMiracle" data-faction="{{this}}"><i class="fas fa-plus"></i></button>
+      <span class="bom-advantages">
+        {{localize "BOM.label.advantages"}}: {{lookup (lookup @root.state.miracles this) "advantagesUsed"}} / {{lookup (lookup @root.state.miracles this) "advantagesTotal"}}
+      </span>
+    </div>
+    {{/each}}
+  </div>
+
+  {{!-- Legion columns --}}
+  <div class="bom-legion-columns">
+    <div class="bom-column bom-allied">
+      <h3 class="bom-faction-header bom-faction-allied">{{localize "BOM.faction.allied"}}</h3>
+      {{#each alliedLegions}}
+        {{> "modules/battle-of-mytros/templates/partials/legion-card.hbs" legion=this}}
+      {{/each}}
+    </div>
+    <div class="bom-column bom-enemy">
+      <h3 class="bom-faction-header bom-faction-enemy">{{localize "BOM.faction.enemy"}}</h3>
+      {{#each enemyLegions}}
+        {{> "modules/battle-of-mytros/templates/partials/legion-card.hbs" legion=this}}
+      {{/each}}
+    </div>
+  </div>
+
+</section>

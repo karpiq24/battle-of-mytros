@@ -1,0 +1,65 @@
+name,faction,vitality,morale,wit,tags,legion
+Aesop,Allied,2,3,3,"Tactician,Veteran",Estoria Centurions
+Brax,Allied,2,4,2,"Rallier,Medic",Estoria Dwarves
+Hukar,Allied,1,2,3,"Vanguard,Fanatic",Mithral Centaurs
+Epikur,Allied,1,2,5,"Mage,Tactician",Mages of Academy
+Hileas,Allied,3,2,3,"Veteran,Tactician",Mytros Centurions I
+Loreus,Allied,1,4,3,"Rallier,Scout",Mytros Centurions II
+Darien,Allied,2,4,2,"Rallier,Brutal",Amazons
+Delg,Allied,2,2,3,"Tactician,Fanatic",Indigo Barbarians
+Vytha,Allied,3,1,2,"Brutal,Fanatic",Lizardfolk
+Versi,Allied,1,4,2,"Rallier,Divine Blood",Egida Mytros
+Hippolyta,Allied,2,3,3,"Tactician,Veteran",
+Anora,Allied,2,2,3,"Steadfast,Tactician",
+Delfin,Allied,1,3,2,"Medic,Rallier",
+Loopywoopy,Allied,3,2,1,"Fanatic,Brutal",
+Nessa,Allied,1,2,3,"Vanguard,Medic",
+Pholon,Allied,2,1,2,"Vanguard,Brutal",
+Corinna,Allied,2,2,2,"Terrorizer,Steadfast",
+Quinn,Allied,1,3,2,"Rallier,Headhunter",
+Bront,Allied,2,2,2,"Terrorizer,Fanatic",
+Steros,Allied,2,2,3,"Tactician,Veteran",
+Dedal,Allied,1,1,4,"Scout,Vanguard",
+Iolaah,Allied,1,2,3,"Medic,Scout",
+Silenos,Allied,1,3,2,"Rallier,Medic",
+Thaddeus Sznukides,Allied,1,3,4,"Mage,Rallier",
+Apasia,Allied,3,2,1,"Fanatic,Brutal",
+Kalistor,Allied,2,3,2,"Divine Blood,Steadfast",
+Grimhilda,Allied,2,1,3,"Terrorizer,Headhunter",
+Falana,Allied,1,3,2,"Rallier,Steadfast",
+Egan,Allied,3,1,2,"Terrorizer,Veteran",
+Lyra,Allied,2,2,2,"Vanguard,Fanatic",
+Makhaila,Allied,1,1,4,"Scout,Headhunter",
+Melania,Allied,1,2,4,"Mage,Medic",
+Astra,Allied,1,2,4,"Mage,Fanatic",
+Moxena,Allied,3,1,2,"Fanatic,Headhunter",
+Boreas,Allied,1,3,2,"Rallier,Steadfast",
+Darok,Allied,2,1,3,"Scout,Veteran",
+Patrea,Allied,1,1,4,"Scout,Headhunter",
+Kaelen Burzowierny,Enemy,2,3,2,"Fanatic,Veteran",Order of Sydon I
+Krull Czarny Rog,Enemy,3,2,1,"Steadfast,Fanatic",Order of Sydon II
+General Tyberiusz,Enemy,2,2,4,"Tactician,Veteran",Order of Sydon III
+Tyrone,Enemy,2,3,2,"Terrorizer,Rallier",Exiles
+Omadon Bezduszny,Enemy,4,1,1,"Steadfast,Brutal",Bronze Automatons I
+Ptoris Kowal Zguby,Enemy,3,1,2,"Engineer,Brutal",Bronze Automatons II
+Vrakos,Enemy,3,2,1,"Brutal,Terrorizer",Cyclops
+Gorgoth,Enemy,3,2,1,"Veteran,Brutal",Gygans I
+Vor'gal Zwiastun,Enemy,2,3,1,"Fanatic,Brutal",Gygans II
+Thalassa Zguba,Enemy,1,2,4,"Mage,Terrorizer",Merrows
+Malakor Zlotousty,Enemy,1,3,4,"Tactician,Rallier",Hired Yugoloths
+Baenor,Enemy,2,3,1,"Fanatic,Terrorizer",
+Nethis Kamienne Spojrzenie,Enemy,1,1,4,"Headhunter,Terrorizer",
+Icarion Utopiony,Enemy,1,2,3,"Medic,Steadfast",
+Zarketh Gruba Luska,Enemy,3,1,2,"Steadfast,Terrorizer",
+Drazhan Zwiastun Burzy,Enemy,1,2,3,"Vanguard,Mage",
+Kaelia Zlamane Ostrze,Enemy,2,1,3,"Headhunter,Veteran",
+Brax Niewolnik,Enemy,3,2,1,"Steadfast,Veteran",
+Ghal Zelazny Krok,Enemy,3,1,2,"Steadfast,Tactician",
+Syra Zgubny Glos,Enemy,1,3,3,"Rallier,Mage",
+Aethelgard Zdrajca,Enemy,1,1,4,"Engineer,Tactician",
+Xanthus Krwawy Kopyto,Enemy,2,2,2,"Vanguard,Fanatic",
+Jorges,Enemy,3,1,2,"Steadfast,Terrorizer",
+Hergeron,Enemy,2,3,2,"Tactician,Brutal,Divine Blood",
+Korteva,Enemy,1,2,3,"Tactician,Headhunter",
+Alexandros,Enemy,2,2,2,"Medic,Veteran",
+Tarchon,Enemy,3,2,1,"Veteran,Brutal",

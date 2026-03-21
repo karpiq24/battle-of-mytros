@@ -1,0 +1,702 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Battle of Mytros — Dashboard Styles
+   Uses Foundry V13 CSS custom properties for theme compatibility.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Faction Colors ── */
+:root {
+  --bom-allied: #3b82f6;
+  --bom-allied-bg: rgba(59, 130, 246, 0.1);
+  --bom-allied-border: rgba(59, 130, 246, 0.3);
+  --bom-enemy: #ef4444;
+  --bom-enemy-bg: rgba(239, 68, 68, 0.1);
+  --bom-enemy-border: rgba(239, 68, 68, 0.3);
+  --bom-gold: #f59e0b;
+  --bom-green: #22c55e;
+  --bom-danger: #dc2626;
+}
+
+/* ── Dashboard Shell ── */
+.bom-dashboard {
+  font-family: var(--font-primary, "Signika", sans-serif);
+}
+
+.bom-dashboard .window-content {
+  padding: 0;
+  overflow: hidden;
+}
+
+/* ── Tabs ── */
+.bom-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--color-border, #999);
+  background: var(--color-bg, #f0f0e0);
+  padding: 0 0.5rem;
+}
+
+.bom-tabs .item {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  color: var(--color-text-secondary, #666);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.bom-tabs .item:hover {
+  color: var(--color-text-primary, #191813);
+  background: var(--color-hover, rgba(0,0,0,0.05));
+}
+
+.bom-tabs .item.active {
+  color: var(--color-text-primary, #191813);
+  border-bottom-color: var(--bom-gold);
+}
+
+.bom-tabs .item i {
+  margin-right: 0.3rem;
+}
+
+/* ── Tab Content ── */
+.bom-dashboard section.tab {
+  padding: 0.75rem;
+  overflow-y: auto;
+  max-height: calc(100% - 3rem);
+}
+
+section.tab.hidden {
+  display: none !important;
+}
+
+/* ── Round Tracker ── */
+.bom-round-tracker {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--color-bg, #f0f0e0);
+  border: 1px solid var(--color-border, #999);
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.bom-day, .bom-round {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.bom-phase-badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 3px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #fff;
+  background: #6b7280;
+}
+
+.bom-phase-reconnaissance { background: #8b5cf6; }
+.bom-phase-planning { background: #3b82f6; }
+.bom-phase-reveal { background: #f59e0b; }
+.bom-phase-battle { background: #ef4444; }
+.bom-phase-aftermath { background: #ec4899; }
+.bom-phase-objectives { background: #22c55e; }
+
+.bom-round-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 0.3rem;
+}
+
+.bom-round-actions button {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.5rem;
+}
+
+/* ── Miracle Points ── */
+.bom-miracles {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.bom-miracle-pool {
+  flex: 1;
+  padding: 0.4rem 0.6rem;
+  border-radius: 4px;
+  border: 1px solid var(--color-border, #999);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.bom-miracle-pool.bom-faction-allied { background: var(--bom-allied-bg); border-color: var(--bom-allied-border); }
+.bom-miracle-pool.bom-faction-enemy { background: var(--bom-enemy-bg); border-color: var(--bom-enemy-border); }
+
+.bom-miracle-pool button {
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.bom-advantages {
+  margin-left: auto;
+  opacity: 0.8;
+  font-size: 0.8rem;
+}
+
+/* ── Legion Columns ── */
+.bom-legion-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.bom-faction-header {
+  text-align: center;
+  padding: 0.3rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.bom-faction-header.bom-faction-allied { background: var(--bom-allied-bg); color: var(--bom-allied); }
+.bom-faction-header.bom-faction-enemy { background: var(--bom-enemy-bg); color: var(--bom-enemy); }
+
+/* ── Legion Card ── */
+.bom-legion-card {
+  border: 1px solid var(--color-border, #999);
+  border-radius: 4px;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  background: var(--color-bg, #fff);
+  position: relative;
+}
+
+.bom-legion-card.bom-faction-allied { border-left: 3px solid var(--bom-allied); }
+.bom-legion-card.bom-faction-enemy { border-left: 3px solid var(--bom-enemy); }
+.bom-legion-card.bom-status-destroyed { opacity: 0.5; }
+.bom-legion-card.bom-status-routed { opacity: 0.7; border-style: dashed; }
+
+.bom-legion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.3rem;
+}
+
+.bom-legion-name {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.bom-status-badge {
+  font-size: 0.7rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.bom-status-badge.bom-status-active { background: var(--bom-green); }
+.bom-status-badge.bom-status-routed { background: var(--bom-gold); }
+.bom-status-badge.bom-status-destroyed { background: var(--bom-danger); }
+
+/* ── Commander Badge ── */
+.bom-commander-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.3rem;
+  flex-wrap: wrap;
+}
+
+.bom-commander-name {
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
+.bom-commander-name i.fa-crown { color: var(--bom-gold); }
+.bom-commander-name i.fa-skull { color: var(--bom-danger); }
+
+.bom-tags {
+  display: flex;
+  gap: 0.2rem;
+  flex-wrap: wrap;
+}
+
+.bom-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  background: rgba(107, 114, 128, 0.15);
+  color: var(--color-text-primary, #333);
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+}
+
+.bom-tag:hover {
+  border-color: var(--color-border, #999);
+}
+
+.bom-tag.bom-tag-used {
+  background: rgba(107, 114, 128, 0.35);
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.bom-tag i { font-size: 0.55rem; }
+
+/* ── Stats Row ── */
+.bom-legion-stats {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.bom-stat {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.bom-stat i { margin-right: 0.15rem; }
+.bom-stat-vit i { color: #ef4444; }
+.bom-stat-mor i { color: #3b82f6; }
+.bom-stat-wit i { color: #8b5cf6; }
+
+/* ── Injury Pips ── */
+.bom-injuries {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.75rem;
+}
+
+.bom-injuries i {
+  color: #9ca3af;
+  margin-right: 0.2rem;
+}
+
+.bom-injury-pip {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid #9ca3af;
+  background: transparent;
+}
+
+.bom-injury-pip.bom-filled {
+  background: var(--bom-danger);
+  border-color: var(--bom-danger);
+}
+
+/* ── Legion Actions ── */
+.bom-legion-actions {
+  position: absolute;
+  top: 0.3rem;
+  right: 0.3rem;
+}
+
+.bom-legion-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary, #666);
+  padding: 0.2rem;
+}
+
+.bom-legion-actions button:hover {
+  color: var(--color-text-primary, #333);
+}
+
+/* ── Battle Tab ── */
+.bom-battle-pairing-form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.bom-battle-pairing-form select {
+  min-width: 140px;
+}
+
+.bom-vs {
+  font-weight: 700;
+  color: var(--color-text-secondary, #666);
+  font-size: 0.85rem;
+}
+
+.bom-battle-card {
+  border: 1px solid var(--color-border, #999);
+  border-radius: 4px;
+  padding: 0.6rem;
+  margin-bottom: 0.5rem;
+}
+
+.bom-battle-card.bom-resolved {
+  border-color: var(--bom-green);
+}
+
+.bom-battle-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.bom-winner-badge {
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  background: var(--bom-green);
+  color: #fff;
+}
+
+.bom-phase-results {
+  margin-top: 0.4rem;
+  font-size: 0.8rem;
+}
+
+.bom-phase-result {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.15rem 0;
+  border-bottom: 1px solid var(--color-border-light, #ddd);
+}
+
+.bom-phase-name {
+  font-weight: 600;
+  min-width: 70px;
+}
+
+.bom-phase-winner {
+  font-weight: 600;
+  margin-left: auto;
+}
+
+.bom-faction-allied { color: var(--bom-allied); }
+.bom-faction-enemy { color: var(--bom-enemy); }
+
+.bom-nat20 { color: var(--bom-gold); font-weight: 700; }
+.bom-nat1 { color: var(--bom-danger); font-weight: 700; }
+
+/* ── Aftermath Tab ── */
+.bom-aftermath-card {
+  border: 1px solid var(--color-border, #999);
+  border-radius: 4px;
+  padding: 0.6rem;
+  margin-bottom: 0.5rem;
+}
+
+.bom-aftermath-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.bom-check-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid var(--color-border-light, #ddd);
+}
+
+.bom-check-label {
+  font-weight: 600;
+  min-width: 120px;
+  font-size: 0.85rem;
+}
+
+.bom-check-done {
+  color: var(--bom-green);
+}
+
+/* ── Setup Tab ── */
+.bom-setup-section {
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--color-border-light, #ddd);
+}
+
+.bom-setup-section h4 {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+}
+
+.bom-setup-section h4 i {
+  margin-right: 0.3rem;
+  opacity: 0.7;
+}
+
+.bom-legion-table {
+  margin-top: 0.5rem;
+}
+
+.bom-legion-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.5rem;
+  border-bottom: 1px solid var(--color-border-light, #ddd);
+  font-size: 0.85rem;
+}
+
+.bom-legion-row.bom-faction-allied { border-left: 3px solid var(--bom-allied); }
+.bom-legion-row.bom-faction-enemy { border-left: 3px solid var(--bom-enemy); }
+
+.bom-legion-row .bom-legion-name { font-weight: 600; flex: 1; }
+.bom-legion-row .bom-commander-name { flex: 1; opacity: 0.8; }
+.bom-legion-row .bom-stats { font-family: monospace; }
+
+.bom-legion-row button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary, #666);
+  padding: 0.2rem;
+}
+
+.bom-objective-form {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.bom-objective-form input { flex: 1; }
+
+.bom-objective-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.2rem 0;
+  font-size: 0.85rem;
+}
+
+.bom-destroyed { color: var(--bom-danger); font-weight: 600; }
+
+.bom-csv-import textarea,
+.bom-json-import textarea {
+  width: 100%;
+  font-family: monospace;
+  font-size: 0.75rem;
+  margin-bottom: 0.4rem;
+}
+
+.bom-data-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.bom-danger {
+  background: var(--bom-danger) !important;
+  color: #fff !important;
+}
+
+/* ── Legion Editor Dialog ── */
+.bom-legion-editor-form {
+  padding: 0.5rem;
+}
+
+.bom-legion-editor-form .form-group {
+  margin-bottom: 0.5rem;
+}
+
+.bom-legion-editor-form .form-group label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.8rem;
+  margin-bottom: 0.15rem;
+}
+
+.bom-legion-editor-form .form-group-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.bom-legion-editor-form .form-group-row .form-group {
+  flex: 1;
+}
+
+.bom-tag-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.bom-tag-checkbox {
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+/* ── Battle Resolver Dialog ── */
+.bom-battle-resolver {
+  padding: 0.5rem;
+}
+
+.bom-resolver-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.bom-resolver-stats .bom-side {
+  padding: 0.4rem;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.bom-resolver-stats .bom-faction-allied { background: var(--bom-allied-bg); }
+.bom-resolver-stats .bom-faction-enemy { background: var(--bom-enemy-bg); }
+
+.bom-counter-display {
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  padding: 0.3rem;
+  background: rgba(0,0,0,0.05);
+  border-radius: 4px;
+}
+
+.bom-resolver-step {
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  border: 1px solid var(--color-border, #999);
+  border-radius: 4px;
+}
+
+.bom-resolver-step.bom-done {
+  opacity: 0.7;
+  border-color: var(--bom-green);
+}
+
+.bom-resolver-step h4 {
+  margin: 0 0 0.3rem;
+  font-size: 0.9rem;
+}
+
+.bom-roll-result {
+  font-size: 0.85rem;
+  font-family: monospace;
+}
+
+.bom-resolver-winner {
+  text-align: center;
+  padding: 0.75rem;
+  background: var(--bom-green);
+  color: #fff;
+  border-radius: 4px;
+}
+
+.bom-benefit-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  margin-bottom: 0.3rem;
+  padding: 0.4rem 0.6rem;
+}
+
+/* ── Chat Cards ── */
+.bom-chat-card {
+  border: 1px solid var(--color-border, #999);
+  border-radius: 4px;
+  padding: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.bom-chat-header {
+  margin: 0 0 0.4rem;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.bom-chat-header i {
+  opacity: 0.7;
+}
+
+.bom-chat-phase {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0;
+  border-bottom: 1px solid var(--color-border-light, #ddd);
+}
+
+.bom-phase-label {
+  font-weight: 600;
+  min-width: 65px;
+}
+
+.bom-chat-counter {
+  text-align: center;
+  font-weight: 700;
+  margin: 0.4rem 0;
+}
+
+.bom-chat-winner {
+  text-align: center;
+  padding: 0.3rem;
+  border-radius: 3px;
+}
+
+.bom-chat-winner.bom-faction-allied { background: var(--bom-allied-bg); }
+.bom-chat-winner.bom-faction-enemy { background: var(--bom-enemy-bg); }
+
+.bom-chat-check {
+  padding: 0.2rem 0;
+  border-bottom: 1px solid var(--color-border-light, #ddd);
+}
+
+.bom-pass { color: var(--bom-green); font-weight: 600; }
+.bom-fail { color: var(--bom-danger); font-weight: 600; }
+.bom-death { color: var(--bom-danger); }
+
+.bom-winner-badge { color: var(--bom-green); font-weight: 600; }
+.bom-loser-badge { color: var(--bom-danger); font-weight: 600; }
+
+.bom-recon-detail {
+  margin-bottom: 0.3rem;
+}
+
+.bom-recon-result {
+  padding: 0.3rem;
+  background: rgba(139, 92, 246, 0.1);
+  border-radius: 3px;
+}
+
+.bom-commander-death-card .bom-chat-header {
+  color: var(--bom-danger);
+}
+
+.bom-empty {
+  text-align: center;
+  color: var(--color-text-secondary, #666);
+  font-style: italic;
+  padding: 1rem;
+}

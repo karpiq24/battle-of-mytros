@@ -1,0 +1,68 @@
+<section class="tab bom-aftermath-tab {{#unless (eq tab 'aftermath')}}hidden{{/unless}}" data-tab="aftermath" data-group="sheet">
+
+  <h3>{{localize "BOM.tab.aftermath"}}</h3>
+
+  {{!-- Show resolved battles that need aftermath --}}
+  <div class="bom-aftermath-list">
+    {{#each state.battles}}
+      {{#if this.resolved}}
+      <div class="bom-aftermath-card">
+        <div class="bom-aftermath-header">
+          {{#with (lookup @root.legions (findIndex @root.legions "id" this.alliedLegionId))}}
+            <span class="bom-faction-allied">{{this.name}}</span>
+          {{/with}}
+          <span class="bom-vs">{{localize "BOM.label.vs"}}</span>
+          {{#with (lookup @root.legions (findIndex @root.legions "id" this.enemyLegionId))}}
+            <span class="bom-faction-enemy">{{this.name}}</span>
+          {{/with}}
+          <span class="bom-winner-badge">{{localize "BOM.label.winner"}}: {{this.winner}}</span>
+        </div>
+
+        <div class="bom-aftermath-checks">
+          {{!-- Recovery --}}
+          <div class="bom-check-row">
+            <span class="bom-check-label">{{localize "BOM.aftermath.recovery"}}</span>
+            {{#if this.aftermathAllied}}
+              <span class="bom-check-done"><i class="fas fa-check"></i></span>
+            {{else}}
+              <button type="button" data-action="resolveAftermath" data-battle-id="{{this.id}}" data-check="recovery">
+                <i class="fas fa-dice-d20"></i> {{localize "BOM.action.roll"}}
+              </button>
+            {{/if}}
+          </div>
+
+          {{!-- Hope --}}
+          <div class="bom-check-row">
+            <span class="bom-check-label">{{localize "BOM.aftermath.hope"}}</span>
+            <button type="button" data-action="resolveAftermath" data-battle-id="{{this.id}}" data-check="hope">
+              <i class="fas fa-dice-d20"></i> {{localize "BOM.action.roll"}}
+            </button>
+          </div>
+
+          {{!-- Salvage --}}
+          <div class="bom-check-row">
+            <span class="bom-check-label">{{localize "BOM.aftermath.salvage"}}</span>
+            <button type="button" data-action="resolveAftermath" data-battle-id="{{this.id}}" data-check="salvage">
+              <i class="fas fa-dice-d20"></i> {{localize "BOM.action.roll"}}
+            </button>
+          </div>
+
+          {{!-- Commander Casualty --}}
+          <div class="bom-check-row">
+            <span class="bom-check-label">{{localize "BOM.aftermath.casualty"}}</span>
+            <button type="button" data-action="resolveAftermath" data-battle-id="{{this.id}}" data-check="casualty">
+              <i class="fas fa-dice-d20"></i> {{localize "BOM.action.roll"}}
+            </button>
+          </div>
+        </div>
+      </div>
+      {{/if}}
+    {{/each}}
+
+    {{!-- No resolved battles --}}
+    {{#unless state.battles.length}}
+    <p class="bom-empty">{{localize "BOM.label.none"}}</p>
+    {{/unless}}
+  </div>
+
+</section>
