@@ -13,8 +13,9 @@ import { BattleState } from "../data/battle-state.mjs";
  * @param {boolean} [opts.disadvantage=false]
  * @returns {Promise<{roll: number, total: number, dc: number, passed: boolean}>}
  */
-async function _aftermathCheck({ legionName, bonus, dc, flavor, advantage = false, disadvantage = false }) {
-  const dice = (advantage && !disadvantage) ? "2d20kh" : (disadvantage && !advantage) ? "2d20kl" : "1d20";
+async function _aftermathCheck({ legionName, bonus, dc, flavor, advantage = false, disadvantage = false, isD100 = false }) {
+  const baseDie = isD100 ? "d100" : "d20";
+  const dice = (advantage && !disadvantage) ? `2${baseDie}kh` : (disadvantage && !advantage) ? `2${baseDie}kl` : `1${baseDie}`;
   const advStr = advantage ? " (Advantage)" : disadvantage ? " (Disadvantage)" : "";
   const roll = new Roll(`${dice} + @bonus`, { bonus });
   await roll.evaluate();
@@ -144,26 +145,31 @@ export async function casualtyCheck(legion, outcome, { manualBonus = 0, advantag
   const cmd = BattleState.getCommander(legion.commanderId);
   if (!cmd?.alive) return { survived: true, result: null };
 
-  const dc = BOM.casualtyDC[outcome] ?? BOM.casualtyDC.loser;
+  const baseRisk = BOM.casualtyBaseRisk[outcome] ?? BOM.casualtyBaseRisk.loser;
 
-  let bonus = cmd.vitBonus ?? 0;
+  // Calculate pure percentile death chance
+  const stats = BattleState.computeStats(legion);
+  const cmdVit = cmd.vitBonus ?? 0;
+  const protection = cmdVit + stats.mor + manualBonus;
+  const deathChance = Math.max(1, baseRisk - protection); // Minimum 1% chance (Natural 1 always dies)
+  
+  // To survive, the d100 roll must be strictly greater than the death chance.
+  const dc = deathChance + 1;
 
-  if (legion.injuries >= BOM.casualtyInjuredAt) {
-    bonus += BOM.casualtyInjuredPenalty;
-  }
-
-  bonus += manualBonus;
+  const hasTeamB = cmd.tags?.some(t => t.name === "Team B");
 
   const result = await _aftermathCheck({
     legionName: `${cmd.name} (${legion.name})`,
-    bonus,
+    bonus: 0, // No bonus added to the d100 itself anymore
     dc,
     flavor: game.i18n.localize("BOM.aftermath.casualty"),
-    advantage,
-    disadvantage
+    advantage: advantage || hasTeamB,
+    disadvantage,
+    isD100: true
   });
 
-  return { survived: result.passed, result };
+  const survived = result.roll > deathChance;
+  return { survived, result };
 }
 
 /**

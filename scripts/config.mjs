@@ -6,13 +6,14 @@ export const BOM = {
   moduleId: "battle-of-mytros",
 
   // Battle Counter
-  counterWin: 1,
-  counterNat20Bonus: 2,
-  counterNat1Penalty: 2,
+  counterWin: 1,         // Maneuver and Charge winner
+  counterClashWin: 2,    // Clash winner scores two counter points
+  counterNat20Bonus: 1,  // Extra point on nat 20 (total = base + 1)
+  counterNat1Penalty: 1, // Extra point lost on nat 1 (total = base + 1)
 
   // Aftermath DCs
-  recoveryBaseDC: 10,
-  hopeDC: 10,
+  recoveryBaseDC: 12,
+  hopeDC: 12,
   hopeMoraleOffset: 5,
   salvageDC: 12,
 
@@ -33,7 +34,7 @@ export const BOM = {
   // Legion durability
   maxInjuries: 6,
   routThreshold: 0,
-  moraleCap: 12,
+  moraleCap: 10,
 
   // Time
   roundsPerDay: 8,
@@ -48,10 +49,9 @@ export const BOM = {
   overnightInjuryMax: 5,
 
   // Commander Casualty
-  casualtyDC: { winner: 3, loser: 5, crushed: 7 },
+  // Percentile risk minus (Commander Vitality + Legion Morale) = Death Chance. Roll 1d100.
+  casualtyBaseRisk: { winner: 15, loser: 25, crushed: 35 },
   casualtyCrushedThreshold: -3,
-  casualtyInjuredPenalty: -2,
-  casualtyInjuredAt: 5,
   commanderDeathMoraleLoss: 1,
 
   // Situational battle bonuses
@@ -64,14 +64,13 @@ export const BOM = {
   chargeWinClashBonus: 1,
   salvageInsightBonus: 2,
 
-  // Recon
+  // Recon — rolls above the highest threshold return the last result
   reconThresholds: [
     { max: 10, result: "BOM.recon.nothing" },
     { max: 14, result: "BOM.recon.oneLegion" },
     { max: 18, result: "BOM.recon.halfLegions" },
     { max: 22, result: "BOM.recon.allMovements" }
   ],
-  reconFullIntel: "BOM.recon.fullIntel",
 
   // Maneuver benefit options
   maneuverBenefits: [
@@ -92,9 +91,9 @@ export const BOM = {
   // PC deployment actions
   pcActions: [
     { id: "reinforce", label: "BOM.pc.reinforce" },
-    { id: "leadCharge", label: "BOM.pc.leadCharge" },
-    { id: "holdLine", label: "BOM.pc.holdLine" },
-    { id: "sabotage", label: "BOM.pc.sabotage" },
+    { id: "shockAssault", label: "BOM.pc.shockAssault" },
+    { id: "targetedStrike", label: "BOM.pc.targetedStrike" },
+    { id: "shieldWounded", label: "BOM.pc.shieldWounded" },
     { id: "rest", label: "BOM.pc.rest" }
   ],
 
@@ -103,12 +102,15 @@ export const BOM = {
 
   // PC deployment bonuses
   pcReinforceBonus: 2,
+  pcShockAssaultBonus: 3,
+  pcTargetedStrikeBonus: 4,
+  pcShieldWoundedBonus: 3,
 
   // Commander tags
   allTags: [
-    "Tactician", "Mage", "Fanatic", "Zealot", "Steadfast", "Medic",
-    "Rallier", "Vanguard", "Brutal", "Scout", "Duelist", "Veteran",
-    "Terrorizer", "Warden", "Divine Blood", "Engineer", "Headhunter"
+    "Tactician", "Mage", "Fanatic", "Zealot", "Medic",
+    "Rallier", "Vanguard", "Brutal", "Scout", "Veteran",
+    "Terrorizer", "Warden", "Divine Blood", "Engineer", "Headhunter", "Team B"
   ],
 
   // Phases of a round

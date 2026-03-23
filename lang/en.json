@@ -103,7 +103,6 @@
   "BOM.recon.oneLegion": "One enemy legion revealed.",
   "BOM.recon.halfLegions": "Half of enemy legions revealed.",
   "BOM.recon.allMovements": "All enemy movements revealed.",
-  "BOM.recon.fullIntel": "Full intelligence — movements and actions revealed!",
   "BOM.recon.title": "Reconnaissance",
 
   "BOM.pc.reinforce": "Reinforce (+2 all rolls)",
@@ -126,19 +125,18 @@
   "BOM.tag.Mage": "Mage",
   "BOM.tag.Fanatic": "Fanatic",
   "BOM.tag.Zealot": "Zealot",
-  "BOM.tag.Steadfast": "Steadfast",
   "BOM.tag.Medic": "Medic",
   "BOM.tag.Rallier": "Rallier",
   "BOM.tag.Vanguard": "Vanguard",
   "BOM.tag.Brutal": "Brutal",
   "BOM.tag.Scout": "Scout",
-  "BOM.tag.Duelist": "Duelist",
   "BOM.tag.Veteran": "Veteran",
   "BOM.tag.Terrorizer": "Terrorizer",
   "BOM.tag.Warden": "Warden",
   "BOM.tag.DivineBlood": "Divine Blood",
   "BOM.tag.Engineer": "Engineer",
   "BOM.tag.Headhunter": "Headhunter",
+  "BOM.tag.TeamB": "Team B",
 
   "BOM.nat20": "NAT 20!",
   "BOM.nat1": "NAT 1!"

@@ -213,8 +213,10 @@ export class BattleResolver extends HandlebarsApplicationMixin(ApplicationV2) {
     });
 
     this._results.clash = result;
-    this._results.counterA += result.counterA;
-    this._results.counterB += result.counterB;
+    // Clash winner scores two counter points instead of the standard one
+    const clashExtra = BOM.counterClashWin - BOM.counterWin;
+    this._results.counterA += result.counterA + (result.winner === "a" ? clashExtra : 0);
+    this._results.counterB += result.counterB + (result.winner === "b" ? clashExtra : 0);
 
     if (this._results.counterA > this._results.counterB) this._results.winner = "allied";
     else if (this._results.counterB > this._results.counterA) this._results.winner = "enemy";

@@ -82,6 +82,8 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
       removeObjective: BattleDashboard.#onRemoveObjective,
       spendMiracle: BattleDashboard.#onSpendMiracle,
       refundMiracle: BattleDashboard.#onRefundMiracle,
+      spendAdvantage: BattleDashboard.#onSpendAdvantage,
+      refundAdvantage: BattleDashboard.#onRefundAdvantage,
       resetState: BattleDashboard.#onResetState,
       importCSV: BattleDashboard.#onImportCSV,
       exportState: BattleDashboard.#onExportState,
@@ -306,6 +308,25 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
     const m = state.miracles[faction];
     if (m.used > 0) {
       m.used -= 1;
+      await BattleState.set(state);
+    }
+    this.render();
+  }
+
+  static async #onSpendAdvantage(event, target) {
+    const faction = target.dataset.faction;
+    if (!faction) return;
+    await BattleState.spendAdvantage(faction);
+    this.render();
+  }
+
+  static async #onRefundAdvantage(event, target) {
+    const faction = target.dataset.faction;
+    if (!faction) return;
+    const state = BattleState.get();
+    const m = state.miracles[faction];
+    if (m.advantagesUsed > 0) {
+      m.advantagesUsed -= 1;
       await BattleState.set(state);
     }
     this.render();

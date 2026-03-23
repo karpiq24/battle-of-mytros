@@ -184,8 +184,8 @@ export class BattleState {
     const cmd = commanders.find(c => c.id === legion.commanderId) ?? null;
     const alive = cmd?.alive !== false;
     const vit = Math.max(0, legion.vitBase + (alive && cmd ? (cmd.vitBonus ?? 0) : 0));
-    const morRaw = legion.morBase + (alive && cmd ? (cmd.morBonus ?? 0) : 0) + (legion.moraleMod ?? 0);
-    const mor = Math.min(BOM.moraleCap, Math.max(0, morRaw));
+    const morStatic = legion.morBase + (alive && cmd ? (cmd.morBonus ?? 0) : 0);
+    const mor = Math.min(BOM.moraleCap, Math.max(0, morStatic + (legion.moraleMod ?? 0)));
     const wit = Math.max(0, legion.witBase + (alive && cmd ? (cmd.witBonus ?? 0) : 0) + (legion.witTempBonus ?? 0));
     return { vit, mor, wit };
   }
@@ -227,6 +227,7 @@ export class BattleState {
       await this._endDay(state);
     }
 
+    // Reset daily/round pools
     state.battles = [];
     state.pcDeployments = [];
   }

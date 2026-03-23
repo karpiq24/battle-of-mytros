@@ -1,24 +1,22 @@
-name,faction,vitality,morale,wit,active
-Estoria Centurions,Allied,2,3,1,1
-Estoria Dwarves,Allied,3,2,1,1
-Mithral Centaurs,Allied,1,2,3,1
-Mages of Academy,Allied,1,1,4,1
-Mytros Centurions I,Allied,2,2,2,1
-Mytros Centurions II,Allied,2,2,2,1
-Amazons,Allied,1,3,2,1
-Indigo Barbarians,Allied,2,3,1,1
-Lizardfolk,Allied,3,2,1,1
-Egida Mytros,Allied,4,1,1,1
-Aresia Centurions,Allied,2,3,1,0
-Order of Sydon I,Enemy,2,3,1,1
-Order of Sydon II,Enemy,2,3,1,1
-Order of Sydon III,Enemy,2,3,1,1
-Exiles,Enemy,2,1,3,1
-Bronze Automatons I,Enemy,4,1,1,1
-Bronze Automatons II,Enemy,4,1,1,1
-Cyclops,Enemy,4,1,1,1
-Gygans I,Enemy,3,2,1,1
-Gygans II,Enemy,3,2,1,1
-Merrows,Enemy,3,2,1,1
-Hired Yugoloths,Enemy,2,1,3,1
-Steppe Centaurs,Enemy,2,2,2,0
+name,faction,vitality,morale,wit
+Estoria Centurions,Allied,2,3,1
+Estoria Dwarves,Allied,3,2,1
+Mithral Centaurs,Allied,1,2,3
+Mages of Academy,Allied,1,1,4
+Mytros Centurions I,Allied,2,2,2
+Mytros Centurions II,Allied,2,2,2
+Amazons,Allied,1,3,2
+Indigo Barbarians,Allied,2,3,1
+Lizardfolk,Allied,3,2,1
+Egida Mytros,Allied,4,1,1
+Order of Sydon I,Enemy,2,3,1
+Order of Sydon II,Enemy,2,3,1
+Order of Sydon III,Enemy,2,3,1
+Exiles,Enemy,2,1,3
+Bronze Automatons I,Enemy,4,1,1
+Bronze Automatons II,Enemy,4,1,1
+Cyclops,Enemy,4,1,1
+Gygans I,Enemy,3,2,1
+Gygans II,Enemy,3,2,1
+Merrows,Enemy,3,2,1
+Hired Yugoloths,Enemy,2,1,3

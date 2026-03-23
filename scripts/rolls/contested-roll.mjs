@@ -95,12 +95,14 @@ export async function contestedRoll({
   let counterB = 0;
   if (winner === "a") {
     counterA += BOM.counterWin;
+    counterB -= BOM.counterWin;
     if (nat20A) counterA += BOM.counterNat20Bonus;
-    if (nat1B) counterA += BOM.counterNat1Penalty;
+    if (nat1B) counterB -= BOM.counterNat1Penalty;
   } else if (winner === "b") {
     counterB += BOM.counterWin;
+    counterA -= BOM.counterWin;
     if (nat20B) counterB += BOM.counterNat20Bonus;
-    if (nat1A) counterB += BOM.counterNat1Penalty;
+    if (nat1A) counterA -= BOM.counterNat1Penalty;
   }
 
   return {

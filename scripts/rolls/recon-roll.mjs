@@ -25,9 +25,9 @@ export async function reconRoll() {
   const roll = new Roll("1d20 + @bonus", { bonus: bestWit });
   await roll.evaluate();
 
-  // Determine result
+  // Determine result — rolls above the highest threshold return the last entry
   const total = roll.total;
-  let resultKey = BOM.reconFullIntel;
+  let resultKey = BOM.reconThresholds[BOM.reconThresholds.length - 1].result;
   for (const threshold of BOM.reconThresholds) {
     if (total <= threshold.max) {
       resultKey = threshold.result;

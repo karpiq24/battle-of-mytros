@@ -25,7 +25,11 @@
       </span>
       <button type="button" data-action="refundMiracle" data-faction="{{this}}" title="Refund miracle"><i class="fas fa-plus"></i></button>
       <span class="bom-advantages">
-        {{localize "BOM.label.advantages"}}: {{lookup (lookup @root.state.miracles this) "advantagesUsed"}} / {{lookup (lookup @root.state.miracles this) "advantagesTotal"}}
+        <strong>{{localize "BOM.label.advantages"}}</strong>
+        <button type="button" data-action="spendAdvantage" data-faction="{{this}}" title="Spend advantage"><i class="fas fa-minus"></i></button>
+        {{sub (lookup (lookup @root.state.miracles this) "advantagesTotal") (lookup (lookup @root.state.miracles this) "advantagesUsed")}}
+        / {{lookup (lookup @root.state.miracles this) "advantagesTotal"}}
+        <button type="button" data-action="refundAdvantage" data-faction="{{this}}" title="Refund advantage"><i class="fas fa-plus"></i></button>
       </span>
     </div>
     {{/each}}
