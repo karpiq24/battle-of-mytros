@@ -73,7 +73,7 @@ OVERNIGHT_MORALE_RECOVERY = 1      # Extra morale regained overnight by all legi
 # ── Commander Casualty ──
 # Commander survives if 1d100 rolls strictly above their Death Chance.
 # Death Chance = Base Risk - (Commander Vitality + Legion Morale). Min 1%.
-CASUALTY_BASE_RISK = {"winner": 6, "loser": 12, "crushed": 18}  # Base % risk of death
+CASUALTY_BASE_RISK = {"winner": 6, "loser": 12, "crushed": 20}  # Base % risk of death
 CASUALTY_CRUSHED_THRESHOLD = -3    # Battle counter diff at or below this → use "crushed" DC
 COMMANDER_DEATH_MORALE_LOSS = 1    # Morale lost by the legion when its commander dies
 

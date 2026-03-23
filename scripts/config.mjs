@@ -50,7 +50,7 @@ export const BOM = {
 
   // Commander Casualty
   // Percentile risk minus (Commander Vitality + Legion Morale) = Death Chance. Roll 1d100.
-  casualtyBaseRisk: { winner: 15, loser: 25, crushed: 35 },
+  casualtyBaseRisk: { winner: 6, loser: 12, crushed: 20 },
   casualtyCrushedThreshold: -3,
   commanderDeathMoraleLoss: 1,
 
