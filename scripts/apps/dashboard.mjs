@@ -19,11 +19,19 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
             importCSV: BattleDashboard.importCSV,
             exportCSV: BattleDashboard.exportCSV,
             openResolver: BattleDashboard.openResolver,
-            assignCommander: BattleDashboard.assignCommander
+            assignCommander: BattleDashboard.assignCommander,
+            setDeploymentMode: BattleDashboard.setDeploymentMode
         }
     };
 
     tab = "overview";
+
+    static async setDeploymentMode(event, target) {
+        const tokenId = target.dataset.tokenId;
+        const mode = target.value;
+        const token = canvas.scene.tokens.get(tokenId);
+        if (token) await token.setFlag("battle-of-mytros", "deploymentMode", mode);
+    }
 
     static async exportCSV(event, target) {
         const type = target.dataset.type;
@@ -134,6 +142,14 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
                     commanderName: t.actor.getFlag("battle-of-mytros", "commanderId") ? 
                         game.actors.get(t.actor.getFlag("battle-of-mytros", "commanderId"))?.name : "None"
                 }));
+
+                const supportTokens = globalThis.MytrosRegionManager.getSupportUnitsInSection(r);
+                const supportUnits = supportTokens.map(t => ({
+                    id: t.id,
+                    name: t.name,
+                    actorId: t.actor.id,
+                    deploymentMode: t.getFlag("battle-of-mytros", "deploymentMode") || "none"
+                }));
                 
                 const hasAllied = mappedLegions.some(l => l.faction === "allied");
                 const hasSydon = mappedLegions.some(l => l.faction === "sydon");
@@ -146,6 +162,7 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
                     fortified: r.getFlag("battle-of-mytros", "fortified"),
                     hasObjective: r.getFlag("battle-of-mytros", "hasObjective"),
                     legions: mappedLegions,
+                    supportUnits: supportUnits,
                     pendingBattle: pendingBattle
                 };
             });

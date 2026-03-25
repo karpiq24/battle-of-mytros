@@ -63,6 +63,33 @@
                                     <p class="empty-state">No legions present.</p>
                                 {{/if}}
                             </div>
+
+                            {{#if this.supportUnits.length}}
+                            <div class="support-units" style="margin-top: 5px; padding-top: 5px; border-top: 1px solid #ddd;">
+                                <h4 style="font-size: 0.8em; margin: 0; color: #666;">Support</h4>
+                                {{#each this.supportUnits}}
+                                <div class="support-item" style="display: flex; justify-content: space-between; align-items: center; font-size: 0.9em;">
+                                    <span>{{this.name}}</span>
+                                    {{#if (eq @root.phase 3)}}
+                                        {{#if @root.isGM}}
+                                        <select data-action="setDeploymentMode" data-token-id="{{this.id}}">
+                                            <option value="none">-- Select Mode --</option>
+                                            <option value="reinforce" {{#if (eq this.deploymentMode 'reinforce')}}selected{{/if}}>Reinforce (+1d4 All)</option>
+                                            <option value="shock_assault" {{#if (eq this.deploymentMode 'shock_assault')}}selected{{/if}}>Shock Assault (+1d6 Battle)</option>
+                                            <option value="targeted_strike" {{#if (eq this.deploymentMode 'targeted_strike')}}selected{{/if}}>Targeted Strike (+1d8/Adv)</option>
+                                            <option value="shield_the_wounded" {{#if (eq this.deploymentMode 'shield_the_wounded')}}selected{{/if}}>Shield Wounded (+1d8 Aftermath)</option>
+                                            <option value="protect" {{#if (eq this.deploymentMode 'protect')}}selected{{/if}}>Protect (No Casualty Check)</option>
+                                        </select>
+                                        {{/if}}
+                                    {{else}}
+                                        {{#if (ne this.deploymentMode 'none')}}
+                                            <span class="badge mode-{{this.deploymentMode}}" style="font-size: 0.7em; background: #eee; padding: 2px 4px; border-radius: 3px;">{{this.deploymentMode}}</span>
+                                        {{/if}}
+                                    {{/if}}
+                                </div>
+                                {{/each}}
+                            </div>
+                            {{/if}}
                         </div>
                     {{/each}}
                 </div>
