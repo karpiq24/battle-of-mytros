@@ -14,7 +14,8 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
             changeTab: BattleDashboard.changeTab,
             updateSetting: BattleDashboard.updateSetting,
             toggleSectionFlag: BattleDashboard.toggleSectionFlag,
-            setSectionControl: BattleDashboard.setSectionControl
+            setSectionControl: BattleDashboard.setSectionControl,
+            importCSV: BattleDashboard.importCSV
         }
     };
 
@@ -23,6 +24,23 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
     static changeTab(event, target) {
         this.tab = target.dataset.tab;
         this.render();
+    }
+
+    static async importCSV(event, target) {
+        const type = target.dataset.type; // 'legion' or 'commander'
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.csv';
+        input.onchange = e => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async (ev) => {
+                await globalThis.MytrosCSVParser.processCSV(ev.target.result, type);
+            };
+            reader.readAsText(file);
+        };
+        input.click();
     }
 
     static async updateSetting(event, target) {

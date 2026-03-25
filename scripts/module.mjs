@@ -109,3 +109,13 @@ Hooks.on("regionEvent", (region, event) => {
         }
     }
 });
+
+Hooks.on("updateRegion", (region, changes, options, userId) => {
+    if (changes.flags && changes.flags["battle-of-mytros"]) {
+        for (const app of Object.values(ui.windows)) {
+            if (app.id === "mytros-battle-dashboard") {
+                app.render({ force: true });
+            }
+        }
+    }
+});

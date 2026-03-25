@@ -76,6 +76,13 @@
                     <label>Civilian Death Toll</label>
                     <input type="number" data-action="updateSetting" data-setting="deathToll" value="{{deathToll}}">
                 </div>
+
+                <hr>
+                <h3>Data Management</h3>
+                <div class="form-group">
+                    <button type="button" data-action="importCSV" data-type="legion"><i class="fas fa-file-csv"></i> Import Legions CSV</button>
+                    <button type="button" data-action="importCSV" data-type="commander"><i class="fas fa-file-csv"></i> Import Commanders CSV</button>
+                </div>
             </div>
         {{/if}}
     </main>
