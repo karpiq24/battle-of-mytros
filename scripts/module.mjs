@@ -124,3 +124,24 @@ Hooks.on("updateRegion", (region, changes, options, userId) => {
         }
     }
 });
+
+Hooks.on("updateActor", (actor, changes, options, userId) => {
+    if (globalThis.MytrosActorData.isLegion(actor) && changes.flags?.["battle-of-mytros"]) {
+        for (const app of Object.values(ui.windows)) {
+            if (app.id === "mytros-battle-dashboard") {
+                app.render({ force: true });
+            }
+        }
+    }
+});
+
+Hooks.on("deleteActor", async (actor, options, userId) => {
+    if (game.user.id !== userId) return;
+    if (globalThis.MytrosActorData.isCommander(actor)) {
+        const legions = game.actors.filter(a => globalThis.MytrosActorData.isLegion(a) && 
+            a.getFlag("battle-of-mytros", "commanderId") === actor.id);
+        for (const legion of legions) {
+            await legion.setFlag("battle-of-mytros", "commanderId", null);
+        }
+    }
+});
