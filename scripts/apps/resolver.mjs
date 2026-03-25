@@ -62,8 +62,11 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
         const aStats = this.state.allied.getFlag("battle-of-mytros", "stats");
         const sStats = this.state.sydon.getFlag("battle-of-mytros", "stats");
 
-        const aRoll = await globalThis.BattleRoller.executeRoll(aStats.vitality, aMods.flatBonus, aMods.advantage, aMods.disadvantage);
-        const sRoll = await globalThis.BattleRoller.executeRoll(sStats.vitality, sMods.flatBonus, sMods.advantage, sMods.disadvantage);
+        const aVeteran = this.state.allied.getFlag("battle-of-mytros", "commanderId") ? game.actors.get(this.state.allied.getFlag("battle-of-mytros", "commanderId"))?.items.some(i => i.name.toLowerCase() === "veteran") : false;
+        const sVeteran = this.state.sydon.getFlag("battle-of-mytros", "commanderId") ? game.actors.get(this.state.sydon.getFlag("battle-of-mytros", "commanderId"))?.items.some(i => i.name.toLowerCase() === "veteran") : false;
+
+        const aRoll = await globalThis.BattleRoller.executeRoll(aStats.vitality, aMods.flatBonus, aMods.advantage, aMods.disadvantage, aVeteran);
+        const sRoll = await globalThis.BattleRoller.executeRoll(sStats.vitality, sMods.flatBonus, sMods.advantage, sMods.disadvantage, sVeteran);
 
         this.state.log.push(`Allied Clash (Vitality): ${aRoll.total}`);
         this.state.log.push(`Sydon Clash (Vitality): ${sRoll.total}`);
@@ -122,8 +125,11 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
         const aStats = this.state.allied.getFlag("battle-of-mytros", "stats");
         const sStats = this.state.sydon.getFlag("battle-of-mytros", "stats");
 
-        const aRoll = await globalThis.BattleRoller.executeRoll(aStats.morale, alliedMods.flatBonus, alliedMods.advantage, alliedMods.disadvantage);
-        const sRoll = await globalThis.BattleRoller.executeRoll(sStats.morale, sydonMods.flatBonus, sydonMods.advantage, sydonMods.disadvantage);
+        const aVeteran = this.state.allied.getFlag("battle-of-mytros", "commanderId") ? game.actors.get(this.state.allied.getFlag("battle-of-mytros", "commanderId"))?.items.some(i => i.name.toLowerCase() === "veteran") : false;
+        const sVeteran = this.state.sydon.getFlag("battle-of-mytros", "commanderId") ? game.actors.get(this.state.sydon.getFlag("battle-of-mytros", "commanderId"))?.items.some(i => i.name.toLowerCase() === "veteran") : false;
+
+        const aRoll = await globalThis.BattleRoller.executeRoll(aStats.morale, alliedMods.flatBonus, alliedMods.advantage, alliedMods.disadvantage, aVeteran);
+        const sRoll = await globalThis.BattleRoller.executeRoll(sStats.morale, sydonMods.flatBonus, sydonMods.advantage, sydonMods.disadvantage, sVeteran);
 
         this.state.log.push(`Allied Charge (Morale): ${aRoll.total}`);
         this.state.log.push(`Sydon Charge (Morale): ${sRoll.total}`);
@@ -162,8 +168,11 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
         const alliedStats = this.state.allied.getFlag("battle-of-mytros", "stats");
         const sydonStats = this.state.sydon.getFlag("battle-of-mytros", "stats");
 
-        const alliedRoll = await globalThis.BattleRoller.executeRoll(alliedStats.wit, alliedMods.flatBonus, alliedMods.advantage, alliedMods.disadvantage);
-        const sydonRoll = await globalThis.BattleRoller.executeRoll(sydonStats.wit, sydonMods.flatBonus, sydonMods.advantage, sydonMods.disadvantage);
+        const aVeteran = this.state.allied.getFlag("battle-of-mytros", "commanderId") ? game.actors.get(this.state.allied.getFlag("battle-of-mytros", "commanderId"))?.items.some(i => i.name.toLowerCase() === "veteran") : false;
+        const sVeteran = this.state.sydon.getFlag("battle-of-mytros", "commanderId") ? game.actors.get(this.state.sydon.getFlag("battle-of-mytros", "commanderId"))?.items.some(i => i.name.toLowerCase() === "veteran") : false;
+
+        const alliedRoll = await globalThis.BattleRoller.executeRoll(alliedStats.wit, alliedMods.flatBonus, alliedMods.advantage, alliedMods.disadvantage, aVeteran);
+        const sydonRoll = await globalThis.BattleRoller.executeRoll(sydonStats.wit, sydonMods.flatBonus, sydonMods.advantage, sydonMods.disadvantage, sVeteran);
 
         this.state.log.push(`Allied Maneuver (Wit): ${alliedRoll.total}`);
         this.state.log.push(`Sydon Maneuver (Wit): ${sydonRoll.total}`);
