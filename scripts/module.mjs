@@ -7,6 +7,15 @@ globalThis.MytrosActorData = MytrosActorData; // expose for macros/testing
 Hooks.once('init', async function() {
     console.log("Battle of Mytros | Initializing module");
 
+    game.settings.register("battle-of-mytros", "battleSceneId", {
+        name: "Battlemap Scene ID",
+        hint: "The ID of the scene acting as the main Battle of Mytros map. Region tracking only runs here.",
+        scope: "world",
+        config: true,
+        type: String,
+        default: ""
+    });
+
     game.settings.register("battle-of-mytros", "currentRound", {
         name: "Current Round",
         hint: "The current round of the battle.",
@@ -53,6 +62,10 @@ Hooks.once('init', async function() {
 
 Hooks.on("canvasReady", async () => {
     if (!game.user.isGM) return;
+    
+    const battleSceneId = game.settings.get("battle-of-mytros", "battleSceneId");
+    if (canvas.scene.id !== battleSceneId) return;
+
     const sections = MytrosRegionManager.getActiveSections();
     for (const section of sections) {
         await MytrosRegionManager.initSectionFlags(section);

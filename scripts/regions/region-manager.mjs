@@ -6,7 +6,10 @@ export class MytrosRegionManager {
 
     // Get all valid sections in the current scene
     static getActiveSections() {
-        if (!canvas.ready) return [];
+        if (!canvas.ready || !canvas.scene) return [];
+        const battleSceneId = game.settings.get(this.MODULE_ID, "battleSceneId");
+        if (canvas.scene.id !== battleSceneId) return [];
+
         return canvas.scene.regions.filter(r => r.name.startsWith(this.SECTION_PREFIX));
     }
 

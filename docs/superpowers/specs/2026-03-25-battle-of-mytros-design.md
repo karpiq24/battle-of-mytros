@@ -13,6 +13,7 @@ A Foundry VTT V13 compatible module to automate the mass combat system defined i
 
 ## 2. Core Architecture & Data Storage
 - **Global State:** Tracked via module-level `game.settings`. This includes:
+  - Battlemap Scene ID (to restrict region tracking to a specific scene)
   - Current Round and Phase
   - Civilian Death Toll
   - Allied and Sydon Miracle Points
