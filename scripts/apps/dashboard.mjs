@@ -15,11 +15,18 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
             updateSetting: BattleDashboard.updateSetting,
             toggleSectionFlag: BattleDashboard.toggleSectionFlag,
             setSectionControl: BattleDashboard.setSectionControl,
-            importCSV: BattleDashboard.importCSV
+            importCSV: BattleDashboard.importCSV,
+            openResolver: BattleDashboard.openResolver
         }
     };
 
     tab = "overview";
+
+    static async openResolver(event, target) {
+        const regionId = target.dataset.regionId;
+        console.log(`Opening resolver for region ${regionId}`);
+        ui.notifications.info("Resolver UI coming in next task!");
+    }
 
     static changeTab(event, target) {
         this.tab = target.dataset.tab;
@@ -95,16 +102,24 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
             const sections = globalThis.MytrosRegionManager.getActiveSections();
             context.sections = sections.map(r => {
                 const legions = globalThis.MytrosRegionManager.getLegionsInSection(r);
+                const mappedLegions = legions.map(t => ({
+                    id: t.actor.id,
+                    name: t.name,
+                    faction: t.actor.getFlag("battle-of-mytros", "faction")
+                }));
+                
+                const hasAllied = mappedLegions.some(l => l.faction === "allied");
+                const hasSydon = mappedLegions.some(l => l.faction === "sydon");
+                const pendingBattle = hasAllied && hasSydon;
+
                 return {
                     id: r.id,
                     name: r.name.replace(globalThis.MytrosRegionManager.SECTION_PREFIX, "").trim(),
                     control: r.getFlag("battle-of-mytros", "control"),
                     fortified: r.getFlag("battle-of-mytros", "fortified"),
                     hasObjective: r.getFlag("battle-of-mytros", "hasObjective"),
-                    legions: legions.map(t => ({
-                        name: t.name,
-                        faction: t.actor.getFlag("battle-of-mytros", "faction")
-                    }))
+                    legions: mappedLegions,
+                    pendingBattle: pendingBattle
                 };
             });
         } else {

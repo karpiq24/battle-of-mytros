@@ -20,6 +20,9 @@
                                 <h3>{{this.name}}</h3>
                                 {{#if @root.isGM}}
                                 <div class="section-controls">
+                                    {{#if this.pendingBattle}}
+                                    <button type="button" class="resolve-btn" data-action="openResolver" data-region-id="{{this.id}}"><i class="fas fa-swords"></i> Resolve Battle</button>
+                                    {{/if}}
                                     <select data-action="setSectionControl" data-region-id="{{this.id}}">
                                         <option value="neutral" {{#if (eq this.control 'neutral')}}selected{{/if}}>Neutral</option>
                                         <option value="allied" {{#if (eq this.control 'allied')}}selected{{/if}}>Allied</option>
