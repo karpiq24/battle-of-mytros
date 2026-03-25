@@ -42,7 +42,21 @@
                                 {{#if this.legions.length}}
                                     <ul>
                                     {{#each this.legions}}
-                                        <li class="legion-item faction-{{this.faction}}">{{this.name}}</li>
+                                        <li class="legion-item faction-{{this.faction}}">
+                                            <span class="legion-name">{{this.name}}</span>
+                                            {{#if @root.isGM}}
+                                                <select data-action="assignCommander" data-legion-id="{{this.id}}">
+                                                    <option value="">-- No Commander --</option>
+                                                    {{#each @root.commanders}}
+                                                        <option value="{{this.id}}" {{#if (eq this.id ../commanderId)}}selected{{/if}}>{{this.name}}</option>
+                                                    {{/each}}
+                                                </select>
+                                            {{else}}
+                                                {{#if this.commanderId}}
+                                                    <span class="commander-tag"><i class="fas fa-user-crown"></i> {{this.commanderName}}</span>
+                                                {{/if}}
+                                            {{/if}}
+                                        </li>
                                     {{/each}}
                                     </ul>
                                 {{else}}

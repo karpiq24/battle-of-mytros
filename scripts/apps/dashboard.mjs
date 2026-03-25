@@ -17,7 +17,8 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
             toggleSectionFlag: BattleDashboard.toggleSectionFlag,
             setSectionControl: BattleDashboard.setSectionControl,
             importCSV: BattleDashboard.importCSV,
-            openResolver: BattleDashboard.openResolver
+            openResolver: BattleDashboard.openResolver,
+            assignCommander: BattleDashboard.assignCommander
         }
     };
 
@@ -29,6 +30,14 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
         if (region) {
             new BattleResolverApp(region).render({ force: true });
         }
+    }
+
+    static async assignCommander(event, target) {
+        const legionId = target.dataset.legionId;
+        const commanderId = target.value || null;
+        const legion = game.actors.get(legionId);
+        if (!legion) return;
+        await legion.setFlag("battle-of-mytros", "commanderId", commanderId);
     }
 
     static changeTab(event, target) {
@@ -97,6 +106,11 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
         context.alliedMiracles = game.settings.get("battle-of-mytros", "alliedMiracles");
         context.sydonMiracles = game.settings.get("battle-of-mytros", "sydonMiracles");
 
+        context.commanders = game.actors.filter(a => globalThis.MytrosActorData.isCommander(a)).map(a => ({
+            id: a.id,
+            name: a.name
+        }));
+
         // Grab regions if we are on the battle scene
         const battleSceneId = game.settings.get("battle-of-mytros", "battleSceneId");
         context.isBattleScene = canvas.scene?.id === battleSceneId;
@@ -108,7 +122,10 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
                 const mappedLegions = legions.map(t => ({
                     id: t.actor.id,
                     name: t.name,
-                    faction: t.actor.getFlag("battle-of-mytros", "faction")
+                    faction: t.actor.getFlag("battle-of-mytros", "faction"),
+                    commanderId: t.actor.getFlag("battle-of-mytros", "commanderId"),
+                    commanderName: t.actor.getFlag("battle-of-mytros", "commanderId") ? 
+                        game.actors.get(t.actor.getFlag("battle-of-mytros", "commanderId"))?.name : "None"
                 }));
                 
                 const hasAllied = mappedLegions.some(l => l.faction === "allied");

@@ -3,10 +3,13 @@ import { MytrosRegionManager } from "./regions/region-manager.mjs";
 import { BattleDashboard } from "./apps/dashboard.mjs";
 import { MytrosCSVParser } from "./utils/csv-parser.mjs";
 import { BattleRoller } from "./utils/battle-roller.mjs";
+import { TagEngine } from "./utils/tag-engine.mjs";
 
 globalThis.MytrosActorData = MytrosActorData; // expose for macros/testing
+globalThis.MytrosRegionManager = MytrosRegionManager;
 globalThis.MytrosCSVParser = MytrosCSVParser;
 globalThis.BattleRoller = BattleRoller;
+globalThis.TagEngine = TagEngine;
 
 Hooks.once('init', async function() {
     console.log("Battle of Mytros | Initializing module");
