@@ -46,4 +46,36 @@ export class MytrosCSVParser {
         
         ui.notifications.info(`Processed ${type}s: ${created} created, ${updated} updated.`);
     }
+
+    static async exportLegions() {
+        const legions = game.actors.filter(a => globalThis.MytrosActorData.isLegion(a));
+        let csv = "Name,Faction,Vitality,Morale,Wit,Injuries,CommanderName\n";
+        for (const l of legions) {
+            const stats = l.getFlag("battle-of-mytros", "stats") || {};
+            const commanderId = l.getFlag("battle-of-mytros", "commanderId");
+            const commanderName = commanderId ? game.actors.get(commanderId)?.name || "" : "";
+            csv += `"${l.name}","${l.getFlag("battle-of-mytros", "faction")}",${stats.vitality || 10},${stats.morale || 10},${stats.wit || 10},${stats.injuries || 0},"${commanderName}"\n`;
+        }
+        this._downloadCSV("legions-export.csv", csv);
+    }
+
+    static async exportCommanders() {
+        const commanders = game.actors.filter(a => globalThis.MytrosActorData.isCommander(a));
+        let csv = "Name,Tags\n";
+        for (const c of commanders) {
+            const tags = c.items.map(i => i.name).join("; ");
+            csv += `"${c.name}","${tags}"\n`;
+        }
+        this._downloadCSV("commanders-export.csv", csv);
+    }
+
+    static _downloadCSV(filename, text) {
+        const element = document.createElement('a');
+        element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    }
 }

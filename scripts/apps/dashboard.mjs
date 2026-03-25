@@ -17,12 +17,19 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
             toggleSectionFlag: BattleDashboard.toggleSectionFlag,
             setSectionControl: BattleDashboard.setSectionControl,
             importCSV: BattleDashboard.importCSV,
+            exportCSV: BattleDashboard.exportCSV,
             openResolver: BattleDashboard.openResolver,
             assignCommander: BattleDashboard.assignCommander
         }
     };
 
     tab = "overview";
+
+    static async exportCSV(event, target) {
+        const type = target.dataset.type;
+        if (type === "legion") await globalThis.MytrosCSVParser.exportLegions();
+        else if (type === "commander") await globalThis.MytrosCSVParser.exportCommanders();
+    }
 
     static async openResolver(event, target) {
         const regionId = target.dataset.regionId;
