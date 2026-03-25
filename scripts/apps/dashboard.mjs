@@ -1,3 +1,4 @@
+import { BattleResolverApp } from "./resolver.mjs";
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
@@ -24,8 +25,10 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
 
     static async openResolver(event, target) {
         const regionId = target.dataset.regionId;
-        console.log(`Opening resolver for region ${regionId}`);
-        ui.notifications.info("Resolver UI coming in next task!");
+        const region = canvas.scene.regions.get(regionId);
+        if (region) {
+            new BattleResolverApp(region).render({ force: true });
+        }
     }
 
     static changeTab(event, target) {

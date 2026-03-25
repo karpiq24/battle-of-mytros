@@ -1,0 +1,25 @@
+<div class="mytros-resolver">
+    <header>
+        <h2>Battle in {{regionName}}</h2>
+        <div class="matchup">
+            <span class="allied">{{alliedName}}</span> VS <span class="sydon">{{sydonName}}</span>
+        </div>
+    </header>
+
+    <main>
+        <div class="battle-log" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; height: 150px; overflow-y: auto;">
+            <ul style="list-style: none; padding: 0; margin: 0;">
+                {{#each state.log}}<li>{{this}}</li>{{/each}}
+            </ul>
+        </div>
+
+        <div class="controls">
+            {{#if (eq state.phase 'setup')}}
+                <button type="button" data-action="runManeuver">Roll Phase 1: Maneuver</button>
+            {{/if}}
+            {{#if (eq state.phase 'maneuver_choice')}}
+                <p>Maneuver completed. Winner chooses benefit (Placeholder).</p>
+            {{/if}}
+        </div>
+    </main>
+</div>
