@@ -2,9 +2,11 @@ import { MytrosActorData } from "./models/actor-data.mjs";
 import { MytrosRegionManager } from "./regions/region-manager.mjs";
 import { BattleDashboard } from "./apps/dashboard.mjs";
 import { MytrosCSVParser } from "./utils/csv-parser.mjs";
+import { BattleRoller } from "./utils/battle-roller.mjs";
 
 globalThis.MytrosActorData = MytrosActorData; // expose for macros/testing
 globalThis.MytrosCSVParser = MytrosCSVParser;
+globalThis.BattleRoller = BattleRoller;
 
 Hooks.once('init', async function() {
     console.log("Battle of Mytros | Initializing module");
