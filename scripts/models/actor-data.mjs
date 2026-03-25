@@ -9,6 +9,14 @@ export class MytrosActorData {
         return actor.getFlag(this.MODULE_ID, "isCommander") === true;
     }
 
+    static isFastResponse(actor) {
+        return actor.hasPlayerOwner === true || actor.getFlag(this.MODULE_ID, "isFastResponse") === true;
+    }
+
+    static async initFastResponse(actor) {
+        await actor.setFlag(this.MODULE_ID, "isFastResponse", true);
+    }
+
     static async initLegion(actor, faction = "allied") {
         await actor.setFlag(this.MODULE_ID, "isLegion", true);
         await actor.setFlag(this.MODULE_ID, "stats", {

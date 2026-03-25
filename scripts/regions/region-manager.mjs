@@ -20,6 +20,13 @@ export class MytrosRegionManager {
         });
     }
 
+    static getSupportUnitsInSection(region) {
+        if (!region.tokens) return [];
+        return Array.from(region.tokens).filter(t => {
+            return t.actor && globalThis.MytrosActorData.isFastResponse(t.actor);
+        });
+    }
+
     // Initialize module flags on a region if they don't exist
     static async initSectionFlags(region) {
         if (region.getFlag(this.MODULE_ID, "initialized")) return;
