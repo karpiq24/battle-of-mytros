@@ -1,0 +1,31 @@
+/* styles/battle-dashboard.css */
+.mytros-dashboard .sections-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    padding: 10px;
+}
+.mytros-dashboard .section-card {
+    border: 1px solid var(--color-border-dark-primary);
+    border-radius: 5px;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.05);
+}
+.mytros-dashboard .section-card.control-allied { border-top: 3px solid #1a5276; }
+.mytros-dashboard .section-card.control-sydon { border-top: 3px solid #7b241c; }
+.mytros-dashboard .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+}
+.mytros-dashboard .section-header h3 { margin: 0; font-size: 1.1em; border: none; }
+.mytros-dashboard .badge { margin-left: 5px; }
+.mytros-dashboard .badge.fortified { color: #5dade2; }
+.mytros-dashboard .badge.objective { color: #f1c40f; }
+.mytros-dashboard .legion-item { font-weight: bold; }
+.mytros-dashboard .legion-item.faction-allied { color: #1a5276; }
+.mytros-dashboard .legion-item.faction-sydon { color: #7b241c; }
+.mytros-dashboard .empty-state { font-style: italic; color: #777; margin: 0; }

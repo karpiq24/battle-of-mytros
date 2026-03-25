@@ -1,13 +1,35 @@
-<div>
-    <header>
+<div class="mytros-dashboard">
+    <header class="dashboard-header">
         <h2>Round {{round}} - Phase {{phase}}</h2>
-        {{#if isGM}}
-            <p>GM Controls Active</p>
-        {{else}}
-            <p>Read-Only Overview</p>
-        {{/if}}
     </header>
-    <main>
-        <p>Dashboard content will go here.</p>
+    <main class="dashboard-body">
+        {{#if isBattleScene}}
+            <div class="sections-list">
+                {{#each sections}}
+                    <div class="section-card control-{{this.control}}">
+                        <div class="section-header">
+                            <h3>{{this.name}}</h3>
+                            <div class="section-badges">
+                                {{#if this.fortified}}<span class="badge fortified" title="Fortified"><i class="fas fa-shield-alt"></i></span>{{/if}}
+                                {{#if this.hasObjective}}<span class="badge objective" title="Strategic Objective"><i class="fas fa-star"></i></span>{{/if}}
+                            </div>
+                        </div>
+                        <div class="section-legions">
+                            {{#if this.legions.length}}
+                                <ul>
+                                {{#each this.legions}}
+                                    <li class="legion-item faction-{{this.faction}}">{{this.name}}</li>
+                                {{/each}}
+                                </ul>
+                            {{else}}
+                                <p class="empty-state">No legions present.</p>
+                            {{/if}}
+                        </div>
+                    </div>
+                {{/each}}
+            </div>
+        {{else}}
+            <p class="warning">Please navigate to the designated Battlemap Scene to view sections.</p>
+        {{/if}}
     </main>
 </div>

@@ -87,3 +87,19 @@ Hooks.on("getSceneControlButtons", (controls) => {
         });
     }
 });
+
+Hooks.on("regionEvent", (region, event) => {
+    if (!game.user.isGM) return;
+    const battleSceneId = game.settings.get("battle-of-mytros", "battleSceneId");
+    if (canvas.scene?.id !== battleSceneId) return;
+    if (!region.name.startsWith(MytrosRegionManager.SECTION_PREFIX)) return;
+
+    if (event.name === "tokenEnter" || event.name === "tokenExit") {
+        // Find our active dashboard app and force a re-render
+        for (const app of Object.values(ui.windows)) {
+            if (app.id === "mytros-battle-dashboard") {
+                app.render({ force: true });
+            }
+        }
+    }
+});

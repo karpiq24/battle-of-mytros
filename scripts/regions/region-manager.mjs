@@ -13,6 +13,13 @@ export class MytrosRegionManager {
         return canvas.scene.regions.filter(r => r.name.startsWith(this.SECTION_PREFIX));
     }
 
+    static getLegionsInSection(region) {
+        if (!region.tokens) return [];
+        return Array.from(region.tokens).filter(token => {
+            return token.actor && MytrosActorData.isLegion(token.actor);
+        });
+    }
+
     // Initialize module flags on a region if they don't exist
     static async initSectionFlags(region) {
         if (region.getFlag(this.MODULE_ID, "initialized")) return;
