@@ -24,7 +24,19 @@
                 <button type="button" data-action="selectManeuverBenefit" data-benefit="disrupted">Disrupted Formation (-1 enemy Charge/Clash)</button>
             {{/if}}
             {{#if (eq state.phase 'charge')}}
-                <button type="button">Roll Phase 2: Charge (Coming Soon)</button>
+                <button type="button" data-action="runCharge">Roll Phase 2: Charge</button>
+            {{/if}}
+            {{#if (eq state.phase 'clash')}}
+                <button type="button" data-action="runClash">Roll Phase 3: Clash</button>
+            {{/if}}
+            {{#if (eq state.phase 'aftermath')}}
+                <h3>Battle Resolved!</h3>
+                <p>Winner: {{state.overallWinner}}</p>
+                <button type="button">Proceed to Aftermath (Coming soon)</button>
+            {{/if}}
+            {{#if (eq state.phase 'tiebreaker')}}
+                <h3>Tiebreaker: Sudden Death Vitality Roll Needed</h3>
+                <button type="button">Roll Tiebreaker (Coming soon)</button>
             {{/if}}
         </div>
     </main>
