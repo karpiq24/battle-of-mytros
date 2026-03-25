@@ -2,6 +2,16 @@ import { BattleResolverApp } from "./resolver.mjs";
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
+    static MAJOR_EVENTS = [
+        { id: "icarus",    name: "Icarus Subdued or Calmed",          reward: 2, description: "A dragon fights to protect the city rather than destroy it.", specialEffect: null },
+        { id: "acastus",   name: "Acastus Redeemed",                  reward: 2, description: "Acastus hands over the Rod of Rulership. His captains stand down.", specialEffect: null },
+        { id: "colossus",  name: "The Colossus Awakened",             reward: 2, description: "The great guardian rises. Manually fortify the section it occupies.", specialEffect: null },
+        { id: "hergeron",  name: "Hergeron Driven from the Temple",   reward: 2, description: "Son of Sydon repelled from the Temple of the Five.", specialEffect: null },
+        { id: "sydon",     name: "Sydon Defeated",                    reward: 2, description: "The Lord of Storms falls. Objective deaths halved for remaining rounds.", specialEffect: "sydon_defeated" },
+        { id: "lutheria",  name: "Lutheria Defeated",                 reward: 2, description: "Titan of Death gone. Subtracts 800 from the running Death Toll.", specialEffect: "lutheria_defeated" },
+        { id: "kentimane", name: "Kentimane Defeated",                reward: 2, description: "The Hundred-Handed One falls. Death Toll stops. The battle is over.", specialEffect: "kentimane_defeated" }
+    ];
+
     static DEFAULT_OPTIONS = {
         id: "mytros-battle-dashboard",
         title: "Battle of Mytros Dashboard",
@@ -20,11 +30,194 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
             exportCSV: BattleDashboard.exportCSV,
             openResolver: BattleDashboard.openResolver,
             assignCommander: BattleDashboard.assignCommander,
-            setDeploymentMode: BattleDashboard.setDeploymentMode
+            setDeploymentMode: BattleDashboard.setDeploymentMode,
+            advanceRound: BattleDashboard.advanceRound,
+            rollRecon: BattleDashboard.rollRecon,
+            spendMiracle: BattleDashboard.spendMiracle,
+            triggerMajorEvent: BattleDashboard.triggerMajorEvent
         }
     };
 
     tab = "overview";
+
+    static async rollRecon(_event, _target) {
+        if (!game.user.isGM) return;
+
+        const alliedLegions = game.actors.filter(a =>
+            globalThis.MytrosActorData.isLegion(a) &&
+            a.getFlag("battle-of-mytros", "faction") === "allied" &&
+            !a.getFlag("battle-of-mytros", "isDestroyed")
+        );
+
+        const highestWit = alliedLegions.reduce((max, l) => {
+            const wit = l.getFlag("battle-of-mytros", "stats")?.wit ?? 0;
+            return Math.max(max, wit);
+        }, 0);
+
+        const roll = await new Roll("1d20").evaluate();
+        const total = roll.total + highestWit;
+
+        let intel, bonus;
+        if (total <= 10) {
+            intel = "No enemy movements revealed.";
+            bonus = 0;
+        } else if (total <= 14) {
+            intel = "Learn the destination of 2 enemy legions.";
+            bonus = 0;
+        } else if (total <= 18) {
+            intel = "Learn the destinations of up to half the enemy legions (rounded up).";
+            bonus = 0;
+        } else if (total <= 22) {
+            intel = "Learn all enemy legion destinations.";
+            bonus = 0;
+        } else {
+            intel = "Learn all enemy destinations. +1 to all allied Maneuver rolls this round!";
+            bonus = 1;
+        }
+
+        const resultText = `1d20 (${roll.total}) + Wit ${highestWit} = ${total} — ${intel}`;
+        await game.settings.set("battle-of-mytros", "reconResult", resultText);
+        await game.settings.set("battle-of-mytros", "reconBonus", bonus);
+        ui.notifications.info(`Recon: ${total} — ${intel}`);
+        this.render();
+    }
+
+    static async spendMiracle(_event, target) {
+        if (!game.user.isGM) return;
+        const faction = target.dataset.faction;
+        const cost = Number(target.dataset.cost);
+        const settingKey = faction === "allied" ? "alliedMiracles" : "sydonMiracles";
+        const current = game.settings.get("battle-of-mytros", settingKey);
+        if (current < cost) {
+            ui.notifications.warn(`Not enough ${faction} Miracle Points!`);
+            return;
+        }
+        await game.settings.set("battle-of-mytros", settingKey, current - cost);
+        this.render();
+    }
+
+    static async triggerMajorEvent(_event, target) {
+        if (!game.user.isGM) return;
+        const eventId = target.dataset.eventId;
+        const event = BattleDashboard.MAJOR_EVENTS.find(e => e.id === eventId);
+        if (!event) return;
+
+        const completed = JSON.parse(game.settings.get("battle-of-mytros", "completedEvents") || "[]");
+        if (completed.includes(eventId)) return;
+        completed.push(eventId);
+        await game.settings.set("battle-of-mytros", "completedEvents", JSON.stringify(completed));
+
+        const current = game.settings.get("battle-of-mytros", "alliedMiracles");
+        await game.settings.set("battle-of-mytros", "alliedMiracles", current + event.reward);
+
+        if (event.specialEffect === "sydon_defeated") {
+            await game.settings.set("battle-of-mytros", "sydonObjectiveHalved", true);
+        } else if (event.specialEffect === "lutheria_defeated") {
+            const toll = game.settings.get("battle-of-mytros", "deathToll");
+            await game.settings.set("battle-of-mytros", "deathToll", Math.max(0, toll - 800));
+        } else if (event.specialEffect === "kentimane_defeated") {
+            await game.settings.set("battle-of-mytros", "deathTollFrozen", true);
+        }
+
+        ui.notifications.info(`Major Event: ${event.name}! Allied Miracles +${event.reward}.`);
+        this.render();
+    }
+
+    static async advanceRound(_event, _target) {
+        if (!game.user.isGM) return;
+        const battleSceneId = game.settings.get("battle-of-mytros", "battleSceneId");
+        if (canvas.scene?.id !== battleSceneId) return;
+
+        const deathTollFrozen = game.settings.get("battle-of-mytros", "deathTollFrozen");
+        const sydonObjectiveHalved = game.settings.get("battle-of-mytros", "sydonObjectiveHalved");
+
+        const allLegions = game.actors.filter(a => globalThis.MytrosActorData.isLegion(a));
+        let totalDeaths = 0;
+
+        // Passive recovery for unengaged legions; death toll for unengaged Sydon legions
+        for (const legion of allLegions) {
+            const fought = legion.getFlag("battle-of-mytros", "foughtThisRound");
+            const faction = legion.getFlag("battle-of-mytros", "faction");
+            const stats = { ...legion.getFlag("battle-of-mytros", "stats") };
+            if (!stats) continue;
+
+            // Skip destroyed legions entirely
+            if (legion.getFlag("battle-of-mytros", "isDestroyed")) {
+                await legion.setFlag("battle-of-mytros", "foughtThisRound", false);
+                continue;
+            }
+
+            if (!fought) {
+                const wasRouted = (stats.morale ?? 0) <= 0;
+                stats.morale = Math.min(10, (stats.morale ?? 0) + 1);
+                stats.injuries = Math.max(0, (stats.injuries || 0) - 1);
+                await legion.setFlag("battle-of-mytros", "stats", stats);
+
+                // Clear rout flag if morale recovered above 0
+                if (wasRouted && stats.morale > 0) {
+                    await legion.setFlag("battle-of-mytros", "isRouted", false);
+                }
+
+                if (faction === "sydon" && !deathTollFrozen) {
+                    const r = await new Roll("1d6").evaluate();
+                    totalDeaths += r.total * 50;
+                }
+            }
+
+            await legion.setFlag("battle-of-mytros", "foughtThisRound", false);
+
+            // Clear tactical insight bonus — it was valid for this round only
+            if (legion.getFlag("battle-of-mytros", "tacInsightBonus")) {
+                await legion.setFlag("battle-of-mytros", "tacInsightBonus", null);
+            }
+        }
+
+        // Objective destruction tracking and per-round death toll
+        const sections = globalThis.MytrosRegionManager.getActiveSections();
+        for (const section of sections) {
+            const hasObjective = section.getFlag("battle-of-mytros", "hasObjective");
+            const objectiveDestroyed = section.getFlag("battle-of-mytros", "objectiveDestroyed");
+            const control = section.getFlag("battle-of-mytros", "control");
+
+            if (hasObjective && !objectiveDestroyed) {
+                if (control === "sydon") {
+                    if (section.getFlag("battle-of-mytros", "sydonHeldLastRound")) {
+                        await section.setFlag("battle-of-mytros", "objectiveDestroyed", true);
+                        ui.notifications.warn(`Objective in ${section.name} has been DESTROYED!`);
+                    } else {
+                        await section.setFlag("battle-of-mytros", "sydonHeldLastRound", true);
+                    }
+                } else {
+                    await section.setFlag("battle-of-mytros", "sydonHeldLastRound", false);
+                }
+            }
+
+            if (!deathTollFrozen && objectiveDestroyed || (hasObjective && !objectiveDestroyed && control === "sydon" && section.getFlag("battle-of-mytros", "sydonHeldLastRound"))) {
+                if (section.getFlag("battle-of-mytros", "objectiveDestroyed")) {
+                    const r = await new Roll("1d4").evaluate();
+                    const deaths = r.total * 10;
+                    totalDeaths += sydonObjectiveHalved ? Math.floor(deaths / 2) : deaths;
+                }
+            }
+        }
+
+        // Commit death toll and advance round
+        if (totalDeaths > 0) {
+            const current = game.settings.get("battle-of-mytros", "deathToll");
+            await game.settings.set("battle-of-mytros", "deathToll", current + totalDeaths);
+        }
+
+        const round = game.settings.get("battle-of-mytros", "currentRound");
+        await game.settings.set("battle-of-mytros", "currentRound", round + 1);
+        await game.settings.set("battle-of-mytros", "currentPhase", 1);
+
+        // Clear recon state for the new round
+        await game.settings.set("battle-of-mytros", "reconResult", "");
+        await game.settings.set("battle-of-mytros", "reconBonus", 0);
+
+        ui.notifications.info(`Round ${round + 1} begins. ${totalDeaths} civilian deaths this past round.`);
+        this.render();
+    }
 
     static async setDeploymentMode(event, target) {
         const tokenId = target.dataset.tokenId;
@@ -126,6 +319,16 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
             name: a.name
         }));
 
+        context.reconResult = game.settings.get("battle-of-mytros", "reconResult");
+        context.reconBonus = game.settings.get("battle-of-mytros", "reconBonus");
+        context.deathTollFrozen = game.settings.get("battle-of-mytros", "deathTollFrozen");
+
+        const completedEventIds = JSON.parse(game.settings.get("battle-of-mytros", "completedEvents") || "[]");
+        context.majorEvents = BattleDashboard.MAJOR_EVENTS.map(e => ({
+            ...e,
+            completed: completedEventIds.includes(e.id)
+        }));
+
         // Grab regions if we are on the battle scene
         const battleSceneId = game.settings.get("battle-of-mytros", "battleSceneId");
         context.isBattleScene = canvas.scene?.id === battleSceneId;
@@ -134,14 +337,23 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
             const sections = globalThis.MytrosRegionManager.getActiveSections();
             context.sections = sections.map(r => {
                 const legions = globalThis.MytrosRegionManager.getLegionsInSection(r);
-                const mappedLegions = legions.map(t => ({
-                    id: t.actor.id,
-                    name: t.name,
-                    faction: t.actor.getFlag("battle-of-mytros", "faction"),
-                    commanderId: t.actor.getFlag("battle-of-mytros", "commanderId"),
-                    commanderName: t.actor.getFlag("battle-of-mytros", "commanderId") ? 
-                        game.actors.get(t.actor.getFlag("battle-of-mytros", "commanderId"))?.name : "None"
-                }));
+                const mappedLegions = legions.map(t => {
+                    const stats = t.actor.getFlag("battle-of-mytros", "stats") || {};
+                    return {
+                        id: t.actor.id,
+                        name: t.name,
+                        faction: t.actor.getFlag("battle-of-mytros", "faction"),
+                        commanderId: t.actor.getFlag("battle-of-mytros", "commanderId"),
+                        commanderName: t.actor.getFlag("battle-of-mytros", "commanderId") ?
+                            game.actors.get(t.actor.getFlag("battle-of-mytros", "commanderId"))?.name : "None",
+                        injuries: stats.injuries ?? 0,
+                        morale: stats.morale ?? "?",
+                        vitality: stats.vitality ?? "?",
+                        wit: stats.wit ?? "?",
+                        isRouted: t.actor.getFlag("battle-of-mytros", "isRouted") ?? false,
+                        isDestroyed: t.actor.getFlag("battle-of-mytros", "isDestroyed") ?? false
+                    };
+                });
 
                 const supportTokens = globalThis.MytrosRegionManager.getSupportUnitsInSection(r);
                 const supportUnits = supportTokens.map(t => ({
@@ -161,6 +373,7 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
                     control: r.getFlag("battle-of-mytros", "control"),
                     fortified: r.getFlag("battle-of-mytros", "fortified"),
                     hasObjective: r.getFlag("battle-of-mytros", "hasObjective"),
+                    objectiveDestroyed: r.getFlag("battle-of-mytros", "objectiveDestroyed"),
                     legions: mappedLegions,
                     supportUnits: supportUnits,
                     pendingBattle: pendingBattle

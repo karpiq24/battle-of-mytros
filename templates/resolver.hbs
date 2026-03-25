@@ -7,37 +7,96 @@
     </header>
 
     <main>
-        <div class="battle-log" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; height: 150px; overflow-y: auto;">
+        <div class="battle-log" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; height: 200px; overflow-y: auto;">
             <ul style="list-style: none; padding: 0; margin: 0;">
                 {{#each state.log}}<li>{{this}}</li>{{/each}}
             </ul>
         </div>
 
         <div class="controls" style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+
+            {{!-- Battle Phases --}}
+
             {{#if (eq state.phase 'setup')}}
-                <button type="button" data-action="runManeuver">Roll Phase 1: Maneuver</button>
+                <button type="button" data-action="runManeuver">Roll Phase 1: Maneuver (Wit)</button>
             {{/if}}
+
             {{#if (eq state.phase 'maneuver_choice')}}
-                <h3>{{state.maneuverWinner}} won Maneuver! Choose a benefit:</h3>
+                <h3>{{state.maneuverWinner}} won Maneuver — choose a benefit:</h3>
                 <button type="button" data-action="selectManeuverBenefit" data-benefit="flanking">Flanking (+1d4 to Charge)</button>
                 <button type="button" data-action="selectManeuverBenefit" data-benefit="defensive">Defensive Footing (+1d2 to Clash)</button>
-                <button type="button" data-action="selectManeuverBenefit" data-benefit="disrupted">Disrupted Formation (-1 enemy Charge/Clash)</button>
+                <button type="button" data-action="selectManeuverBenefit" data-benefit="disrupted">Disrupted Formation (−1 enemy Charge & Clash)</button>
+                <button type="button" data-action="selectManeuverBenefit" data-benefit="seized_initiative">Seized Initiative (+1d2 injuries to enemy if you win)</button>
             {{/if}}
+
             {{#if (eq state.phase 'charge')}}
-                <button type="button" data-action="runCharge">Roll Phase 2: Charge</button>
+                <button type="button" data-action="runCharge">Roll Phase 2: Charge (Morale)</button>
             {{/if}}
+
             {{#if (eq state.phase 'clash')}}
-                <button type="button" data-action="runClash">Roll Phase 3: Clash</button>
+                <button type="button" data-action="runClash">Roll Phase 3: Clash (Vitality)</button>
             {{/if}}
-            {{#if (eq state.phase 'aftermath')}}
-                <h3>Battle Resolved!</h3>
-                <p>Winner: {{state.overallWinner}}</p>
-                <button type="button">Proceed to Aftermath (Coming soon)</button>
-            {{/if}}
+
             {{#if (eq state.phase 'tiebreaker')}}
-                <h3>Tiebreaker: Sudden Death Vitality Roll Needed</h3>
-                <button type="button">Roll Tiebreaker (Coming soon)</button>
+                <h3>Tiebreaker — Sudden Death Vitality</h3>
+                <p style="font-size:0.9em; color:#666;">Keep rolling until one side wins.</p>
+                <button type="button" data-action="runTiebreaker">Roll Tiebreaker</button>
             {{/if}}
+
+            {{!-- Aftermath Phases --}}
+
+            {{#if (eq state.phase 'aftermath_recovery')}}
+                <h3>Aftermath 1/4 — Recovery (Vitality)</h3>
+                <p style="font-size:0.9em;">Winner: <strong>{{state.overallWinner}}</strong> | DC = 12 + current injuries</p>
+                <p style="font-size:0.9em; color:#666;">Winner: success=no injury, fail=1 injury. Loser: success=1 injury, fail=2 injuries. Nat 1 always fails.</p>
+                <button type="button" data-action="runRecovery">Roll Recovery Checks</button>
+            {{/if}}
+
+            {{#if (eq state.phase 'aftermath_hope')}}
+                <h3>Aftermath 2/4 — Hope (Morale)</h3>
+                <p style="font-size:0.9em; color:#666;">DC 12. Winner: success=+2, fail=+1 Morale. Loser: success=−1, fail=−2 Morale. Cap 10.</p>
+                <button type="button" data-action="runHope">Roll Hope Checks</button>
+            {{/if}}
+
+            {{#if (eq state.phase 'aftermath_salvage')}}
+                <h3>Aftermath 3/4 — Salvage (Wit)</h3>
+                <p style="font-size:0.9em; color:#666;">DC 12. Success: 1 benefit. Nat 20: 2 benefits.</p>
+                <button type="button" data-action="runSalvage">Roll Salvage Checks</button>
+            {{/if}}
+
+            {{#if (eq state.phase 'aftermath_salvage_allied_choice')}}
+                <h3>Allied Salvage — Choose Benefit ({{state.salvageBenefits.allied.length}}/{{state.salvageResult.allied.benefitCount}})</h3>
+                <button type="button" data-action="selectSalvageBenefit" data-benefit="captured_supplies">Captured Supplies — remove 1 injury from Allied</button>
+                <button type="button" data-action="selectSalvageBenefit" data-benefit="tactical_insight">Tactical Insight — +1d2 to Allied Wit rolls next round</button>
+                <button type="button" data-action="selectSalvageBenefit" data-benefit="enemy_shaken">Enemy Shaken — Sydon loses 1 Morale</button>
+                <button type="button" data-action="selectSalvageBenefit" data-benefit="quick_fortify">Quick Fortify — fortify this section immediately</button>
+            {{/if}}
+
+            {{#if (eq state.phase 'aftermath_salvage_sydon_choice')}}
+                <h3>Sydon Salvage — Choose Benefit ({{state.salvageBenefits.sydon.length}}/{{state.salvageResult.sydon.benefitCount}})</h3>
+                <button type="button" data-action="selectSalvageBenefit" data-benefit="captured_supplies">Captured Supplies — remove 1 injury from Sydon</button>
+                <button type="button" data-action="selectSalvageBenefit" data-benefit="tactical_insight">Tactical Insight — +1d2 to Sydon Wit rolls next round</button>
+                <button type="button" data-action="selectSalvageBenefit" data-benefit="enemy_shaken">Enemy Shaken — Allied loses 1 Morale</button>
+                <button type="button" data-action="selectSalvageBenefit" data-benefit="quick_fortify">Quick Fortify — fortify this section immediately</button>
+            {{/if}}
+
+            {{#if (eq state.phase 'aftermath_commander')}}
+                <h3>Aftermath 4/4 — Commander Casualty</h3>
+                <p style="font-size:0.9em; color:#666;">Won=6%, Lost=12%, Lost by 3+=20%. Subtract Morale for final target. Min 1%.</p>
+                <button type="button" data-action="runCommanderCasualty">Roll Commander Casualty Checks</button>
+            {{/if}}
+
+            {{#if (eq state.phase 'done')}}
+                <h3>Commit Results</h3>
+                <p style="font-size:0.9em; color:#666;">All rolls complete. Write injuries, morale, and commander changes to the actor sheets.</p>
+                <button type="button" data-action="commitAftermath">Commit Changes to Actors</button>
+            {{/if}}
+
+            {{#if (eq state.phase 'complete')}}
+                <h3>Battle Complete</h3>
+                <p>All changes have been saved. Close this window when ready.</p>
+            {{/if}}
+
         </div>
     </main>
 </div>

@@ -30,7 +30,6 @@
       "path": "lang/pl.json"
     }
   ],
-  "socket": true,
   "url": "https://github.com/karpiq24/battle-of-mytros",
   "manifest": "https://raw.githubusercontent.com/karpiq24/battle-of-mytros/main/module.json",
   "download": "https://github.com/karpiq24/battle-of-mytros/archive/refs/heads/main.zip"

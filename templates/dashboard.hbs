@@ -1,6 +1,7 @@
 <div class="mytros-dashboard">
     <nav class="tabs">
         <a class="item {{#if (eq tab 'overview')}}active{{/if}}" data-action="changeTab" data-tab="overview">Overview</a>
+        <a class="item {{#if (eq tab 'miracles')}}active{{/if}}" data-action="changeTab" data-tab="miracles">Miracles</a>
         {{#if isGM}}
         <a class="item {{#if (eq tab 'setup')}}active{{/if}}" data-action="changeTab" data-tab="setup">Setup</a>
         {{/if}}
@@ -12,6 +13,24 @@
 
     <main class="dashboard-body">
         {{#if (eq tab 'overview')}}
+            {{#if isBattleScene}}
+            {{#if @root.isGM}}
+            <div class="recon-panel">
+                <div class="recon-header">
+                    <strong><i class="fas fa-eye"></i> Phase 1: Reconnaissance</strong>
+                    <button type="button" class="recon-btn" data-action="rollRecon">Roll Recon (1d20 + highest allied Wit)</button>
+                </div>
+                {{#if reconResult}}
+                <div class="recon-result {{#if reconBonus}}recon-bonus{{/if}}">
+                    {{#if reconBonus}}<i class="fas fa-star"></i> {{/if}}{{reconResult}}
+                </div>
+                {{/if}}
+                {{#if deathTollFrozen}}
+                <div class="recon-result recon-frozen"><i class="fas fa-lock"></i> Death Toll is frozen — Kentimane has been defeated.</div>
+                {{/if}}
+            </div>
+            {{/if}}
+            {{/if}}
             {{#if isBattleScene}}
                 <div class="sections-list">
                     {{#each sections}}
@@ -35,6 +54,7 @@
                                 <div class="section-badges">
                                     {{#if this.fortified}}<span class="badge fortified" title="Fortified"><i class="fas fa-shield-alt"></i></span>{{/if}}
                                     {{#if this.hasObjective}}<span class="badge objective" title="Strategic Objective"><i class="fas fa-star"></i></span>{{/if}}
+                                    {{#if this.objectiveDestroyed}}<span class="badge destroyed" title="Objective Destroyed"><i class="fas fa-fire"></i></span>{{/if}}
                                 </div>
                                 {{/if}}
                             </div>
@@ -42,8 +62,13 @@
                                 {{#if this.legions.length}}
                                     <ul>
                                     {{#each this.legions}}
-                                        <li class="legion-item faction-{{this.faction}}">
-                                            <span class="legion-name">{{this.name}}</span>
+                                        <li class="legion-item faction-{{this.faction}}{{#if this.isRouted}} is-routed{{/if}}{{#if this.isDestroyed}} is-destroyed{{/if}}">
+                                            <div class="legion-header">
+                                                <span class="legion-name">{{this.name}}</span>
+                                                <span class="legion-stats">Inj {{this.injuries}} · Mor {{this.morale}}</span>
+                                                {{#if this.isRouted}}<span class="badge routed" title="Routed"><i class="fas fa-flag"></i></span>{{/if}}
+                                                {{#if this.isDestroyed}}<span class="badge destroyed" title="Destroyed"><i class="fas fa-skull"></i></span>{{/if}}
+                                            </div>
                                             {{#if @root.isGM}}
                                                 <select data-action="assignCommander" data-legion-id="{{this.id}}">
                                                     <option value="">-- No Commander --</option>
@@ -98,6 +123,57 @@
             {{/if}}
         {{/if}}
 
+        {{#if (eq tab 'miracles')}}
+            <div class="miracles-panel">
+                <div class="miracle-pools">
+                    <div class="miracle-pool pool-allied">
+                        <h3><i class="fas fa-sun"></i> Allied Miracles</h3>
+                        <div class="pool-count">{{alliedMiracles}}</div>
+                        {{#if isGM}}
+                        <div class="miracle-spend-group">
+                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-cost="1">−1 Roll Bonus (1pt)</button>
+                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-cost="2">−2 Divine Advantage (2pt)</button>
+                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-cost="2">−2 PC Short Rest (2pt)</button>
+                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-cost="4">−4 PC Long Rest (4pt)</button>
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="miracle-pool pool-sydon">
+                        <h3><i class="fas fa-bolt"></i> Sydon Miracles</h3>
+                        <div class="pool-count">{{sydonMiracles}}</div>
+                        {{#if isGM}}
+                        <div class="miracle-spend-group">
+                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="sydon" data-cost="1">−1 Roll Bonus (1pt)</button>
+                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="sydon" data-cost="2">−2 Divine Advantage (2pt)</button>
+                        </div>
+                        {{/if}}
+                    </div>
+                </div>
+
+                {{#if isGM}}
+                <hr>
+                <h3><i class="fas fa-star"></i> Major Events</h3>
+                <div class="major-events-list">
+                    {{#each majorEvents}}
+                    <div class="event-item {{#if this.completed}}event-completed{{/if}}">
+                        <div class="event-info">
+                            <strong>{{this.name}}</strong>
+                            <span class="event-desc">{{this.description}}</span>
+                        </div>
+                        {{#if this.completed}}
+                        <span class="event-done"><i class="fas fa-check-circle"></i> Resolved (+{{this.reward}} Miracles)</span>
+                        {{else}}
+                        <button type="button" class="event-trigger-btn" data-action="triggerMajorEvent" data-event-id="{{this.id}}">
+                            <i class="fas fa-bolt"></i> Resolve (+{{this.reward}} Allied Miracles)
+                        </button>
+                        {{/if}}
+                    </div>
+                    {{/each}}
+                </div>
+                {{/if}}
+            </div>
+        {{/if}}
+
         {{#if (eq tab 'setup')}}
             <div class="setup-form">
                 <div class="form-group">
@@ -119,6 +195,11 @@
                 <div class="form-group">
                     <label>Civilian Death Toll</label>
                     <input type="number" data-action="updateSetting" data-setting="deathToll" value="{{deathToll}}">
+                </div>
+
+                <hr>
+                <div class="form-group">
+                    <button type="button" class="advance-round-btn" data-action="advanceRound"><i class="fas fa-forward"></i> Advance to Round {{round}} + 1</button>
                 </div>
 
                 <hr>

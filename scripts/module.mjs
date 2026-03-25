@@ -18,6 +18,10 @@ Hooks.once('init', async function() {
         return a === b;
     });
 
+    Handlebars.registerHelper('ne', function (a, b) {
+        return a !== b;
+    });
+
     game.settings.register("battle-of-mytros", "battleSceneId", {
         name: "Battlemap Scene ID",
         hint: "The ID of the scene acting as the main Battle of Mytros map. Region tracking only runs here.",
@@ -68,6 +72,46 @@ Hooks.once('init', async function() {
         config: false,
         type: Number,
         default: 10
+    });
+
+    game.settings.register("battle-of-mytros", "reconResult", {
+        name: "Reconnaissance Result",
+        scope: "world",
+        config: false,
+        type: String,
+        default: ""
+    });
+
+    game.settings.register("battle-of-mytros", "reconBonus", {
+        name: "Reconnaissance Maneuver Bonus",
+        scope: "world",
+        config: false,
+        type: Number,
+        default: 0
+    });
+
+    game.settings.register("battle-of-mytros", "completedEvents", {
+        name: "Completed Major Events",
+        scope: "world",
+        config: false,
+        type: String,
+        default: "[]"
+    });
+
+    game.settings.register("battle-of-mytros", "deathTollFrozen", {
+        name: "Death Toll Frozen",
+        scope: "world",
+        config: false,
+        type: Boolean,
+        default: false
+    });
+
+    game.settings.register("battle-of-mytros", "sydonObjectiveHalved", {
+        name: "Sydon Objective Deaths Halved",
+        scope: "world",
+        config: false,
+        type: Boolean,
+        default: false
     });
 });
 

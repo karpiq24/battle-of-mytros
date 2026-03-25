@@ -9,7 +9,13 @@ export class TagEngine {
      */
     static getRollModifiers(legion, enemyLegion, phase, context = {}) {
         let mods = { advantage: false, disadvantage: false, flatBonus: 0 };
-        
+
+        // Tactical Insight: +1d2 (pre-rolled) to Wit rolls for one round
+        if (phase === "maneuver" || phase === "salvage") {
+            const tacBonus = legion.getFlag("battle-of-mytros", "tacInsightBonus");
+            if (tacBonus) mods.flatBonus += tacBonus;
+        }
+
         // Fetch Commander Items
         const commanderId = legion.getFlag("battle-of-mytros", "commanderId");
         const commander = commanderId ? game.actors.get(commanderId) : null;
@@ -50,6 +56,46 @@ export class TagEngine {
         if (phase === "charge" && context.maneuverBenefit === "flanking") mods.flatBonus += 2; // +1d4 averages to +2
         if (phase === "clash" && context.maneuverBenefit === "defensive") mods.flatBonus += 1; // +1d2 averages to +1
         if (context.enemyManeuverBenefit === "disrupted" && (phase === "charge" || phase === "clash")) mods.flatBonus -= 1;
+
+        return mods;
+    }
+
+    /**
+     * Calculates modifiers for an aftermath check.
+     * @param {Actor} legion The legion actor rolling.
+     * @param {Actor} enemyLegion The opposing legion actor.
+     * @param {string} phase "recovery", "hope", or "salvage"
+     * @param {object} context { isWinner: boolean }
+     * @returns {object} { advantage: boolean, disadvantage: boolean, flatBonus: number }
+     */
+    static getAftermathModifiers(legion, enemyLegion, phase, context = {}) {
+        let mods = { advantage: false, disadvantage: false, flatBonus: 0 };
+
+        const commanderId = legion.getFlag("battle-of-mytros", "commanderId");
+        const commander = commanderId ? game.actors.get(commanderId) : null;
+        const tags = commander ? commander.items.map(i => i.name.toLowerCase()) : [];
+
+        const enemyCommanderId = enemyLegion.getFlag("battle-of-mytros", "commanderId");
+        const enemyCommander = enemyCommanderId ? game.actors.get(enemyCommanderId) : null;
+        const enemyTags = enemyCommander ? enemyCommander.items.map(i => i.name.toLowerCase()) : [];
+
+        if (phase === "recovery") {
+            if (tags.includes("medic")) mods.advantage = true;
+            if (tags.includes("fanatic")) mods.disadvantage = true;
+            if (tags.includes("ironclad")) mods.flatBonus += 2;
+            // Brutal: only the winner's tag causes the loser's disadvantage
+            if (!context.isWinner && enemyTags.includes("brutal")) mods.disadvantage = true;
+        }
+
+        if (phase === "hope") {
+            if (tags.includes("rallier")) mods.flatBonus += 2;
+            if (tags.includes("inspiring")) mods.flatBonus += 2;
+            if (enemyTags.includes("terrorizer")) mods.disadvantage = true;
+        }
+
+        if (phase === "salvage") {
+            if (tags.includes("cunning")) mods.flatBonus += 2;
+        }
 
         return mods;
     }
