@@ -7,6 +7,10 @@ globalThis.MytrosActorData = MytrosActorData; // expose for macros/testing
 Hooks.once('init', async function() {
     console.log("Battle of Mytros | Initializing module");
 
+    Handlebars.registerHelper('eq', function (a, b) {
+        return a === b;
+    });
+
     game.settings.register("battle-of-mytros", "battleSceneId", {
         name: "Battlemap Scene ID",
         hint: "The ID of the scene acting as the main Battle of Mytros map. Region tracking only runs here.",

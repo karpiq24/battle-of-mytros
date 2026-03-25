@@ -12,8 +12,27 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
         position: {
             width: 800,
             height: 600
+        },
+        actions: {
+            changeTab: BattleDashboard.changeTab,
+            updateSetting: BattleDashboard.updateSetting
         }
     };
+
+    tab = "overview";
+
+    static changeTab(event, target) {
+        this.tab = target.dataset.tab;
+        this.render();
+    }
+
+    static async updateSetting(event, target) {
+        const settingName = target.dataset.setting;
+        const isNumeric = target.type === "number";
+        let value = isNumeric ? Number(target.value) : target.value;
+        await game.settings.set("battle-of-mytros", settingName, value);
+        this.render();
+    }
 
     static PARTS = {
         form: {
@@ -27,6 +46,11 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
         context.round = game.settings.get("battle-of-mytros", "currentRound");
         context.phase = game.settings.get("battle-of-mytros", "currentPhase");
         
+        context.tab = this.tab;
+        context.deathToll = game.settings.get("battle-of-mytros", "deathToll");
+        context.alliedMiracles = game.settings.get("battle-of-mytros", "alliedMiracles");
+        context.sydonMiracles = game.settings.get("battle-of-mytros", "sydonMiracles");
+
         // Grab regions if we are on the battle scene
         const battleSceneId = game.settings.get("battle-of-mytros", "battleSceneId");
         context.isBattleScene = canvas.scene?.id === battleSceneId;

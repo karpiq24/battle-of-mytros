@@ -1,35 +1,70 @@
 <div class="mytros-dashboard">
+    <nav class="tabs">
+        <a class="item {{#if (eq tab 'overview')}}active{{/if}}" data-action="changeTab" data-tab="overview">Overview</a>
+        {{#if isGM}}
+        <a class="item {{#if (eq tab 'setup')}}active{{/if}}" data-action="changeTab" data-tab="setup">Setup</a>
+        {{/if}}
+    </nav>
+
     <header class="dashboard-header">
         <h2>Round {{round}} - Phase {{phase}}</h2>
     </header>
+
     <main class="dashboard-body">
-        {{#if isBattleScene}}
-            <div class="sections-list">
-                {{#each sections}}
-                    <div class="section-card control-{{this.control}}">
-                        <div class="section-header">
-                            <h3>{{this.name}}</h3>
-                            <div class="section-badges">
-                                {{#if this.fortified}}<span class="badge fortified" title="Fortified"><i class="fas fa-shield-alt"></i></span>{{/if}}
-                                {{#if this.hasObjective}}<span class="badge objective" title="Strategic Objective"><i class="fas fa-star"></i></span>{{/if}}
+        {{#if (eq tab 'overview')}}
+            {{#if isBattleScene}}
+                <div class="sections-list">
+                    {{#each sections}}
+                        <div class="section-card control-{{this.control}}">
+                            <div class="section-header">
+                                <h3>{{this.name}}</h3>
+                                <div class="section-badges">
+                                    {{#if this.fortified}}<span class="badge fortified" title="Fortified"><i class="fas fa-shield-alt"></i></span>{{/if}}
+                                    {{#if this.hasObjective}}<span class="badge objective" title="Strategic Objective"><i class="fas fa-star"></i></span>{{/if}}
+                                </div>
+                            </div>
+                            <div class="section-legions">
+                                {{#if this.legions.length}}
+                                    <ul>
+                                    {{#each this.legions}}
+                                        <li class="legion-item faction-{{this.faction}}">{{this.name}}</li>
+                                    {{/each}}
+                                    </ul>
+                                {{else}}
+                                    <p class="empty-state">No legions present.</p>
+                                {{/if}}
                             </div>
                         </div>
-                        <div class="section-legions">
-                            {{#if this.legions.length}}
-                                <ul>
-                                {{#each this.legions}}
-                                    <li class="legion-item faction-{{this.faction}}">{{this.name}}</li>
-                                {{/each}}
-                                </ul>
-                            {{else}}
-                                <p class="empty-state">No legions present.</p>
-                            {{/if}}
-                        </div>
-                    </div>
-                {{/each}}
+                    {{/each}}
+                </div>
+            {{else}}
+                <p class="warning">Please navigate to the designated Battlemap Scene to view sections.</p>
+            {{/if}}
+        {{/if}}
+
+        {{#if (eq tab 'setup')}}
+            <div class="setup-form">
+                <div class="form-group">
+                    <label>Current Round</label>
+                    <input type="number" data-action="updateSetting" data-setting="currentRound" value="{{round}}">
+                </div>
+                <div class="form-group">
+                    <label>Current Phase (1-5)</label>
+                    <input type="number" data-action="updateSetting" data-setting="currentPhase" value="{{phase}}">
+                </div>
+                <div class="form-group">
+                    <label>Allied Miracles</label>
+                    <input type="number" data-action="updateSetting" data-setting="alliedMiracles" value="{{alliedMiracles}}">
+                </div>
+                <div class="form-group">
+                    <label>Sydon Miracles</label>
+                    <input type="number" data-action="updateSetting" data-setting="sydonMiracles" value="{{sydonMiracles}}">
+                </div>
+                <div class="form-group">
+                    <label>Civilian Death Toll</label>
+                    <input type="number" data-action="updateSetting" data-setting="deathToll" value="{{deathToll}}">
+                </div>
             </div>
-        {{else}}
-            <p class="warning">Please navigate to the designated Battlemap Scene to view sections.</p>
         {{/if}}
     </main>
 </div>
