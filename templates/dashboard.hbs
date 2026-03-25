@@ -18,10 +18,22 @@
                         <div class="section-card control-{{this.control}}">
                             <div class="section-header">
                                 <h3>{{this.name}}</h3>
+                                {{#if @root.isGM}}
+                                <div class="section-controls">
+                                    <select data-action="setSectionControl" data-region-id="{{this.id}}">
+                                        <option value="neutral" {{#if (eq this.control 'neutral')}}selected{{/if}}>Neutral</option>
+                                        <option value="allied" {{#if (eq this.control 'allied')}}selected{{/if}}>Allied</option>
+                                        <option value="sydon" {{#if (eq this.control 'sydon')}}selected{{/if}}>Sydon</option>
+                                    </select>
+                                    <button type="button" data-action="toggleSectionFlag" data-region-id="{{this.id}}" data-flag="fortified" class="{{#if this.fortified}}active{{/if}}"><i class="fas fa-shield-alt"></i></button>
+                                    <button type="button" data-action="toggleSectionFlag" data-region-id="{{this.id}}" data-flag="hasObjective" class="{{#if this.hasObjective}}active{{/if}}"><i class="fas fa-star"></i></button>
+                                </div>
+                                {{else}}
                                 <div class="section-badges">
                                     {{#if this.fortified}}<span class="badge fortified" title="Fortified"><i class="fas fa-shield-alt"></i></span>{{/if}}
                                     {{#if this.hasObjective}}<span class="badge objective" title="Strategic Objective"><i class="fas fa-star"></i></span>{{/if}}
                                 </div>
+                                {{/if}}
                             </div>
                             <div class="section-legions">
                                 {{#if this.legions.length}}
