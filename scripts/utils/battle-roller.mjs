@@ -6,9 +6,10 @@ export class BattleRoller {
      * @param {boolean} advantage 
      * @param {boolean} disadvantage 
      * @param {boolean} isVeteran If true, natural rolls of 1-4 are treated as 5
+     * @param {string[]} bonusDice Array of dice formulas (e.g. ["1d4", "1d6"])
      * @returns {object} { roll: Roll, total: number, isNat20: boolean, isNat1: boolean }
      */
-    static async executeRoll(stat, flatBonus = 0, advantage = false, disadvantage = false, isVeteran = false) {
+    static async executeRoll(stat, flatBonus = 0, advantage = false, disadvantage = false, isVeteran = false, bonusDice = []) {
         let formula = "1d20";
         if (advantage && !disadvantage) formula = "2d20kh";
         if (disadvantage && !advantage) formula = "2d20kl";
@@ -16,6 +17,10 @@ export class BattleRoller {
         formula += ` + ${stat}`;
         if (flatBonus !== 0) {
             formula += ` + ${flatBonus}`;
+        }
+
+        if (bonusDice.length) {
+            formula += ` + ${bonusDice.join(" + ")}`;
         }
 
         const roll = await new Roll(formula).evaluate();
