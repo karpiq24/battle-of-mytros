@@ -13,12 +13,18 @@
             </ul>
         </div>
 
-        <div class="controls">
+        <div class="controls" style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
             {{#if (eq state.phase 'setup')}}
                 <button type="button" data-action="runManeuver">Roll Phase 1: Maneuver</button>
             {{/if}}
             {{#if (eq state.phase 'maneuver_choice')}}
-                <p>Maneuver completed. Winner chooses benefit (Placeholder).</p>
+                <h3>{{state.maneuverWinner}} won Maneuver! Choose a benefit:</h3>
+                <button type="button" data-action="selectManeuverBenefit" data-benefit="flanking">Flanking (+1d4 to Charge)</button>
+                <button type="button" data-action="selectManeuverBenefit" data-benefit="defensive">Defensive Footing (+1d2 to Clash)</button>
+                <button type="button" data-action="selectManeuverBenefit" data-benefit="disrupted">Disrupted Formation (-1 enemy Charge/Clash)</button>
+            {{/if}}
+            {{#if (eq state.phase 'charge')}}
+                <button type="button">Roll Phase 2: Charge (Coming Soon)</button>
             {{/if}}
         </div>
     </main>
