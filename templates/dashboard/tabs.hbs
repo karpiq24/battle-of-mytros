@@ -1,8 +1,0 @@
-<nav class="bom-tabs" data-group="sheet">
-  {{#each tabDefs}}
-  <a class="item {{#if (eq this.id ../activeTab)}}active{{/if}}"
-     data-tab="{{this.id}}" data-group="sheet">
-    <i class="{{this.icon}}"></i> {{localize this.label}}
-  </a>
-  {{/each}}
-</nav>
