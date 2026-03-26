@@ -36,7 +36,7 @@ export class TagEngine {
         if (phase === "maneuver" && tags.includes("cunning")) mods.flatBonus += 2;
         if (phase === "clash" && tags.includes("warden")) mods.flatBonus += 2;
         if (phase === "clash" && context.adjacentWarden) mods.flatBonus += 2;
-        if (phase === "charge" && tags.includes("vanguard")) mods.advantage = true; // Assuming Vanguard moved 3 spaces for simplicity during combat phase
+        if (phase === "charge" && tags.includes("vanguard") && context.movedThree) mods.advantage = true;
 
         // --- Check Enemy Tags (Debuffs) ---
         if (phase === "clash" && enemyTags.includes("headhunter")) mods.disadvantage = true;
@@ -54,8 +54,8 @@ export class TagEngine {
         }
 
         // --- Maneuver Benefits ---
-        if (phase === "charge" && context.maneuverBenefit === "flanking") mods.flatBonus += 2; // +1d4 averages to +2
-        if (phase === "clash" && context.maneuverBenefit === "defensive") mods.flatBonus += 1; // +1d2 averages to +1
+        if (phase === "charge" && context.maneuverBenefit === "flanking") mods.flatBonus += 2; // Default to average if not specified as dice
+        if (phase === "clash" && context.maneuverBenefit === "defensive") mods.flatBonus += 1; 
         if (context.enemyManeuverBenefit === "disrupted" && (phase === "charge" || phase === "clash")) mods.flatBonus -= 1;
 
         return mods;
@@ -66,7 +66,7 @@ export class TagEngine {
      * @param {Actor} legion The legion actor rolling.
      * @param {Actor} enemyLegion The opposing legion actor.
      * @param {string} phase "recovery", "hope", or "salvage"
-     * @param {object} context { isWinner: boolean }
+     * @param {object} context { isWinner: boolean, adjacentWarden: boolean, adjacentRallier: boolean }
      * @returns {object} { advantage: boolean, disadvantage: boolean, flatBonus: number }
      */
     static getAftermathModifiers(legion, enemyLegion, phase, context = {}) {
@@ -84,6 +84,7 @@ export class TagEngine {
             if (tags.includes("medic")) mods.advantage = true;
             if (tags.includes("fanatic")) mods.disadvantage = true;
             if (tags.includes("ironclad")) mods.flatBonus += 2;
+            if (context.adjacentWarden) mods.flatBonus += 2;
             // Brutal: only the winner's tag causes the loser's disadvantage
             if (!context.isWinner && enemyTags.includes("brutal")) mods.disadvantage = true;
         }

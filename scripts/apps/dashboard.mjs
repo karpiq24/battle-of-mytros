@@ -36,10 +36,22 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
             spendMiracle: BattleDashboard.spendMiracle,
             triggerMajorEvent: BattleDashboard.triggerMajorEvent,
             disbandRoutedLegions: BattleDashboard.disbandRoutedLegions,
+            toggleLegionFlag: BattleDashboard.toggleLegionFlag,
             addAdjacencyPair: BattleDashboard.addAdjacencyPair,
             removeAdjacencyPair: BattleDashboard.removeAdjacencyPair
         }
     };
+
+    static async toggleLegionFlag(event, target) {
+        if (!game.user.isGM) return;
+        const legionId = target.dataset.legionId;
+        const flag = target.dataset.flag;
+        const actor = game.actors.get(legionId);
+        if (!actor) return;
+
+        const current = actor.getFlag("battle-of-mytros", flag);
+        await actor.setFlag("battle-of-mytros", flag, !current);
+    }
 
     tab = "overview";
 
@@ -239,6 +251,11 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
             if (legion.getFlag("battle-of-mytros", "tacInsightBonus")) {
                 await legion.setFlag("battle-of-mytros", "tacInsightBonus", null);
             }
+
+            // Clear movedThree flag
+            if (legion.getFlag("battle-of-mytros", "movedThree")) {
+                await legion.setFlag("battle-of-mytros", "movedThree", null);
+            }
         }
 
         // Objective destruction tracking and per-round death toll
@@ -420,7 +437,8 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
                         vitality: stats.vitality ?? "?",
                         wit: stats.wit ?? "?",
                         isRouted: t.actor.getFlag("battle-of-mytros", "isRouted") ?? false,
-                        isDestroyed: t.actor.getFlag("battle-of-mytros", "isDestroyed") ?? false
+                        isDestroyed: t.actor.getFlag("battle-of-mytros", "isDestroyed") ?? false,
+                        movedThree: t.actor.getFlag("battle-of-mytros", "movedThree") ?? false
                     };
                 });
 

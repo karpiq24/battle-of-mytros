@@ -20,9 +20,9 @@ export class MytrosActorData {
     static async initLegion(actor, faction = "allied") {
         await actor.setFlag(this.MODULE_ID, "isLegion", true);
         await actor.setFlag(this.MODULE_ID, "stats", {
-            vitality: 10,
-            morale: 10,
-            wit: 10,
+            vitality: 4,
+            morale: 4,
+            wit: 4,
             injuries: 0
         });
         await actor.setFlag(this.MODULE_ID, "faction", faction); // "allied" or "sydon"

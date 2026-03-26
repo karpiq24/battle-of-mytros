@@ -19,7 +19,6 @@ A complete GM-facing mass combat system for *Odyssey of the Dragonlords*, implem
 9. [Code Architecture](#9-code-architecture)
 10. [Data Model — Flags and Settings](#10-data-model--flags-and-settings)
 11. [Global Exports & Macros](#11-global-exports--macros)
-12. [Pending Features](#12-pending-features)
 
 ---
 
@@ -31,14 +30,17 @@ A complete GM-facing mass combat system for *Odyssey of the Dragonlords*, implem
 | **Reconnaissance** | 1d20 + highest allied Wit; intelligence result table; 23+ auto-wires +1 bonus to every allied Maneuver roll this round |
 | **Battle Resolver** | Step-by-step Maneuver → Charge → Clash → full Aftermath state machine per engagement |
 | **Tag Engine** | All 20 commander tags automatically applied to every relevant roll and aftermath check |
-| **PC Fast Response** | Six deployment modes per PC token (including Rest); Targeted Strike is phase-specific; bonuses detected from token flags and applied in the resolver |
-| **Aftermath** | Recovery, Hope, Salvage with interactive benefit selection; Commander Casualty d100 check |
+| **PC Fast Response** | Six deployment modes per PC token (Rest included); Targeted Strike is phase-specific (Maneuver/Charge/Clash); bonuses detected from token flags and applied in the resolver |
+| **Aftermath** | Recovery, Hope, Salvage with interactive benefit selection; Divine Blood re-roll phase; Commander Casualty d100 check |
+| **Section Adjacency** | GM-configured adjacency pairs: Warden grants +2 Clash and Rallier grants +2 Hope to allied legions in neighbouring sections |
 | **Stat Persistence** | Stats, rout/destruction, section control written to actor/region flags at Commit |
 | **Chat Cards** | Styled battle summary posted to public chat after every committed engagement |
 | **Round Advancement** | Passive recovery for idle legions, per-round death toll, objective destruction tracking, recon/insight cleared |
 | **Miracle UI** | Allied/Sydon pools with one-click spend buttons (Roll Bonus, Divine Advantage, Short/Long Rest) |
 | **Major Events** | 7 canon events (Icarus → Kentimane) — grant Miracles and apply mechanical effects, locked after use |
 | **CSV Import/Export** | Bulk legion and commander management via CSV files |
+| **Dark Mode** | CSS custom properties respect `prefers-color-scheme: dark` and Foundry v13 `body.theme-dark` |
+| **Localization** | Full English and Polish translations via `lang/en.json` and `lang/pl.json` |
 
 ---
 
@@ -93,6 +95,12 @@ In the Dashboard Overview tab, each legion card shows a commander dropdown. Sele
 ### 3.6 Place Tokens
 
 Drag legion actor tokens onto the battlemap. When a token enters or exits a `Section:` region, the Dashboard auto-refreshes. Fast Response tokens (any actor with `hasPlayerOwner === true`, or flagged as `isFastResponse`) appear under each section's Support panel and can be assigned deployment modes.
+
+### 3.7 Configure Section Adjacency
+
+In the Dashboard **Setup tab**, scroll to **Section Adjacency**. Use the two dropdowns to select a pair of neighbouring sections and click **Add Pair**. Pairs are bidirectional — adding A ↔ B also makes B adjacent to A. You must be on the battle scene for the dropdowns to populate.
+
+Adjacency is used by the Warden tag (+2 Clash to allied legions in neighbouring sections) and the Rallier tag (+2 Hope to allied legions in neighbouring sections).
 
 ---
 
@@ -152,7 +160,9 @@ The current phase is tracked as a number in the Setup tab. When Phase = 3, suppo
 |---|---|
 | **Reinforce** | +1d4 to all battle and aftermath rolls for the allied legion |
 | **Shock Assault** | +1d6 to all three battle phase rolls (no aftermath bonus) |
-| **Targeted Strike: Maneuver/Charge/Clash** | +1d8 + Advantage to the one chosen battle phase roll |
+| **Targeted Strike: Maneuver** | +1d8 + Advantage on the Maneuver roll only |
+| **Targeted Strike: Charge** | +1d8 + Advantage on the Charge roll only |
+| **Targeted Strike: Clash** | +1d8 + Advantage on the Clash roll only |
 | **Shield the Wounded** | +1d8 to all three aftermath rolls (Recovery, Hope, Salvage) |
 | **Protect** | No Commander Casualty check this round |
 | **Rest** | PC takes a Short Rest; no bonuses applied this round |
@@ -186,7 +196,8 @@ One card per map section. Colour-coded border: blue = Allied control, red = Sydo
 - Control dropdown (Neutral / Allied / Sydon)
 - Fortify toggle button (shield icon)
 - Objective toggle button (star icon)
-- **Resolve Battle** button — appears only when both allied and sydon legions are present
+- **Resolve Battle** button — appears only when both allied and sydon legions are present (active, non-routed allied required)
+- **Overrun Routed** button — appears when only routed allied legions remain against a sydon legion; click to disband them and roll death toll
 - Legion list: `Name · Inj X · Mor Y` with faction colour, Routed flag (orange), Destroyed badge (red strikethrough)
 - Commander assignment dropdown
 - Support unit list with deployment mode selector (Phase 3 only)
@@ -226,7 +237,10 @@ Each event can only be triggered once. The button locks and shows "✓ Resolved"
 
 ### Setup Tab (GM only)
 
-Manual overrides: Round, Phase, Allied Miracles, Sydon Miracles, Death Toll. Also contains the **Advance Round** button and CSV import/export controls.
+Manual overrides: Round, Phase, Allied Miracles, Sydon Miracles, Death Toll. Also contains:
+- **Advance Round** button
+- **Section Adjacency** — list of current adjacent pairs with remove buttons; two dropdowns + Add Pair button to define new pairs
+- CSV import/export controls for legions and commanders
 
 ---
 
@@ -252,7 +266,8 @@ setup → runManeuver
                                  aftermath_salvage_allied_choice
                                  aftermath_salvage_sydon_choice
                                           └──────────────┤
-                                                aftermath_commander
+                                              aftermath_divine_blood (if applicable)
+                                                    aftermath_commander
                                                     done (commit)
                                                      complete
 ```
@@ -273,13 +288,13 @@ Winner chooses one benefit:
 
 ### Charge (Morale)
 
-Rolls 1d20 + Morale. Modifiers: Inspiring (+2), Fanatic (Advantage), Flanking bonus, Disrupted penalty, Headhunter (no effect here), Engineer (−2 to enemy in fortified), Mage (−1 to enemy), Veteran.
+Rolls 1d20 + Morale. Modifiers: Inspiring (+2), Fanatic (Advantage), Flanking bonus, Disrupted penalty, Engineer (−2 to enemy in fortified), Mage (−1 to enemy), Veteran.
 
 Winner: +1 counter point, +1 flat bonus applied to own Clash roll.
 
 ### Clash (Vitality)
 
-Rolls 1d20 + Vitality. Modifiers: Ironclad (+2), Fanatic (Advantage), Warden (+2), Zealot (+2 if Morale ≥ 6), Headhunter (enemy Disadvantage), Defensive Footing bonus, Charge winner +1, Engineer (−2 to enemy in fortified), Mage (−1 to enemy), Veteran.
+Rolls 1d20 + Vitality. Modifiers: Ironclad (+2), Fanatic (Advantage), Warden (+2 own, +2 if an allied legion with Warden is in an adjacent section), Zealot (+2 if Morale ≥ 6), Headhunter (enemy Disadvantage), Defensive Footing bonus, Charge winner +1, Engineer (−2 to enemy in fortified), Mage (−1 to enemy), Veteran.
 
 Winner: +2 counter points.
 
@@ -291,7 +306,7 @@ DC = 12 + current injuries. Natural 1 always fails regardless of total.
 
 | | Success | Failure |
 |---|---|---|
-| **Winner** | 0 injuries (−1 if Medic and success) | +1 injury |
+| **Winner** | 0 injuries | +1 injury |
 | **Loser** | +1 injury | +2 injuries |
 
 Post-check additions: Seized Initiative (+1d2 to loser if applicable); Brutal (+1 to loser if projected injuries ≥ 4). Tags: Medic (Advantage), Ironclad (+2), Fanatic (Disadvantage on own roll), Brutal (enemy Disadvantage + extra injury trigger), Mage (enemy Disadvantage).
@@ -305,7 +320,7 @@ DC = 12, rolled with 1d20 + Morale.
 | **Winner** | +2 Morale | +1 Morale |
 | **Loser** | −1 Morale | −2 Morale |
 
-Tags: Rallier (+2), Inspiring (+2), Terrorizer (enemy Disadvantage).
+Tags: Rallier (+2 own, +2 if an allied legion with Rallier is in an adjacent section), Inspiring (+2), Terrorizer (enemy Disadvantage).
 
 ### Salvage (Wit)
 
@@ -317,6 +332,16 @@ DC = 12. Success = 1 benefit. Nat20 = 2 benefits. Both sides roll independently.
 | Tactical Insight | Pre-rolls 1d2; stores value as `tacInsightBonus` flag; applied to this legion's Wit rolls next round |
 | Enemy Shaken | Enemy −1 Morale |
 | Quick Fortify | Fortifies this section immediately, sets control to this side |
+
+### Divine Blood Re-roll
+
+After Salvage (and all benefit choices), any side with the **Divine Blood** tag that failed one or more aftermath checks is offered a re-roll for each failed check (Recovery, Hope, or Salvage). Only one re-roll per check per side. The better result is kept.
+
+- Recovery re-roll: injuries taken only if the new roll is worse than the original
+- Hope re-roll: morale delta updated only if the new roll is better
+- Salvage re-roll to success: triggers an additional benefit selection sub-flow within the Divine Blood phase
+
+Either or both sides may skip their re-roll by clicking **Proceed to Commander Casualty**.
 
 ### Commander Casualty
 
@@ -345,16 +370,16 @@ Tags are Items on the commander actor, matched case-insensitively by name. All e
 | **Tactician** | Maneuver | Advantage on Maneuver rolls |
 | **Headhunter** | Clash, Casualty | Enemy Disadvantage on Clash; enemy commander +5% death chance |
 | **Engineer** | All battle rolls | Enemy −2 to all battle rolls when this legion's section is fortified (Siege Breaker cancels) |
-| **Rallier** | Hope | +2 to Hope checks |
+| **Rallier** | Hope | +2 to own Hope check; +2 to Hope of allied legions in adjacent sections |
 | **Terrorizer** | Hope | Enemy Disadvantage on Hope checks |
 | **Fanatic** | Charge, Clash, Recovery | Advantage on Charge and Clash; Disadvantage on own Recovery |
 | **Zealot** | All battle rolls | +2 to all battle rolls while Morale ≥ 6 |
 | **Veteran** | All d20 rolls | Natural 1–4 treated as 5 (applied in BattleRoller before all other math) |
-| **Warden** | Clash, Recovery | +2 to own Clash; +2 Recovery to adjacent allied legions *(adjacency graph pending)* |
+| **Warden** | Clash | +2 to own Clash; +2 Clash to allied legions in adjacent sections |
 | **Mage** | All battle rolls, Recovery | Enemy −1 to all battle rolls; enemy Recovery Disadvantage |
-| **Medic** | Recovery | Advantage on Recovery; −1 injury if won and succeeded |
+| **Medic** | Recovery | Advantage on Recovery |
 | **Vanguard** | Planning | Extended movement *(Planning phase is manual; not automated)* |
-| **Divine Blood** | Casualty | −5% death chance; re-roll one failed aftermath check *(re-roll not automated)* |
+| **Divine Blood** | Casualty, Aftermath | −5% death chance; re-roll one failed aftermath check (Recovery, Hope, or Salvage) and keep the better result |
 | **Brutal** | Recovery | Enemy Recovery Disadvantage; +1 injury if enemy projected ≥ 4 injuries |
 | **Unbreakable Pact** | Casualty | Roll 1d100 twice, take lower result |
 | **Ironclad** | Clash, Recovery | +2 to Vitality-based rolls |
@@ -389,22 +414,22 @@ battle-of-mytros/
 │   ├── resolver.hbs              Resolver window (state machine UI buttons)
 │   └── chat-card.hbs            Battle summary card for public chat
 ├── styles/
-│   └── battle-dashboard.css      All module CSS (dashboard, resolver, chat card)
+│   └── battle-dashboard.css      All module CSS (CSS custom properties, dark mode support)
 └── lang/
-    ├── en.json                   English localisation (stub — keys not yet populated)
-    └── pl.json                   Polish localisation (stub)
+    ├── en.json                   English localisation (~95 keys, full coverage)
+    └── pl.json                   Polish localisation (full coverage)
 ```
 
 ### `scripts/module.mjs`
 
-Registers all 11 `game.settings` (world-scoped), exposes utility classes on `globalThis`, and sets up 6 Foundry hooks:
+Registers all 12 `game.settings` (world-scoped), exposes utility classes on `globalThis`, and sets up 6 Foundry hooks:
 
 | Hook | Purpose |
 |---|---|
 | `init` | Register settings; register `eq` and `ne` Handlebars helpers |
 | `canvasReady` | Initialise section flags (control/fortified/hasObjective) on battle scene load |
 | `getSceneControlButtons` | Inject the dashboard button into the token toolbar |
-| `regionEvent` | Re-render dashboard on `tokenEnter` / `tokenExit` |
+| `regionEvent` | Re-render dashboard on `tokenEnter` / `tokenExit` (no auto-actions — tokenEnter fires for every pass-through region during a drag) |
 | `updateRegion` | Re-render dashboard when region flags change |
 | `updateActor` | Re-render dashboard when legion flags change |
 | `deleteActor` | Clear `commanderId` from all legions when a commander is deleted |
@@ -415,11 +440,11 @@ Registers all 11 `game.settings` (world-scoped), exposes utility classes on `glo
 
 **Key statics:**
 - `MAJOR_EVENTS` — array of 7 event definitions (id, name, reward, description, specialEffect)
-- `DEFAULT_OPTIONS.actions` — maps 13 action strings to static handler methods
+- `DEFAULT_OPTIONS.actions` — maps 15 action strings to static handler methods
 
 **`tab` instance property** — defaults to `"overview"`, updated by `changeTab` (no setting write; purely in-memory per window instance).
 
-**`_prepareContext`** — called on every render, pulls the full template context from `game.settings`, `game.actors`, `MytrosRegionManager`, and the `MAJOR_EVENTS` constant. Heavy lifting happens here — all section/legion/support data is mapped into plain objects for the template.
+**`_prepareContext`** — called on every render, pulls the full template context from `game.settings`, `game.actors`, `MytrosRegionManager`, and the `MAJOR_EVENTS` constant. Also resolves `adjacencyPairs` to named pairs and provides `sectionOpts` for the adjacency dropdowns.
 
 **Action handlers** (static methods bound to the app instance):
 
@@ -438,18 +463,24 @@ Registers all 11 `game.settings` (world-scoped), exposes utility classes on `glo
 | `rollRecon` | Rolls 1d20 + highest Wit, stores result + bonus to settings |
 | `spendMiracle` | Decrements miracle pool setting; warns if insufficient |
 | `triggerMajorEvent` | Marks event complete, grants miracles, applies special effect |
+| `disbandRoutedLegions` | Marks routed legions destroyed, rolls death toll, posts chat message |
+| `addAdjacencyPair` | Reads two section dropdowns, adds pair to `adjacencyPairs` setting (guards against duplicates and self-pairs) |
+| `removeAdjacencyPair` | Removes pair at given index from `adjacencyPairs` setting |
 
 ### `scripts/apps/resolver.mjs` — BattleResolverApp
 
-`HandlebarsApplicationMixin(ApplicationV2)`. One instance per engagement. Constructed with a `Region` object; finds the allied and sydon legion actors in that region via `initFactions()`.
+`HandlebarsApplicationMixin(ApplicationV2)`. One instance per engagement. Constructed with a `Region` object; finds the allied and sydon legion actors in that region via `initFactions()` (skips routed and destroyed legions).
 
-**`this.state`** is the entire battle's working memory: `phase`, `allied` (actor ref), `sydon` (actor ref), `log[]`, plus accumulated results (`counter`, `maneuverWinner`, `maneuverBenefit`, `overallWinner`, `recoveryResult`, `hopeResult`, `salvageResult`, `salvageBenefits`, `commanderResult`). None of this is persisted until `commitAftermath` runs.
+**`this.state`** is the entire battle's working memory: `phase`, `allied` (actor ref), `sydon` (actor ref), `log[]`, plus accumulated results (`counter`, `maneuverWinner`, `maneuverBenefit`, `overallWinner`, `recoveryResult`, `hopeResult`, `salvageResult`, `salvageBenefits`, `commanderResult`, `divineBloodPending`, `divineBloodSalvageNeedChoice`). None of this is persisted until `commitAftermath` runs.
 
 **Instance helpers:**
 - `hasTag(legion, tagName)` — checks if the legion's commander has an item with that name
 - `getCommander(legion)` — returns the commander actor or null
 - `getSupportBonuses(faction, phase)` — returns `{ dice[], advantage }` for battle phases
 - `getSupportBonusesAftermath(faction)` — returns `{ dice[] }` for aftermath (reinforce + shield_the_wounded)
+- `_computeAdjacencyContext()` — returns `{ adjacentWarden, adjacentRallier }` by checking allied legions in sections adjacent to `this.region`
+- `_computeDivineBloodPending()` — returns per-side object of failed checks eligible for Divine Blood re-roll
+- `_nextPhaseAfterSalvage()` — decides whether to go to `aftermath_divine_blood` or `aftermath_commander`
 
 **`commitAftermath`** is the only method that writes to the database. It applies the entire accumulated `this.state` in sequence — see §7 Commit for the full list.
 
@@ -467,6 +498,7 @@ Static flag namespace. Not a DataModel.
 - `getActiveSections()` — returns all regions in the battle scene starting with the prefix
 - `getLegionsInSection(region)` — filters `region.tokens` for legion actors
 - `getSupportUnitsInSection(region)` — filters for fast-response actors
+- `getAdjacentSections(regionId)` — reads `adjacencyPairs` setting, returns IDs of all sections adjacent to the given region (bidirectional lookup)
 - `initSectionFlags(region)` — sets default flags if not yet initialised (idempotent)
 
 ### `scripts/utils/battle-roller.mjs` — BattleRoller
@@ -485,13 +517,13 @@ Returns `{ roll, total, isNat20, isNat1 }`.
 
 **`getRollModifiers(legion, enemyLegion, phase, context)`** — for battle phases (`"maneuver"`, `"charge"`, `"clash"`).
 
-Context object keys: `isFortified`, `enemyIsFortified`, `maneuverBenefit`, `enemyManeuverBenefit`.
+Context object keys: `isFortified`, `enemyIsFortified`, `maneuverBenefit`, `enemyManeuverBenefit`, `adjacentWarden`.
 
 Also reads `tacInsightBonus` from the legion flag for maneuver and salvage phases.
 
 **`getAftermathModifiers(legion, enemyLegion, phase, context)`** — for aftermath phases (`"recovery"`, `"hope"`, `"salvage"`).
 
-Context object key: `isWinner`.
+Context object keys: `isWinner`, `adjacentRallier`.
 
 Both methods return `{ advantage: boolean, disadvantage: boolean, flatBonus: number }`.
 
@@ -529,7 +561,7 @@ Tags are stored as **Items on the actor** — each item's `name` (lowercase) is 
 
 | Flag | Type | Description |
 |---|---|---|
-| `deploymentMode` | String | `"none"`, `"reinforce"`, `"shock_assault"`, `"targeted_strike"`, `"shield_the_wounded"`, or `"protect"` |
+| `deploymentMode` | String | `"none"`, `"reinforce"`, `"shock_assault"`, `"targeted_strike_maneuver"`, `"targeted_strike_charge"`, `"targeted_strike_clash"`, `"shield_the_wounded"`, `"protect"`, or `"rest"` |
 
 ### Region Flags
 
@@ -557,6 +589,7 @@ Tags are stored as **Items on the actor** — each item's `name` (lowercase) is 
 | `completedEvents` | String | `"[]"` | JSON array of completed major event IDs |
 | `deathTollFrozen` | Boolean | false | Set by Kentimane Defeated; prevents all future death toll accumulation |
 | `sydonObjectiveHalved` | Boolean | false | Set by Sydon Defeated; halves destroyed-objective deaths per round |
+| `adjacencyPairs` | String | `"[]"` | JSON array of `[regionId, regionId]` pairs defining neighbouring sections |
 
 ---
 
@@ -566,7 +599,7 @@ All utility classes are exposed on `globalThis` for use in Foundry macros or the
 
 ```javascript
 globalThis.MytrosActorData      // Type checks and actor init helpers
-globalThis.MytrosRegionManager  // Section discovery and token queries
+globalThis.MytrosRegionManager  // Section discovery, token queries, adjacency lookup
 globalThis.MytrosCSVParser      // CSV import/export
 globalThis.BattleRoller         // Roll execution
 globalThis.TagEngine            // Roll modifier calculation
@@ -585,25 +618,17 @@ for (const s of MytrosRegionManager.getActiveSections()) {
 }
 ```
 
+**Example — list adjacent sections for a given region:**
+```javascript
+const region = canvas.scene.regions.getName("Section: The Docks");
+const adjacentIds = MytrosRegionManager.getAdjacentSections(region.id);
+console.log(adjacentIds);
+```
+
 **Example — trigger a recon roll from a macro:**
 ```javascript
-// Dashboard must be open; or call the logic directly:
 const legions = game.actors.filter(a => MytrosActorData.isLegion(a) && a.getFlag("battle-of-mytros", "faction") === "allied");
 const wit = legions.reduce((m, l) => Math.max(m, l.getFlag("battle-of-mytros", "stats")?.wit ?? 0), 0);
 const r = await new Roll(`1d20 + ${wit}`).evaluate({ async: true });
 r.toMessage({ flavor: `Reconnaissance: ${r.total}` });
 ```
-
----
-
-## 12. Pending Features
-
-From `docs/superpowers/roadmap.md` Phase 5:
-
-- **Warden/Rallier Adjacency:** Both tags grant bonuses to allied legions in *adjacent* sections. Requires a spatial graph mapping which sections neighbour which (either a manual GM config or geometric computation from region bounds).
-
-- **Divine Blood Re-roll:** The −5% death chance reduction is wired. The "re-roll one failed aftermath check" half is not automated.
-
-- **Dark Mode Support:** Uses hardcoded hex colours throughout. CSS custom properties or `prefers-color-scheme` would be needed.
-
-- **Localization (i18n):** `lang/en.json` and `lang/pl.json` exist as empty stubs. All UI strings are hard-coded in English.

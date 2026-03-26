@@ -101,6 +101,9 @@ body.theme-dark,
 .mytros-dashboard .badge.routed { color: #e67e22; }
 .mytros-dashboard .legion-header { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .mytros-dashboard .legion-stats { font-size: 0.8em; color: var(--mytros-text-muted); font-weight: normal; }
+.mytros-dashboard .legion-flag-btn { padding: 0 4px; font-size: 0.8em; background: none; border: 1px solid var(--mytros-divider); border-radius: 3px; cursor: pointer; color: var(--mytros-text-muted-alt); }
+.mytros-dashboard .legion-flag-btn:hover { background: var(--mytros-surface-alt); }
+.mytros-dashboard .legion-flag-btn.active { color: #d4a017; border-color: #d4a017; background: rgba(212, 160, 23, 0.1); }
 .mytros-dashboard .legion-item.is-routed { opacity: 0.7; font-style: italic; }
 .mytros-dashboard .legion-item.is-destroyed { opacity: 0.4; text-decoration: line-through; }
 .mytros-dashboard .advance-round-btn { width: 100%; margin-top: 10px; background: var(--mytros-btn-primary-bg); color: #fff; border: none; padding: 8px; border-radius: 4px; cursor: pointer; font-weight: bold; }
