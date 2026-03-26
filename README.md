@@ -31,7 +31,7 @@ A complete GM-facing mass combat system for *Odyssey of the Dragonlords*, implem
 | **Reconnaissance** | 1d20 + highest allied Wit; intelligence result table; 23+ auto-wires +1 bonus to every allied Maneuver roll this round |
 | **Battle Resolver** | Step-by-step Maneuver → Charge → Clash → full Aftermath state machine per engagement |
 | **Tag Engine** | All 20 commander tags automatically applied to every relevant roll and aftermath check |
-| **PC Fast Response** | Five deployment modes per PC token; bonuses detected from token flags and applied in the resolver |
+| **PC Fast Response** | Six deployment modes per PC token (including Rest); Targeted Strike is phase-specific; bonuses detected from token flags and applied in the resolver |
 | **Aftermath** | Recovery, Hope, Salvage with interactive benefit selection; Commander Casualty d100 check |
 | **Stat Persistence** | Stats, rout/destruction, section control written to actor/region flags at Commit |
 | **Chat Cards** | Styled battle summary posted to public chat after every committed engagement |
@@ -152,9 +152,10 @@ The current phase is tracked as a number in the Setup tab. When Phase = 3, suppo
 |---|---|
 | **Reinforce** | +1d4 to all battle and aftermath rolls for the allied legion |
 | **Shock Assault** | +1d6 to all three battle phase rolls (no aftermath bonus) |
-| **Targeted Strike** | +1d8 + Advantage to battle phase rolls |
+| **Targeted Strike: Maneuver/Charge/Clash** | +1d8 + Advantage to the one chosen battle phase roll |
 | **Shield the Wounded** | +1d8 to all three aftermath rolls (Recovery, Hope, Salvage) |
 | **Protect** | No Commander Casualty check this round |
+| **Rest** | PC takes a Short Rest; no bonuses applied this round |
 
 Multiple PC tokens can deploy to the same battle; their bonuses stack.
 
@@ -599,13 +600,7 @@ r.toMessage({ flavor: `Reconnaissance: ${r.total}` });
 
 From `docs/superpowers/roadmap.md` Phase 5:
 
-- **Rout Handling (full):** Routed legions are flagged and visually indicated but currently not blocked from acting next round. Auto-disbanding when an enemy moves into a routed legion's section uncontested also requires event-driven logic in `regionEvent` / `advanceRound`.
-
 - **Warden/Rallier Adjacency:** Both tags grant bonuses to allied legions in *adjacent* sections. Requires a spatial graph mapping which sections neighbour which (either a manual GM config or geometric computation from region bounds).
-
-- **PC Resting:** Allow PCs to skip deployment and take a Short Rest. Currently there is no "skip" mode. Needs a new token flag and resolver skip logic.
-
-- **Targeted Strike Phase Selection:** Currently grants +1d8 + Advantage to all battle phase rolls; should apply to one chosen phase only. Requires a phase-selection step during deployment.
 
 - **Divine Blood Re-roll:** The −5% death chance reduction is wired. The "re-roll one failed aftermath check" half is not automated.
 

@@ -35,6 +35,7 @@ export class TagEngine {
         if (phase === "charge" && tags.includes("inspiring")) mods.flatBonus += 2;
         if (phase === "maneuver" && tags.includes("cunning")) mods.flatBonus += 2;
         if (phase === "clash" && tags.includes("warden")) mods.flatBonus += 2;
+        if (phase === "clash" && context.adjacentWarden) mods.flatBonus += 2;
         if (phase === "charge" && tags.includes("vanguard")) mods.advantage = true; // Assuming Vanguard moved 3 spaces for simplicity during combat phase
 
         // --- Check Enemy Tags (Debuffs) ---
@@ -89,6 +90,7 @@ export class TagEngine {
 
         if (phase === "hope") {
             if (tags.includes("rallier")) mods.flatBonus += 2;
+            if (context.adjacentRallier) mods.flatBonus += 2;
             if (tags.includes("inspiring")) mods.flatBonus += 2;
             if (enemyTags.includes("terrorizer")) mods.disadvantage = true;
         }

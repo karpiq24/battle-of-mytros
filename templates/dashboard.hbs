@@ -1,14 +1,14 @@
 <div class="mytros-dashboard">
     <nav class="tabs">
-        <a class="item {{#if (eq tab 'overview')}}active{{/if}}" data-action="changeTab" data-tab="overview">Overview</a>
-        <a class="item {{#if (eq tab 'miracles')}}active{{/if}}" data-action="changeTab" data-tab="miracles">Miracles</a>
+        <a class="item {{#if (eq tab 'overview')}}active{{/if}}" data-action="changeTab" data-tab="overview">{{localize "MYTROS.TabOverview"}}</a>
+        <a class="item {{#if (eq tab 'miracles')}}active{{/if}}" data-action="changeTab" data-tab="miracles">{{localize "MYTROS.TabMiracles"}}</a>
         {{#if isGM}}
-        <a class="item {{#if (eq tab 'setup')}}active{{/if}}" data-action="changeTab" data-tab="setup">Setup</a>
+        <a class="item {{#if (eq tab 'setup')}}active{{/if}}" data-action="changeTab" data-tab="setup">{{localize "MYTROS.TabSetup"}}</a>
         {{/if}}
     </nav>
 
     <header class="dashboard-header">
-        <h2>Round {{round}} - Phase {{phase}}</h2>
+        <h2>{{localize "MYTROS.Round"}} {{round}} - {{localize "MYTROS.Phase"}} {{phase}}</h2>
     </header>
 
     <main class="dashboard-body">
@@ -17,8 +17,8 @@
             {{#if @root.isGM}}
             <div class="recon-panel">
                 <div class="recon-header">
-                    <strong><i class="fas fa-eye"></i> Phase 1: Reconnaissance</strong>
-                    <button type="button" class="recon-btn" data-action="rollRecon">Roll Recon (1d20 + highest allied Wit)</button>
+                    <strong><i class="fas fa-eye"></i> {{localize "MYTROS.ReconTitle"}}</strong>
+                    <button type="button" class="recon-btn" data-action="rollRecon">{{localize "MYTROS.ReconButton"}}</button>
                 </div>
                 {{#if reconResult}}
                 <div class="recon-result {{#if reconBonus}}recon-bonus{{/if}}">
@@ -26,7 +26,7 @@
                 </div>
                 {{/if}}
                 {{#if deathTollFrozen}}
-                <div class="recon-result recon-frozen"><i class="fas fa-lock"></i> Death Toll is frozen — Kentimane has been defeated.</div>
+                <div class="recon-result recon-frozen"><i class="fas fa-lock"></i> {{localize "MYTROS.ReconFrozen"}}</div>
                 {{/if}}
             </div>
             {{/if}}
@@ -40,12 +40,15 @@
                                 {{#if @root.isGM}}
                                 <div class="section-controls">
                                     {{#if this.pendingBattle}}
-                                    <button type="button" class="resolve-btn" data-action="openResolver" data-region-id="{{this.id}}"><i class="fas fa-swords"></i> Resolve Battle</button>
+                                    <button type="button" class="resolve-btn" data-action="openResolver" data-region-id="{{this.id}}"><i class="fas fa-swords"></i> {{localize "MYTROS.ResolveBattle"}}</button>
+                                    {{/if}}
+                                    {{#if this.routedContested}}
+                                    <button type="button" class="resolve-btn resolve-rout" data-action="disbandRoutedLegions" data-region-id="{{this.id}}"><i class="fas fa-flag"></i> {{localize "MYTROS.OverrunRouted"}}</button>
                                     {{/if}}
                                     <select data-action="setSectionControl" data-region-id="{{this.id}}">
-                                        <option value="neutral" {{#if (eq this.control 'neutral')}}selected{{/if}}>Neutral</option>
-                                        <option value="allied" {{#if (eq this.control 'allied')}}selected{{/if}}>Allied</option>
-                                        <option value="sydon" {{#if (eq this.control 'sydon')}}selected{{/if}}>Sydon</option>
+                                        <option value="neutral" {{#if (eq this.control 'neutral')}}selected{{/if}}>{{localize "MYTROS.ControlNeutral"}}</option>
+                                        <option value="allied" {{#if (eq this.control 'allied')}}selected{{/if}}>{{localize "MYTROS.ControlAllied"}}</option>
+                                        <option value="sydon" {{#if (eq this.control 'sydon')}}selected{{/if}}>{{localize "MYTROS.ControlSydon"}}</option>
                                     </select>
                                     <button type="button" data-action="toggleSectionFlag" data-region-id="{{this.id}}" data-flag="fortified" class="{{#if this.fortified}}active{{/if}}"><i class="fas fa-shield-alt"></i></button>
                                     <button type="button" data-action="toggleSectionFlag" data-region-id="{{this.id}}" data-flag="hasObjective" class="{{#if this.hasObjective}}active{{/if}}"><i class="fas fa-star"></i></button>
@@ -65,13 +68,13 @@
                                         <li class="legion-item faction-{{this.faction}}{{#if this.isRouted}} is-routed{{/if}}{{#if this.isDestroyed}} is-destroyed{{/if}}">
                                             <div class="legion-header">
                                                 <span class="legion-name">{{this.name}}</span>
-                                                <span class="legion-stats">Inj {{this.injuries}} · Mor {{this.morale}}</span>
-                                                {{#if this.isRouted}}<span class="badge routed" title="Routed"><i class="fas fa-flag"></i></span>{{/if}}
-                                                {{#if this.isDestroyed}}<span class="badge destroyed" title="Destroyed"><i class="fas fa-skull"></i></span>{{/if}}
+                                                <span class="legion-stats">{{localize "MYTROS.InjShort"}} {{this.injuries}} · {{localize "MYTROS.MorShort"}} {{this.morale}}</span>
+                                                {{#if this.isRouted}}<span class="badge routed" title="Routed"><i class="fas fa-flag"></i> {{localize "MYTROS.Routed"}}</span>{{/if}}
+                                                {{#if this.isDestroyed}}<span class="badge destroyed" title="Destroyed"><i class="fas fa-skull"></i> {{localize "MYTROS.Destroyed"}}</span>{{/if}}
                                             </div>
                                             {{#if @root.isGM}}
                                                 <select data-action="assignCommander" data-legion-id="{{this.id}}">
-                                                    <option value="">-- No Commander --</option>
+                                                    <option value="">{{localize "MYTROS.NoCommander"}}</option>
                                                     {{#each @root.commanders}}
                                                         <option value="{{this.id}}" {{#if (eq this.id ../commanderId)}}selected{{/if}}>{{this.name}}</option>
                                                     {{/each}}
@@ -85,25 +88,28 @@
                                     {{/each}}
                                     </ul>
                                 {{else}}
-                                    <p class="empty-state">No legions present.</p>
+                                    <p class="empty-state">{{localize "MYTROS.NoLegions"}}</p>
                                 {{/if}}
                             </div>
 
                             {{#if this.supportUnits.length}}
                             <div class="support-units" style="margin-top: 5px; padding-top: 5px; border-top: 1px solid #ddd;">
-                                <h4 style="font-size: 0.8em; margin: 0; color: #666;">Support</h4>
+                                <h4 style="font-size: 0.8em; margin: 0; color: #666;">{{localize "MYTROS.Support"}}</h4>
                                 {{#each this.supportUnits}}
                                 <div class="support-item" style="display: flex; justify-content: space-between; align-items: center; font-size: 0.9em;">
                                     <span>{{this.name}}</span>
                                     {{#if (eq @root.phase 3)}}
                                         {{#if @root.isGM}}
                                         <select data-action="setDeploymentMode" data-token-id="{{this.id}}">
-                                            <option value="none">-- Select Mode --</option>
-                                            <option value="reinforce" {{#if (eq this.deploymentMode 'reinforce')}}selected{{/if}}>Reinforce (+1d4 All)</option>
-                                            <option value="shock_assault" {{#if (eq this.deploymentMode 'shock_assault')}}selected{{/if}}>Shock Assault (+1d6 Battle)</option>
-                                            <option value="targeted_strike" {{#if (eq this.deploymentMode 'targeted_strike')}}selected{{/if}}>Targeted Strike (+1d8/Adv)</option>
-                                            <option value="shield_the_wounded" {{#if (eq this.deploymentMode 'shield_the_wounded')}}selected{{/if}}>Shield Wounded (+1d8 Aftermath)</option>
-                                            <option value="protect" {{#if (eq this.deploymentMode 'protect')}}selected{{/if}}>Protect (No Casualty Check)</option>
+                                            <option value="none">{{localize "MYTROS.DeployNone"}}</option>
+                                            <option value="reinforce" {{#if (eq this.deploymentMode 'reinforce')}}selected{{/if}}>{{localize "MYTROS.DeployReinforce"}}</option>
+                                            <option value="shock_assault" {{#if (eq this.deploymentMode 'shock_assault')}}selected{{/if}}>{{localize "MYTROS.DeployShockAssault"}}</option>
+                                            <option value="targeted_strike_maneuver" {{#if (eq this.deploymentMode 'targeted_strike_maneuver')}}selected{{/if}}>{{localize "MYTROS.DeployTargetedManeuver"}}</option>
+                                            <option value="targeted_strike_charge" {{#if (eq this.deploymentMode 'targeted_strike_charge')}}selected{{/if}}>{{localize "MYTROS.DeployTargetedCharge"}}</option>
+                                            <option value="targeted_strike_clash" {{#if (eq this.deploymentMode 'targeted_strike_clash')}}selected{{/if}}>{{localize "MYTROS.DeployTargetedClash"}}</option>
+                                            <option value="shield_the_wounded" {{#if (eq this.deploymentMode 'shield_the_wounded')}}selected{{/if}}>{{localize "MYTROS.DeployShield"}}</option>
+                                            <option value="protect" {{#if (eq this.deploymentMode 'protect')}}selected{{/if}}>{{localize "MYTROS.DeployProtect"}}</option>
+                                            <option value="rest" {{#if (eq this.deploymentMode 'rest')}}selected{{/if}}>{{localize "MYTROS.DeployRest"}}</option>
                                         </select>
                                         {{/if}}
                                     {{else}}
@@ -119,7 +125,7 @@
                     {{/each}}
                 </div>
             {{else}}
-                <p class="warning">Please navigate to the designated Battlemap Scene to view sections.</p>
+                <p class="warning">{{localize "MYTROS.NoBattleScene"}}</p>
             {{/if}}
         {{/if}}
 
@@ -127,24 +133,24 @@
             <div class="miracles-panel">
                 <div class="miracle-pools">
                     <div class="miracle-pool pool-allied">
-                        <h3><i class="fas fa-sun"></i> Allied Miracles</h3>
+                        <h3><i class="fas fa-sun"></i> {{localize "MYTROS.AlliedMiracles"}}</h3>
                         <div class="pool-count">{{alliedMiracles}}</div>
                         {{#if isGM}}
                         <div class="miracle-spend-group">
-                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-cost="1">−1 Roll Bonus (1pt)</button>
-                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-cost="2">−2 Divine Advantage (2pt)</button>
-                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-cost="2">−2 PC Short Rest (2pt)</button>
-                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-cost="4">−4 PC Long Rest (4pt)</button>
+                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-cost="1">{{localize "MYTROS.SpendRollBonus"}}</button>
+                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-cost="2">{{localize "MYTROS.SpendDivineAdvantage"}}</button>
+                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-cost="2">{{localize "MYTROS.SpendShortRest"}}</button>
+                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-cost="4">{{localize "MYTROS.SpendLongRest"}}</button>
                         </div>
                         {{/if}}
                     </div>
                     <div class="miracle-pool pool-sydon">
-                        <h3><i class="fas fa-bolt"></i> Sydon Miracles</h3>
+                        <h3><i class="fas fa-bolt"></i> {{localize "MYTROS.SydonMiracles"}}</h3>
                         <div class="pool-count">{{sydonMiracles}}</div>
                         {{#if isGM}}
                         <div class="miracle-spend-group">
-                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="sydon" data-cost="1">−1 Roll Bonus (1pt)</button>
-                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="sydon" data-cost="2">−2 Divine Advantage (2pt)</button>
+                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="sydon" data-cost="1">{{localize "MYTROS.SpendRollBonus"}}</button>
+                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="sydon" data-cost="2">{{localize "MYTROS.SpendDivineAdvantage"}}</button>
                         </div>
                         {{/if}}
                     </div>
@@ -152,7 +158,7 @@
 
                 {{#if isGM}}
                 <hr>
-                <h3><i class="fas fa-star"></i> Major Events</h3>
+                <h3><i class="fas fa-star"></i> {{localize "MYTROS.MajorEventsTitle"}}</h3>
                 <div class="major-events-list">
                     {{#each majorEvents}}
                     <div class="event-item {{#if this.completed}}event-completed{{/if}}">
@@ -161,10 +167,10 @@
                             <span class="event-desc">{{this.description}}</span>
                         </div>
                         {{#if this.completed}}
-                        <span class="event-done"><i class="fas fa-check-circle"></i> Resolved (+{{this.reward}} Miracles)</span>
+                        <span class="event-done"><i class="fas fa-check-circle"></i> {{localize "MYTROS.EventResolved"}} (+{{this.reward}} {{localize "MYTROS.Miracles"}})</span>
                         {{else}}
                         <button type="button" class="event-trigger-btn" data-action="triggerMajorEvent" data-event-id="{{this.id}}">
-                            <i class="fas fa-bolt"></i> Resolve (+{{this.reward}} Allied Miracles)
+                            <i class="fas fa-bolt"></i> {{localize "MYTROS.EventTriggerBtn"}} (+{{this.reward}} {{localize "MYTROS.AlliedMiracles"}})
                         </button>
                         {{/if}}
                     </div>
@@ -177,40 +183,64 @@
         {{#if (eq tab 'setup')}}
             <div class="setup-form">
                 <div class="form-group">
-                    <label>Current Round</label>
+                    <label>{{localize "MYTROS.SetupRoundLabel"}}</label>
                     <input type="number" data-action="updateSetting" data-setting="currentRound" value="{{round}}">
                 </div>
                 <div class="form-group">
-                    <label>Current Phase (1-5)</label>
+                    <label>{{localize "MYTROS.SetupPhaseLabel"}}</label>
                     <input type="number" data-action="updateSetting" data-setting="currentPhase" value="{{phase}}">
                 </div>
                 <div class="form-group">
-                    <label>Allied Miracles</label>
+                    <label>{{localize "MYTROS.AlliedMiracles"}}</label>
                     <input type="number" data-action="updateSetting" data-setting="alliedMiracles" value="{{alliedMiracles}}">
                 </div>
                 <div class="form-group">
-                    <label>Sydon Miracles</label>
+                    <label>{{localize "MYTROS.SydonMiracles"}}</label>
                     <input type="number" data-action="updateSetting" data-setting="sydonMiracles" value="{{sydonMiracles}}">
                 </div>
                 <div class="form-group">
-                    <label>Civilian Death Toll</label>
+                    <label>{{localize "MYTROS.SetupDeathTollLabel"}}</label>
                     <input type="number" data-action="updateSetting" data-setting="deathToll" value="{{deathToll}}">
                 </div>
 
                 <hr>
                 <div class="form-group">
-                    <button type="button" class="advance-round-btn" data-action="advanceRound"><i class="fas fa-forward"></i> Advance to Round {{round}} + 1</button>
+                    <button type="button" class="advance-round-btn" data-action="advanceRound"><i class="fas fa-forward"></i> {{localize "MYTROS.AdvanceRound"}} {{round}} + 1</button>
                 </div>
 
                 <hr>
-                <h3>Data Management</h3>
+                <h3>{{localize "MYTROS.AdjacencyTitle"}}</h3>
+                <p style="font-size:0.8em; color:#666;">{{localize "MYTROS.AdjacencyHint"}}</p>
+                {{#if adjacencyPairs.length}}
+                <div style="margin-bottom:8px;">
+                    {{#each adjacencyPairs}}
+                    <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px; font-size:0.9em;">
+                        <span>{{this.aName}} ↔ {{this.bName}}</span>
+                        <button type="button" data-action="removeAdjacencyPair" data-index="{{this.index}}" style="padding:1px 6px; font-size:0.85em;">×</button>
+                    </div>
+                    {{/each}}
+                </div>
+                {{/if}}
+                <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                    <select data-ref="adjA" style="flex:1;">
+                        {{#each sectionOpts}}<option value="{{this.id}}">{{this.name}}</option>{{/each}}
+                    </select>
+                    <span>↔</span>
+                    <select data-ref="adjB" style="flex:1;">
+                        {{#each sectionOpts}}<option value="{{this.id}}">{{this.name}}</option>{{/each}}
+                    </select>
+                    <button type="button" data-action="addAdjacencyPair">{{localize "MYTROS.AdjacencyAdd"}}</button>
+                </div>
+
+                <hr>
+                <h3>{{localize "MYTROS.DataManagement"}}</h3>
                 <div class="form-group">
-                    <button type="button" data-action="importCSV" data-type="legion"><i class="fas fa-file-import"></i> Import Legions</button>
-                    <button type="button" data-action="exportCSV" data-type="legion"><i class="fas fa-file-export"></i> Export Legions</button>
+                    <button type="button" data-action="importCSV" data-type="legion"><i class="fas fa-file-import"></i> {{localize "MYTROS.ImportLegions"}}</button>
+                    <button type="button" data-action="exportCSV" data-type="legion"><i class="fas fa-file-export"></i> {{localize "MYTROS.ExportLegions"}}</button>
                 </div>
                 <div class="form-group">
-                    <button type="button" data-action="importCSV" data-type="commander"><i class="fas fa-file-import"></i> Import Commanders</button>
-                    <button type="button" data-action="exportCSV" data-type="commander"><i class="fas fa-file-export"></i> Export Commanders</button>
+                    <button type="button" data-action="importCSV" data-type="commander"><i class="fas fa-file-import"></i> {{localize "MYTROS.ImportCommanders"}}</button>
+                    <button type="button" data-action="exportCSV" data-type="commander"><i class="fas fa-file-export"></i> {{localize "MYTROS.ExportCommanders"}}</button>
                 </div>
             </div>
         {{/if}}

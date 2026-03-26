@@ -1,57 +1,57 @@
 <div class="mytros-battle-card">
     <div class="card-header">
-        <i class="fas fa-swords"></i> Battle in <strong>{{sectionName}}</strong>
+        <i class="fas fa-swords"></i> {{localize "MYTROS.CardBattleIn"}} <strong>{{sectionName}}</strong>
     </div>
 
     <div class="card-matchup">
         <span class="faction-allied">{{alliedName}}</span>
-        <span class="card-vs">vs</span>
+        <span class="card-vs">{{localize "MYTROS.CardVS"}}</span>
         <span class="faction-sydon">{{sydonName}}</span>
     </div>
 
     <div class="card-result">
-        <strong>{{winnerLabel}}</strong> wins
+        <strong>{{winnerLabel}}</strong> {{localize "MYTROS.CardWins"}}
         <span class="card-score">({{scoreAllied}}–{{scoreSydon}})</span>
     </div>
 
     <table class="card-table">
         <thead>
-            <tr><th></th><th>Allied</th><th>Sydon</th></tr>
+            <tr><th></th><th>{{localize "MYTROS.CardAllied"}}</th><th>{{localize "MYTROS.CardSydon"}}</th></tr>
         </thead>
         <tbody>
             <tr>
-                <td>Recovery</td>
+                <td>{{localize "MYTROS.CardRecovery"}}</td>
                 <td class="{{alliedRecoveryClass}}">{{alliedRecoveryText}}</td>
                 <td class="{{sydonRecoveryClass}}">{{sydonRecoveryText}}</td>
             </tr>
             <tr>
-                <td>Hope</td>
+                <td>{{localize "MYTROS.CardHope"}}</td>
                 <td class="{{alliedHopeClass}}">{{alliedHopeText}}</td>
                 <td class="{{sydonHopeClass}}">{{sydonHopeText}}</td>
             </tr>
             <tr class="card-final">
-                <td>Final State</td>
-                <td>Inj <strong>{{alliedInjuries}}</strong> · Mor <strong>{{alliedMorale}}</strong></td>
-                <td>Inj <strong>{{sydonInjuries}}</strong> · Mor <strong>{{sydonMorale}}</strong></td>
+                <td>{{localize "MYTROS.CardFinalState"}}</td>
+                <td>{{localize "MYTROS.InjShort"}} <strong>{{alliedInjuries}}</strong> · {{localize "MYTROS.MorShort"}} <strong>{{alliedMorale}}</strong></td>
+                <td>{{localize "MYTROS.InjShort"}} <strong>{{sydonInjuries}}</strong> · {{localize "MYTROS.MorShort"}} <strong>{{sydonMorale}}</strong></td>
             </tr>
         </tbody>
     </table>
 
     {{#if alliedCommanderDied}}
-    <p class="card-death"><i class="fas fa-skull"></i> {{alliedCommanderName}} has fallen in battle!</p>
+    <p class="card-death"><i class="fas fa-skull"></i> {{alliedCommanderName}} {{localize "MYTROS.CardFallen"}}</p>
     {{/if}}
     {{#if sydonCommanderDied}}
-    <p class="card-death"><i class="fas fa-skull"></i> {{sydonCommanderName}} has fallen in battle!</p>
+    <p class="card-death"><i class="fas fa-skull"></i> {{sydonCommanderName}} {{localize "MYTROS.CardFallen"}}</p>
     {{/if}}
 
     {{#if alliedStatus}}
-    <p class="card-status card-status-{{alliedStatusType}}"><i class="fas fa-exclamation-triangle"></i> Allied: {{alliedStatus}}</p>
+    <p class="card-status card-status-{{alliedStatusType}}"><i class="fas fa-exclamation-triangle"></i> {{localize "MYTROS.CardAllied"}}: {{alliedStatus}}</p>
     {{/if}}
     {{#if sydonStatus}}
-    <p class="card-status card-status-{{sydonStatusType}}"><i class="fas fa-exclamation-triangle"></i> Sydon: {{sydonStatus}}</p>
+    <p class="card-status card-status-{{sydonStatusType}}"><i class="fas fa-exclamation-triangle"></i> {{localize "MYTROS.CardSydon"}}: {{sydonStatus}}</p>
     {{/if}}
 
     <div class="card-toll">
-        <i class="fas fa-skull-crossbones"></i> Civilian deaths this engagement: ~{{deathToll}}
+        <i class="fas fa-skull-crossbones"></i> {{localize "MYTROS.CardDeaths"}}{{deathToll}}
     </div>
 </div>

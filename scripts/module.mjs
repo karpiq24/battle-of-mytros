@@ -113,6 +113,15 @@ Hooks.once('init', async function() {
         type: Boolean,
         default: false
     });
+
+    game.settings.register("battle-of-mytros", "adjacencyPairs", {
+        name: "Section Adjacency Pairs",
+        hint: "JSON array of [regionId, regionId] pairs defining which sections are adjacent.",
+        scope: "world",
+        config: false,
+        type: String,
+        default: "[]"
+    });
 });
 
 Hooks.on("canvasReady", async () => {
@@ -150,7 +159,9 @@ Hooks.on("regionEvent", (region, event) => {
     if (!region.name.startsWith(MytrosRegionManager.SECTION_PREFIX)) return;
 
     if (event.name === "tokenEnter" || event.name === "tokenExit") {
-        // Find our active dashboard app and force a re-render
+        // Re-render dashboard; routedContested sections will show a DM-confirmation button.
+        // No auto-disbanding here — tokenEnter fires for every region a token passes through
+        // during a drag, not just the destination.
         for (const app of Object.values(ui.windows)) {
             if (app.id === "mytros-battle-dashboard") {
                 app.render({ force: true });

@@ -34,7 +34,10 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
             advanceRound: BattleDashboard.advanceRound,
             rollRecon: BattleDashboard.rollRecon,
             spendMiracle: BattleDashboard.spendMiracle,
-            triggerMajorEvent: BattleDashboard.triggerMajorEvent
+            triggerMajorEvent: BattleDashboard.triggerMajorEvent,
+            disbandRoutedLegions: BattleDashboard.disbandRoutedLegions,
+            addAdjacencyPair: BattleDashboard.addAdjacencyPair,
+            removeAdjacencyPair: BattleDashboard.removeAdjacencyPair
         }
     };
 
@@ -120,6 +123,72 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
         }
 
         ui.notifications.info(`Major Event: ${event.name}! Allied Miracles +${event.reward}.`);
+        this.render();
+    }
+
+    static async addAdjacencyPair(_event, target) {
+        if (!game.user.isGM) return;
+        const form = target.closest(".setup-form");
+        const aId = form.querySelector("[data-ref='adjA']").value;
+        const bId = form.querySelector("[data-ref='adjB']").value;
+        if (!aId || !bId || aId === bId) {
+            ui.notifications.warn("Select two different sections.");
+            return;
+        }
+        const pairs = JSON.parse(game.settings.get("battle-of-mytros", "adjacencyPairs") || "[]");
+        const already = pairs.some(([a, b]) => (a === aId && b === bId) || (a === bId && b === aId));
+        if (already) {
+            ui.notifications.warn("That pair already exists.");
+            return;
+        }
+        pairs.push([aId, bId]);
+        await game.settings.set("battle-of-mytros", "adjacencyPairs", JSON.stringify(pairs));
+        this.render();
+    }
+
+    static async removeAdjacencyPair(_event, target) {
+        if (!game.user.isGM) return;
+        const index = Number(target.dataset.index);
+        const pairs = JSON.parse(game.settings.get("battle-of-mytros", "adjacencyPairs") || "[]");
+        pairs.splice(index, 1);
+        await game.settings.set("battle-of-mytros", "adjacencyPairs", JSON.stringify(pairs));
+        this.render();
+    }
+
+    static async disbandRoutedLegions(_event, target) {
+        if (!game.user.isGM) return;
+        const regionId = target.dataset.regionId;
+        const region = canvas.scene.regions.get(regionId);
+        if (!region) return;
+
+        const legions = globalThis.MytrosRegionManager.getLegionsInSection(region);
+        const routedLegions = legions.filter(t =>
+            t.actor.getFlag("battle-of-mytros", "isRouted") &&
+            !t.actor.getFlag("battle-of-mytros", "isDestroyed")
+        );
+
+        for (const t of routedLegions) {
+            await t.actor.setFlag("battle-of-mytros", "isDestroyed", true);
+            await t.actor.setFlag("battle-of-mytros", "isRouted", false);
+            await t.actor.setFlag("battle-of-mytros", "foughtThisRound", true);
+        }
+
+        const names = routedLegions.map(t => t.actor.name).join(", ");
+        const sectionName = region.name.replace(globalThis.MytrosRegionManager.SECTION_PREFIX, "").trim();
+
+        const deathRoll = await new Roll(`${routedLegions.length}d6`).evaluate();
+        const deaths = deathRoll.total * 50;
+        if (!game.settings.get("battle-of-mytros", "deathTollFrozen")) {
+            const current = game.settings.get("battle-of-mytros", "deathToll");
+            await game.settings.set("battle-of-mytros", "deathToll", current + deaths);
+        }
+
+        await ChatMessage.create({
+            content: `<div class="battle-chat-card"><h3>⚠ Routed Legion Overrun</h3><p><strong>${sectionName}</strong></p><p>${names} ${routedLegions.length === 1 ? "was" : "were"} disbanded — overrun while routed.</p><p>Civilian deaths: ${deaths}</p></div>`,
+            speaker: { alias: "Battle of Mytros" }
+        });
+
+        ui.notifications.warn(`${names} disbanded in ${sectionName}.`);
         this.render();
     }
 
@@ -363,9 +432,11 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
                     deploymentMode: t.getFlag("battle-of-mytros", "deploymentMode") || "none"
                 }));
                 
-                const hasAllied = mappedLegions.some(l => l.faction === "allied");
-                const hasSydon = mappedLegions.some(l => l.faction === "sydon");
-                const pendingBattle = hasAllied && hasSydon;
+                const hasActiveAllied = mappedLegions.some(l => l.faction === "allied" && !l.isRouted && !l.isDestroyed);
+                const hasSydon = mappedLegions.some(l => l.faction === "sydon" && !l.isDestroyed);
+                const pendingBattle = hasActiveAllied && hasSydon;
+                const hasRoutedAllied = mappedLegions.some(l => l.faction === "allied" && l.isRouted && !l.isDestroyed);
+                const routedContested = hasRoutedAllied && hasSydon && !hasActiveAllied;
 
                 return {
                     id: r.id,
@@ -376,12 +447,28 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
                     objectiveDestroyed: r.getFlag("battle-of-mytros", "objectiveDestroyed"),
                     legions: mappedLegions,
                     supportUnits: supportUnits,
-                    pendingBattle: pendingBattle
+                    pendingBattle: pendingBattle,
+                    routedContested: routedContested
                 };
             });
         } else {
             context.sections = [];
         }
+
+        // Adjacency configuration (for Setup tab)
+        const allSections = globalThis.MytrosRegionManager.getActiveSections();
+        const sectionOpts = allSections.map(r => ({
+            id: r.id,
+            name: r.name.replace(globalThis.MytrosRegionManager.SECTION_PREFIX, "").trim()
+        }));
+        const rawPairs = JSON.parse(game.settings.get("battle-of-mytros", "adjacencyPairs") || "[]");
+        context.adjacencyPairs = rawPairs.map(([aId, bId], index) => ({
+            index,
+            aId, bId,
+            aName: sectionOpts.find(s => s.id === aId)?.name ?? aId,
+            bName: sectionOpts.find(s => s.id === bId)?.name ?? bId
+        }));
+        context.sectionOpts = sectionOpts;
 
         return context;
     }

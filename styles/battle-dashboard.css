@@ -1,4 +1,72 @@
 /* styles/battle-dashboard.css */
+
+/* ── Light-mode defaults ─────────────────────────────────────────────────── */
+:root {
+    --mytros-surface: rgba(0, 0, 0, 0.05);
+    --mytros-surface-alt: rgba(0, 0, 0, 0.04);
+    --mytros-surface-header: rgba(0, 0, 0, 0.07);
+    --mytros-surface-completed: rgba(0, 0, 0, 0.03);
+    --mytros-divider: rgba(0, 0, 0, 0.1);
+    --mytros-text-muted: #666;
+    --mytros-text-muted-alt: #888;
+    --mytros-btn-primary-bg: #2c3e50;
+    --mytros-btn-primary-hover: #1a252f;
+    --mytros-btn-secondary-bg: #f4f6f7;
+    --mytros-btn-secondary-hover: #e8e8e8;
+    --mytros-btn-secondary-border: #ccc;
+    --mytros-border-light: #ddd;
+    --mytros-recon-bonus-bg: rgba(241, 196, 15, 0.15);
+    --mytros-recon-bonus-text: #7d6608;
+    --mytros-recon-frozen-bg: rgba(52, 73, 94, 0.1);
+    --mytros-recon-frozen-text: #2c3e50;
+}
+
+/* ── System dark mode ────────────────────────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --mytros-surface: rgba(255, 255, 255, 0.06);
+        --mytros-surface-alt: rgba(255, 255, 255, 0.04);
+        --mytros-surface-header: rgba(255, 255, 255, 0.08);
+        --mytros-surface-completed: rgba(255, 255, 255, 0.02);
+        --mytros-divider: rgba(255, 255, 255, 0.12);
+        --mytros-text-muted: #999;
+        --mytros-text-muted-alt: #777;
+        --mytros-btn-primary-bg: #1e3448;
+        --mytros-btn-primary-hover: #152535;
+        --mytros-btn-secondary-bg: #2a2a2e;
+        --mytros-btn-secondary-hover: #38383e;
+        --mytros-btn-secondary-border: #4a4a55;
+        --mytros-border-light: #3a3a40;
+        --mytros-recon-bonus-bg: rgba(241, 196, 15, 0.12);
+        --mytros-recon-bonus-text: #d4b84a;
+        --mytros-recon-frozen-bg: rgba(93, 140, 174, 0.15);
+        --mytros-recon-frozen-text: #7aadcc;
+    }
+}
+
+/* ── Foundry VTT v13 dark theme selectors ────────────────────────────────── */
+body.theme-dark,
+[data-theme="dark"] {
+    --mytros-surface: rgba(255, 255, 255, 0.06);
+    --mytros-surface-alt: rgba(255, 255, 255, 0.04);
+    --mytros-surface-header: rgba(255, 255, 255, 0.08);
+    --mytros-surface-completed: rgba(255, 255, 255, 0.02);
+    --mytros-divider: rgba(255, 255, 255, 0.12);
+    --mytros-text-muted: #999;
+    --mytros-text-muted-alt: #777;
+    --mytros-btn-primary-bg: #1e3448;
+    --mytros-btn-primary-hover: #152535;
+    --mytros-btn-secondary-bg: #2a2a2e;
+    --mytros-btn-secondary-hover: #38383e;
+    --mytros-btn-secondary-border: #4a4a55;
+    --mytros-border-light: #3a3a40;
+    --mytros-recon-bonus-bg: rgba(241, 196, 15, 0.12);
+    --mytros-recon-bonus-text: #d4b84a;
+    --mytros-recon-frozen-bg: rgba(93, 140, 174, 0.15);
+    --mytros-recon-frozen-text: #7aadcc;
+}
+
+/* ── Dashboard layout ────────────────────────────────────────────────────── */
 .mytros-dashboard .sections-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -9,7 +77,7 @@
     border: 1px solid var(--color-border-dark-primary);
     border-radius: 5px;
     padding: 8px;
-    background: rgba(0, 0, 0, 0.05);
+    background: var(--mytros-surface);
 }
 .mytros-dashboard .section-card.control-allied { border-top: 3px solid #1a5276; }
 .mytros-dashboard .section-card.control-sydon { border-top: 3px solid #7b241c; }
@@ -17,7 +85,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid rgba(0,0,0,0.1);
+    border-bottom: 1px solid var(--mytros-divider);
     margin-bottom: 5px;
     padding-bottom: 5px;
 }
@@ -28,24 +96,24 @@
 .mytros-dashboard .legion-item { font-weight: bold; }
 .mytros-dashboard .legion-item.faction-allied { color: #1a5276; }
 .mytros-dashboard .legion-item.faction-sydon { color: #7b241c; }
-.mytros-dashboard .empty-state { font-style: italic; color: #777; margin: 0; }
+.mytros-dashboard .empty-state { font-style: italic; color: var(--mytros-text-muted-alt); margin: 0; }
 .mytros-dashboard .badge.destroyed { color: #e74c3c; }
 .mytros-dashboard .badge.routed { color: #e67e22; }
 .mytros-dashboard .legion-header { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-.mytros-dashboard .legion-stats { font-size: 0.8em; color: #666; font-weight: normal; }
+.mytros-dashboard .legion-stats { font-size: 0.8em; color: var(--mytros-text-muted); font-weight: normal; }
 .mytros-dashboard .legion-item.is-routed { opacity: 0.7; font-style: italic; }
 .mytros-dashboard .legion-item.is-destroyed { opacity: 0.4; text-decoration: line-through; }
-.mytros-dashboard .advance-round-btn { width: 100%; margin-top: 10px; background: #2c3e50; color: #fff; border: none; padding: 8px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-.mytros-dashboard .advance-round-btn:hover { background: #1a252f; }
+.mytros-dashboard .advance-round-btn { width: 100%; margin-top: 10px; background: var(--mytros-btn-primary-bg); color: #fff; border: none; padding: 8px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+.mytros-dashboard .advance-round-btn:hover { background: var(--mytros-btn-primary-hover); }
 
 /* Reconnaissance Panel */
-.mytros-dashboard .recon-panel { background: rgba(0,0,0,0.04); border: 1px solid var(--color-border-dark-primary); border-radius: 4px; padding: 8px 10px; margin-bottom: 10px; }
+.mytros-dashboard .recon-panel { background: var(--mytros-surface-alt); border: 1px solid var(--color-border-dark-primary); border-radius: 4px; padding: 8px 10px; margin-bottom: 10px; }
 .mytros-dashboard .recon-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-.mytros-dashboard .recon-btn { padding: 4px 10px; font-size: 0.85em; background: #2c3e50; color: #fff; border: none; border-radius: 3px; cursor: pointer; }
-.mytros-dashboard .recon-btn:hover { background: #1a252f; }
-.mytros-dashboard .recon-result { margin-top: 6px; font-size: 0.9em; padding: 4px 8px; background: rgba(0,0,0,0.05); border-radius: 3px; }
-.mytros-dashboard .recon-result.recon-bonus { background: rgba(241,196,15,0.15); color: #7d6608; font-weight: bold; }
-.mytros-dashboard .recon-result.recon-frozen { background: rgba(52,73,94,0.1); color: #2c3e50; }
+.mytros-dashboard .recon-btn { padding: 4px 10px; font-size: 0.85em; background: var(--mytros-btn-primary-bg); color: #fff; border: none; border-radius: 3px; cursor: pointer; }
+.mytros-dashboard .recon-btn:hover { background: var(--mytros-btn-primary-hover); }
+.mytros-dashboard .recon-result { margin-top: 6px; font-size: 0.9em; padding: 4px 8px; background: var(--mytros-surface); border-radius: 3px; }
+.mytros-dashboard .recon-result.recon-bonus { background: var(--mytros-recon-bonus-bg); color: var(--mytros-recon-bonus-text); font-weight: bold; }
+.mytros-dashboard .recon-result.recon-frozen { background: var(--mytros-recon-frozen-bg); color: var(--mytros-recon-frozen-text); }
 
 /* Miracles Panel */
 .mytros-dashboard .miracles-panel { padding: 10px; }
@@ -58,16 +126,16 @@
 .mytros-dashboard .pool-allied .pool-count { color: #1a5276; }
 .mytros-dashboard .pool-sydon .pool-count { color: #7b241c; }
 .mytros-dashboard .miracle-spend-group { display: flex; flex-direction: column; gap: 4px; }
-.mytros-dashboard .miracle-spend-btn { padding: 4px 8px; font-size: 0.8em; background: #f4f6f7; border: 1px solid #ccc; border-radius: 3px; cursor: pointer; text-align: left; }
-.mytros-dashboard .miracle-spend-btn:hover { background: #e8e8e8; }
+.mytros-dashboard .miracle-spend-btn { padding: 4px 8px; font-size: 0.8em; background: var(--mytros-btn-secondary-bg); border: 1px solid var(--mytros-btn-secondary-border); border-radius: 3px; cursor: pointer; text-align: left; }
+.mytros-dashboard .miracle-spend-btn:hover { background: var(--mytros-btn-secondary-hover); }
 
 /* Major Events */
 .mytros-dashboard .major-events-list { display: flex; flex-direction: column; gap: 6px; }
 .mytros-dashboard .event-item { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--color-border-dark-primary); border-radius: 4px; }
-.mytros-dashboard .event-item.event-completed { opacity: 0.6; background: rgba(0,0,0,0.03); }
+.mytros-dashboard .event-item.event-completed { opacity: 0.6; background: var(--mytros-surface-completed); }
 .mytros-dashboard .event-info { flex: 1; }
 .mytros-dashboard .event-info strong { display: block; font-size: 0.95em; }
-.mytros-dashboard .event-desc { font-size: 0.8em; color: #666; }
+.mytros-dashboard .event-desc { font-size: 0.8em; color: var(--mytros-text-muted); }
 .mytros-dashboard .event-trigger-btn { padding: 5px 10px; font-size: 0.8em; background: #d4a017; color: #fff; border: none; border-radius: 3px; cursor: pointer; white-space: nowrap; }
 .mytros-dashboard .event-trigger-btn:hover { background: #b8860b; }
 .mytros-dashboard .event-done { font-size: 0.8em; color: #27ae60; white-space: nowrap; }
@@ -76,20 +144,20 @@
 .mytros-battle-card { font-size: 0.9em; }
 .mytros-battle-card .card-header { font-size: 1.1em; border-bottom: 2px solid #555; padding-bottom: 4px; margin-bottom: 6px; }
 .mytros-battle-card .card-matchup { display: flex; gap: 8px; align-items: center; margin-bottom: 4px; }
-.mytros-battle-card .card-vs { color: #888; font-size: 0.85em; }
+.mytros-battle-card .card-vs { color: var(--mytros-text-muted-alt); font-size: 0.85em; }
 .mytros-battle-card .faction-allied { color: #1a5276; font-weight: bold; }
 .mytros-battle-card .faction-sydon { color: #7b241c; font-weight: bold; }
 .mytros-battle-card .card-result { margin-bottom: 8px; }
-.mytros-battle-card .card-score { color: #666; }
+.mytros-battle-card .card-score { color: var(--mytros-text-muted); }
 .mytros-battle-card .card-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
-.mytros-battle-card .card-table th, .mytros-battle-card .card-table td { padding: 3px 6px; border: 1px solid #ddd; }
-.mytros-battle-card .card-table th { background: rgba(0,0,0,0.07); }
+.mytros-battle-card .card-table th, .mytros-battle-card .card-table td { padding: 3px 6px; border: 1px solid var(--mytros-border-light); }
+.mytros-battle-card .card-table th { background: var(--mytros-surface-header); }
 .mytros-battle-card .card-final td { font-size: 0.85em; }
 .mytros-battle-card .text-good { color: #27ae60; }
 .mytros-battle-card .text-bad { color: #c0392b; }
-.mytros-battle-card .text-neutral { color: #888; }
+.mytros-battle-card .text-neutral { color: var(--mytros-text-muted-alt); }
 .mytros-battle-card .card-death { color: #c0392b; font-weight: bold; margin: 4px 0; }
 .mytros-battle-card .card-status { margin: 3px 0; font-weight: bold; }
 .mytros-battle-card .card-status-destroyed { color: #e74c3c; }
 .mytros-battle-card .card-status-routed { color: #e67e22; }
-.mytros-battle-card .card-toll { color: #888; font-size: 0.85em; margin-top: 6px; border-top: 1px solid #ddd; padding-top: 4px; }
+.mytros-battle-card .card-toll { color: var(--mytros-text-muted-alt); font-size: 0.85em; margin-top: 6px; border-top: 1px solid var(--mytros-border-light); padding-top: 4px; }

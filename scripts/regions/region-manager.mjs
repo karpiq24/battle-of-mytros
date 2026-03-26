@@ -27,6 +27,11 @@ export class MytrosRegionManager {
         });
     }
 
+    static getAdjacentSections(regionId) {
+        const pairs = JSON.parse(game.settings.get(this.MODULE_ID, "adjacencyPairs") || "[]");
+        return pairs.flatMap(([a, b]) => a === regionId ? [b] : b === regionId ? [a] : []);
+    }
+
     // Initialize module flags on a region if they don't exist
     static async initSectionFlags(region) {
         if (region.getFlag(this.MODULE_ID, "initialized")) return;
