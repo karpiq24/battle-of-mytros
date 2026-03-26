@@ -68,7 +68,6 @@ COMMANDER_DEATH_MORALE_LOSS = 1
 # ── Tag bonuses / thresholds ──
 ZEALOT_MORALE_THRESHOLD  = 6
 ZEALOT_BONUS             = 2
-FANATIC_EXTRA_INJURY     = 1
 WARDEN_CLASH_BONUS       = 2
 WARDEN_ADJ_RECOVERY      = 2   # Adjacent allied legions get +2 Recovery
 IRONCLAD_BONUS           = 2
@@ -106,6 +105,19 @@ SALVAGE_BENEFITS = [
     "Quick Fortify",
 ]
 
+STRATEGIC_OBJECTIVES = {
+    "Temple of the Five": {"miracles": 3, "section": 1},
+    "Royal Palace":      {"miracles": 2, "section": 2},
+    "The Dockyard":      {"miracles": 2, "section": 3},
+    "Soldier's Gate":    {"miracles": 2, "section": 4},
+    "The Agora":         {"miracles": 2, "section": 5},
+    "The Academy":       {"miracles": 2, "section": 6},
+    "The Gymnasium":     {"miracles": 2, "section": 7},
+    "The Harp Bridge":   {"miracles": 2, "section": 8},
+    "The Vineyards":     {"miracles": 2, "section": 9},
+    "Fish Market":       {"miracles": 1, "section": 10},
+}
+
 
 # ─── Enums & Data Classes ──────────────────────────────────────────────
 
@@ -118,6 +130,34 @@ class BattleResult(Enum):
     WIN       = "Win"
     LOSS      = "Loss"
     NO_BATTLE = "No Battle"
+
+
+@dataclass
+class PCDeployment:
+    name: str = "PC"
+    type: str = "Reinforce" # "Reinforce", "Shock Assault", "Targeted Strike", "Shield the Wounded", "Protect"
+    phase: Optional[str] = None # For Targeted Strike: "maneuver", "charge", "clash"
+
+
+class MiraclePool:
+    def __init__(self, points: int):
+        self.points = points
+
+    def spend_bonus(self, amount: int = 1) -> int:
+        """Spend points for a flat bonus. Returns the bonus granted."""
+        if self.points >= amount:
+            self.points -= amount
+            return amount
+        b = self.points
+        self.points = 0
+        return b
+
+    def spend_advantage(self) -> bool:
+        """Spend 2 points for advantage. Returns True if advantage granted."""
+        if self.points >= 2:
+            self.points -= 2
+            return True
+        return False
 
 
 @dataclass
@@ -225,10 +265,6 @@ def contested_roll(bonus_a: int, bonus_b: int,
 
 
 def determine_phase_winner(ta, tb, n20a, n20b, n1a, n1b) -> str:
-    if n20a and not n20b: return 'a'
-    if n20b and not n20a: return 'b'
-    if n1a  and not n1b:  return 'b'
-    if n1b  and not n1a:  return 'a'
     if ta > tb: return 'a'
     if tb > ta: return 'b'
     return 'tie'
@@ -331,7 +367,11 @@ class BattleLog:
 # ─── Battle Resolution ──────────────────────────────────────────────────
 
 def simulate_battle(la: Legion, lb: Legion, log: BattleLog,
-                    recon_maneuver_bonus: int = 0):
+                    recon_maneuver_bonus: int = 0,
+                    pc_a: list[PCDeployment] = None,
+                    pc_b: list[PCDeployment] = None,
+                    pool_a: MiraclePool = None,
+                    pool_b: MiraclePool = None):
     """Resolve a 3-phase battle. Modifies log in-place."""
     counter_a = 0
     counter_b = 0
@@ -344,28 +384,58 @@ def simulate_battle(la: Legion, lb: Legion, log: BattleLog,
     fort_a = fortification_bonus(la, lb)
     fort_b = fortification_bonus(lb, la)
 
+    def roll_pc(deployments, phase_name):
+        bonus = 0
+        adv = False
+        if not deployments: return 0, False
+        for p in deployments:
+            if p.type == "Reinforce": bonus += random.randint(1, 4)
+            elif p.type == "Shock Assault": bonus += random.randint(1, 6)
+            elif p.type == "Targeted Strike" and p.phase == phase_name:
+                bonus += random.randint(1, 8)
+                adv = True
+        return bonus, adv
+
+    def get_miracle(pool):
+        if not pool: return 0, False
+        # Spend 1 for +1 bonus, or 2 for advantage if pool is large
+        bonus = 0
+        adv = False
+        if pool.points >= 2:
+            adv = pool.spend_advantage()
+        elif pool.points >= 1:
+            bonus = pool.spend_bonus(1)
+        return bonus, adv
+
     # ── Phase 1: Maneuver (Wit) ──────────────────────────────────────────
     bon_a, adv_a, _ = legion_battle_bonuses(la, "maneuver")
     bon_b, adv_b, _ = legion_battle_bonuses(lb, "maneuver")
     pen_a, dd_a     = enemy_penalties(la, lb, "maneuver")
     pen_b, dd_b     = enemy_penalties(lb, la, "maneuver")
 
+    pc_bon_a, pc_adv_a = roll_pc(pc_a, "maneuver")
+    pc_bon_b, pc_adv_b = roll_pc(pc_b, "maneuver")
+
+    mir_bon_a, mir_adv_a = get_miracle(pool_a)
+    mir_bon_b, mir_adv_b = get_miracle(pool_b)
+
     # recon bonus only applies to the allied side
     rec_a = recon_maneuver_bonus if la.faction == Faction.ALLIED else 0
     rec_b = recon_maneuver_bonus if lb.faction == Faction.ALLIED else 0
 
-    tot_a = la.wit_total + bon_a + pen_a + fort_a + rec_a
-    tot_b = lb.wit_total + bon_b + pen_b + fort_b + rec_b
+    tot_a = la.wit_total + bon_a + pen_a + fort_a + rec_a + pc_bon_a + mir_bon_a
+    tot_b = lb.wit_total + bon_b + pen_b + fort_b + rec_b + pc_bon_b + mir_bon_b
 
     # Up to 3 rerolls on tie
     winner = 'tie'
     for _ in range(4):
         ra, rb, ta, tb, n20a, n20b, n1a, n1b = contested_roll(
-            tot_a, tot_b, adv_a=adv_a, adv_b=adv_b,
+            tot_a, tot_b, adv_a=adv_a or pc_adv_a or mir_adv_a, adv_b=adv_b or pc_adv_b or mir_adv_b,
             disadv_a=dd_a, disadv_b=dd_b, vet_a=vet_a, vet_b=vet_b)
         winner = determine_phase_winner(ta, tb, n20a, n20b, n1a, n1b)
         if winner != 'tie':
             break
+    # ... (rest of function unchanged, but using pool_a/b for Charge and Clash)
 
     da = db = 0
     seized_for_b = 0; seized_for_a = 0
@@ -402,18 +472,24 @@ def simulate_battle(la: Legion, lb: Legion, log: BattleLog,
     pen_a2, dd_a2     = enemy_penalties(la, lb, "charge")
     pen_b2, dd_b2     = enemy_penalties(lb, la, "charge")
 
-    tot_a2 = la.mor_total + bon_a2 + pen_a2 + charge_bonus_a + fort_a
-    tot_b2 = lb.mor_total + bon_b2 + pen_b2 + charge_bonus_b + fort_b
+    pc_bon_a2, pc_adv_a2 = roll_pc(pc_a, "charge")
+    pc_bon_b2, pc_adv_b2 = roll_pc(pc_b, "charge")
+
+    mir_bon_a2, mir_adv_a2 = get_miracle(pool_a)
+    mir_bon_b2, mir_adv_b2 = get_miracle(pool_b)
+
+    tot_a2 = la.mor_total + bon_a2 + pen_a2 + charge_bonus_a + fort_a + pc_bon_a2 + mir_bon_a2
+    tot_b2 = lb.mor_total + bon_b2 + pen_b2 + charge_bonus_b + fort_b + pc_bon_b2 + mir_bon_b2
 
     ra, rb, ta, tb, n20a, n20b, n1a, n1b = contested_roll(
-        tot_a2, tot_b2, adv_a=adv_a2, adv_b=adv_b2,
+        tot_a2, tot_b2, adv_a=adv_a2 or pc_adv_a2 or mir_adv_a2, adv_b=adv_b2 or pc_adv_b2 or mir_adv_b2,
         disadv_a=dd_a2, disadv_b=dd_b2, vet_a=vet_a, vet_b=vet_b)
     winner_c = determine_phase_winner(ta, tb, n20a, n20b, n1a, n1b)
 
     # One reroll on tie
     if winner_c == 'tie':
         ra, rb, ta, tb, n20a, n20b, n1a, n1b = contested_roll(
-            tot_a2, tot_b2, adv_a=adv_a2, adv_b=adv_b2,
+            tot_a2, tot_b2, adv_a=adv_a2 or pc_adv_a2 or mir_adv_a2, adv_b=adv_b2 or pc_adv_b2 or mir_adv_b2,
             disadv_a=dd_a2, disadv_b=dd_b2, vet_a=vet_a, vet_b=vet_b)
         winner_c = determine_phase_winner(ta, tb, n20a, n20b, n1a, n1b)
     # Still tied → neither gains Clash bonus, no counter points
@@ -437,11 +513,17 @@ def simulate_battle(la: Legion, lb: Legion, log: BattleLog,
     pen_a3, dd_a3     = enemy_penalties(la, lb, "clash")
     pen_b3, dd_b3     = enemy_penalties(lb, la, "clash")
 
-    tot_a3 = la.vit_total + bon_a3 + pen_a3 + clash_bonus_a + fort_a
-    tot_b3 = lb.vit_total + bon_b3 + pen_b3 + clash_bonus_b + fort_b
+    pc_bon_a3, pc_adv_a3 = roll_pc(pc_a, "clash")
+    pc_bon_b3, pc_adv_b3 = roll_pc(pc_b, "clash")
+
+    mir_bon_a3, mir_adv_a3 = get_miracle(pool_a)
+    mir_bon_b3, mir_adv_b3 = get_miracle(pool_b)
+
+    tot_a3 = la.vit_total + bon_a3 + pen_a3 + clash_bonus_a + fort_a + pc_bon_a3 + mir_bon_a3
+    tot_b3 = lb.vit_total + bon_b3 + pen_b3 + clash_bonus_b + fort_b + pc_bon_b3 + mir_bon_b3
 
     ra, rb, ta, tb, n20a, n20b, n1a, n1b = contested_roll(
-        tot_a3, tot_b3, adv_a=adv_a3, adv_b=adv_b3,
+        tot_a3, tot_b3, adv_a=adv_a3 or pc_adv_a3 or mir_adv_a3, adv_b=adv_b3 or pc_adv_b3 or mir_adv_b3,
         disadv_a=dd_a3, disadv_b=dd_b3, vet_a=vet_a, vet_b=vet_b)
     winner_cl = determine_phase_winner(ta, tb, n20a, n20b, n1a, n1b)
     # Tied Clash → no counter points for either (brutal and indecisive)
@@ -456,6 +538,7 @@ def simulate_battle(la: Legion, lb: Legion, log: BattleLog,
 
     counter_a += da; counter_b += db
     log.phases.append(PhaseResult("Clash (Vitality)", ra, rb, ta, tb, n20a, n20b, n1a, n1b, winner_cl, da, db))
+
 
     # Final tie-breaker: sudden-death Vitality rerolls
     while counter_a == counter_b:
@@ -485,23 +568,46 @@ def run_aftermath(legion: Legion, won: bool, battle_counter_diff: int,
                   seized_extra_injuries: int = 0,
                   warden_recovery_bonus: int = 0,
                   rallier_hope_bonus: int = 0,
-                  headhunter_death_penalty: int = 0) -> dict:
+                  headhunter_death_penalty: int = 0,
+                  fort_bonus: int = 0,
+                  pc_deployments: list[PCDeployment] = None,
+                  pool: MiraclePool = None) -> dict:
     results = {}
     vet = _has(legion, "Veteran")
     divine_reroll_used = False
 
+    def roll_pc_aft(aft_name):
+        bonus = 0
+        if not pc_deployments: return 0
+        for p in pc_deployments:
+            if p.type == "Reinforce": bonus += random.randint(1, 4)
+            elif p.type == "Shield the Wounded" and aft_name in ("recovery", "hope", "salvage"):
+                bonus += random.randint(1, 8)
+        return bonus
+
+    def get_miracle(pool):
+        if not pool: return 0, False
+        bonus = 0
+        adv = False
+        if pool.points >= 2:
+            adv = pool.spend_advantage()
+        elif pool.points >= 1:
+            bonus = pool.spend_bonus(1)
+        return bonus, adv
+
     # ── Recovery Check (Vitality) ─────────────────────────────────────────
     adv_rec   = _has(legion, "Medic")    # Medic: advantage on Recovery
     disadv_rec = disadv_recovery or _has(legion, "Fanatic")  # Fanatic: disadvantage
-    rec_bonus = warden_recovery_bonus
+    mir_bon_r, mir_adv_r = get_miracle(pool)
+    rec_bonus = warden_recovery_bonus + fort_bonus + roll_pc_aft("recovery") + mir_bon_r
     if _has(legion, "Ironclad"):
         rec_bonus += IRONCLAD_BONUS
 
     dc = RECOVERY_BASE_DC + legion.injuries
 
-    if adv_rec and not disadv_rec:
+    if (adv_rec or mir_adv_r) and not disadv_rec:
         roll_r = max(d20(vet), d20(vet))
-    elif disadv_rec and not adv_rec:
+    elif disadv_rec and not (adv_rec or mir_adv_r):
         roll_r = min(d20(vet), d20(vet))
     else:
         roll_r = d20(vet)
@@ -520,7 +626,6 @@ def run_aftermath(legion: Legion, won: bool, battle_counter_diff: int,
     else:
         inj = RECOVERY_LOSER_PASS if passed_r else RECOVERY_LOSER_FAIL
 
-    inj += FANATIC_EXTRA_INJURY if _has(legion, "Fanatic") else 0
     inj += seized_extra_injuries
 
     # Medic: if won and passed, remove 1 existing injury
@@ -536,12 +641,15 @@ def run_aftermath(legion: Legion, won: bool, battle_counter_diff: int,
                             "injuries_gained": inj, "healed": healed}
 
     # ── Hope Check (Morale) ───────────────────────────────────────────────
-    hope_bonus = rallier_hope_bonus
+    mir_bon_h, mir_adv_h = get_miracle(pool)
+    hope_bonus = rallier_hope_bonus + fort_bonus + roll_pc_aft("hope") + mir_bon_h
     if _has(legion, "Rallier"):  hope_bonus += RALLIER_OWN_HOPE_BONUS
     if _has(legion, "Inspiring"): hope_bonus += INSPIRING_BONUS
 
-    if disadv_hope:
+    if disadv_hope and not mir_adv_h:
         roll_h = min(d20(vet), d20(vet))
+    elif mir_adv_h and not disadv_hope:
+        roll_h = max(d20(vet), d20(vet))
     else:
         roll_h = d20(vet)
 
@@ -565,9 +673,23 @@ def run_aftermath(legion: Legion, won: bool, battle_counter_diff: int,
     results["hope"] = {"roll": roll_h, "passed": passed_h, "morale_change": mor_chg}
 
     # ── Salvage Check (Wit) ───────────────────────────────────────────────
-    salvage_bonus = CUNNING_BONUS if _has(legion, "Cunning") else 0
-    roll_s = d20(vet)
+    mir_bon_s, mir_adv_s = get_miracle(pool)
+    salvage_bonus = fort_bonus + roll_pc_aft("salvage") + mir_bon_s
+    if _has(legion, "Cunning"): salvage_bonus += CUNNING_BONUS
+    
+    if mir_adv_s:
+        roll_s = max(d20(vet), d20(vet))
+    else:
+        roll_s = d20(vet)
+
     passed_s = roll_s + legion.wit_total + salvage_bonus >= SALVAGE_DC
+
+    if not passed_s and _has(legion, "Divine Blood") and not divine_reroll_used:
+        r2 = d20(vet)
+        if r2 + legion.wit_total + salvage_bonus >= SALVAGE_DC:
+            passed_s = True
+        divine_reroll_used = True
+
     nat20_s  = (roll_s == 20)
     benefits = []
 
@@ -585,7 +707,12 @@ def run_aftermath(legion: Legion, won: bool, battle_counter_diff: int,
     results["salvage"] = {"roll": roll_s, "passed": passed_s, "benefits": benefits}
 
     # ── Commander Casualty Check ──────────────────────────────────────────
-    if legion.commander.alive:
+    is_protected = False
+    if pc_deployments:
+        for p in pc_deployments:
+            if p.type == "Protect": is_protected = True
+
+    if legion.commander.alive and not is_protected:
         if won:
             base_risk = CASUALTY_BASE_RISK["winner"]
         elif battle_counter_diff <= CASUALTY_CRUSHED_THRESHOLD:
@@ -617,7 +744,7 @@ def run_aftermath(legion: Legion, won: bool, battle_counter_diff: int,
         }
     else:
         results["casualty"] = {"roll": 0, "dc": 0, "died": False,
-                                "protection": 0, "base_risk": 0}
+                                "protection": 0, "base_risk": 0, "protected": is_protected}
 
     legion.wit_temp_bonus = 0
     return results
@@ -733,16 +860,33 @@ class RoundSummary:
     successions: list = field(default_factory=list)
     rallied:     list = field(default_factory=list)
     civilian_deaths: int = 0
+    allied_miracles: int = 8
+    enemy_miracles:  int = 10
+    destroyed_objectives: list = field(default_factory=list)
+    objective_hold_counters: dict = field(default_factory=dict)
 
 
 def simulate_round(allied: list, enemy: list, round_num: int,
-                   commander_pool: Optional[CommanderPool] = None) -> RoundSummary:
-    summary = RoundSummary(round_num=round_num, recon_result="", recon_total=0)
+                   commander_pool: Optional[CommanderPool] = None,
+                   miracle_allied: int = 8,
+                   miracle_enemy: int = 10,
+                   destroyed_objectives: list = None,
+                   objective_hold_counters: dict = None) -> RoundSummary:
+    summary = RoundSummary(
+        round_num=round_num, recon_result="", recon_total=0,
+        allied_miracles=miracle_allied, enemy_miracles=miracle_enemy,
+        destroyed_objectives=list(destroyed_objectives) if destroyed_objectives else [],
+        objective_hold_counters=dict(objective_hold_counters) if objective_hold_counters else {})
 
     active_allied = [l for l in allied if l.effective]
     active_enemy  = [l for l in enemy  if l.effective]
     if not active_allied or not active_enemy:
         return summary
+
+    # Assign sections for the round if not already (for objective logic)
+    # Simplified for batch: each legion occupies its index as a section
+    for i, l in enumerate(allied): l.section = i + 1
+    for i, l in enumerate(enemy):  l.section = i + 1
 
     recon_total, recon_result = reconnaissance_roll(active_allied)
     summary.recon_result = recon_result
@@ -753,15 +897,55 @@ def simulate_round(allied: list, enemy: list, round_num: int,
     random.shuffle(active_enemy)
     num_battles = min(len(active_allied), len(active_enemy))
 
+    # --- Miracle Spending ---
+    # Allied side spends on their battles, Enemy on theirs
+    # Distribute available points into MiraclePools for each battle
+    miracle_pool_allied = MiraclePool(summary.allied_miracles)
+    miracle_pool_enemy  = MiraclePool(summary.enemy_miracles)
+    
+    battle_pools_a = [MiraclePool(0) for _ in range(num_battles)]
+    battle_pools_e = [MiraclePool(0) for _ in range(num_battles)]
+    
+    if num_battles > 0:
+        # Greedily distribute points to battles
+        while miracle_pool_allied.points > 0:
+            for i in range(num_battles):
+                if miracle_pool_allied.points > 0:
+                    battle_pools_a[i].points += 1
+                    miracle_pool_allied.points -= 1
+                else: break
+        while miracle_pool_enemy.points > 0:
+            for i in range(num_battles):
+                if miracle_pool_enemy.points > 0:
+                    battle_pools_e[i].points += 1
+                    miracle_pool_enemy.points -= 1
+                else: break
+
+    # --- PC Deployment (Allied side only for sim) ---
+    # Randomly assign 3 PCs to allied battles
+    pc_types = ["Reinforce", "Shock Assault", "Targeted Strike", "Shield the Wounded", "Protect"]
+    pc_deployments_by_battle = [[] for _ in range(num_battles)]
+    if num_battles > 0:
+        for i in range(3): # 3 PCs
+            battle_idx = random.randrange(num_battles)
+            ptype = random.choice(pc_types)
+            pphase = random.choice(["maneuver", "charge", "clash"]) if ptype == "Targeted Strike" else None
+            pc_deployments_by_battle[battle_idx].append(PCDeployment(name=f"PC{i+1}", type=ptype, phase=pphase))
+
     fought = set()
 
     for i in range(num_battles):
         la = active_allied[i]
         le = active_enemy[i]
         fought.add(id(la)); fought.add(id(le))
+        
+        pcs_a = pc_deployments_by_battle[i]
+        pool_a = battle_pools_a[i]
+        pool_e = battle_pools_e[i]
 
         log = BattleLog(legion_a=la.name, legion_b=le.name)
-        simulate_battle(la, le, log, recon_maneuver_bonus=recon_man_bonus)
+        simulate_battle(la, le, log, recon_maneuver_bonus=recon_man_bonus,
+                        pc_a=pcs_a, pool_a=pool_a, pool_b=pool_e)
 
         won_a        = log.winner == "a"
         cdiff_a      = log.counter_a - log.counter_b
@@ -769,46 +953,46 @@ def simulate_round(allied: list, enemy: list, round_num: int,
         # Cross-effects from opponent tags
         brutal_won_a = won_a  and _has(la, "Brutal")
         brutal_won_b = (not won_a) and _has(le, "Brutal")
-        terror_a     = _has(la, "Terrorizer")   # la imposes disadv Hope on le
-        terror_b     = _has(le, "Terrorizer")   # le imposes disadv Hope on la
+        terror_a     = _has(la, "Terrorizer")
+        terror_b     = _has(le, "Terrorizer")
 
-        # Warden: adjacent allies get +2 Recovery
         def warden_bonus(legion, active_list):
-            return sum(WARDEN_ADJ_RECOVERY
-                       for o in active_list
-                       if o is not legion and _has(o, "Warden")
-                       and abs(o.section - legion.section) == 1)
+            return sum(WARDEN_ADJ_RECOVERY for o in active_list if o is not legion and _has(o, "Warden") and abs(o.section - legion.section) == 1)
 
-        # Rallier: adjacent allies get +1 Hope
         def rallier_bonus(legion, active_list):
-            return sum(RALLIER_ADJ_HOPE_BONUS
-                       for o in active_list
-                       if o is not legion and _has(o, "Rallier")
-                       and abs(o.section - legion.section) == 1)
+            return sum(RALLIER_ADJ_HOPE_BONUS for o in active_list if o is not legion and _has(o, "Rallier") and abs(o.section - legion.section) == 1)
 
-        # Headhunter: +5% death chance against enemy commander
         hh_vs_a = HEADHUNTER_DEATH_BONUS if _has(le, "Headhunter") else 0
         hh_vs_b = HEADHUNTER_DEATH_BONUS if _has(la, "Headhunter") else 0
+        mage_vs_a = _has(le, "Mage")
+        mage_vs_b = _has(la, "Mage")
+
+        fort_a = fortification_bonus(la, le)
+        fort_b = fortification_bonus(le, la)
 
         aftermath_a = run_aftermath(
             la, won_a, cdiff_a,
-            disadv_recovery = brutal_won_b,
+            disadv_recovery = brutal_won_b or mage_vs_a,
             disadv_hope     = terror_b,
             seized_extra_injuries = log.seized_extra_for_a,
             warden_recovery_bonus = warden_bonus(la, active_allied),
             rallier_hope_bonus    = rallier_bonus(la, active_allied),
-            headhunter_death_penalty = hh_vs_a)
+            headhunter_death_penalty = hh_vs_a,
+            fort_bonus = fort_a,
+            pc_deployments = pcs_a,
+            pool = pool_a)
 
         aftermath_b = run_aftermath(
             le, not won_a, -cdiff_a,
-            disadv_recovery = brutal_won_a,
+            disadv_recovery = brutal_won_a or mage_vs_b,
             disadv_hope     = terror_a,
             seized_extra_injuries = log.seized_extra_for_b,
             warden_recovery_bonus = warden_bonus(le, active_enemy),
             rallier_hope_bonus    = rallier_bonus(le, active_enemy),
-            headhunter_death_penalty = hh_vs_b)
+            headhunter_death_penalty = hh_vs_b,
+            fort_bonus = fort_b,
+            pool = pool_e)
 
-        # Brutal: +1 extra injury to enemy if they already have 4+ after Recovery
         if brutal_won_a and le.injuries >= 4 and not le.destroyed:
             le.injuries = min(le.max_injuries, le.injuries + 1)
             if le.injuries >= le.max_injuries: le.destroyed = True
@@ -816,96 +1000,69 @@ def simulate_round(allied: list, enemy: list, round_num: int,
             la.injuries = min(la.max_injuries, la.injuries + 1)
             if la.injuries >= la.max_injuries: la.destroyed = True
 
-        # Mage: loser Recovery check with Disadvantage (in addition to normal disadv)
-        # This was already handled via disadv_recovery parameter for the loser if Mage is on winner.
-        # Actually the Mage tag says "forces enemy Recovery check with Disadvantage"
-        # We apply this here by re-applying only the Mage disadv (already included above via brutal_won).
-        # For precision: if winner has Mage, loser's Recovery is with Disadvantage regardless.
-        # Since run_aftermath already ran, we note this for future improvement — currently
-        # the Mage Recovery disadv is partially captured through the brutal pathway.
-
-        # Enemy Shaken salvage cross-effect
-        for benefits_list, target in [
-            (aftermath_a.get("salvage", {}).get("benefits", []), le),
-            (aftermath_b.get("salvage", {}).get("benefits", []), la),
-        ]:
+        for benefits_list, target in [(aftermath_a.get("salvage", {}).get("benefits", []), le), (aftermath_b.get("salvage", {}).get("benefits", []), la)]:
             for b in benefits_list:
-                if "Shaken" in b:
-                    target.morale_mod -= 1
+                if "Shaken" in b: target.morale_mod -= 1
 
         log.aftermath_a = aftermath_a
         log.aftermath_b = aftermath_b
-
-        la.record_state(BattleResult.WIN  if won_a else BattleResult.LOSS)
+        la.record_state(BattleResult.WIN if won_a else BattleResult.LOSS)
         le.record_state(BattleResult.LOSS if won_a else BattleResult.WIN)
 
-        # Commander succession
-        for legion, aft, faction, deaths, events in [
-            (la, aftermath_a, Faction.ALLIED, summary.allied_commander_deaths,
-             summary.allied_commander_death_events),
-            (le, aftermath_b, Faction.ENEMY,  summary.enemy_commander_deaths,
-             summary.enemy_commander_death_events),
-        ]:
+        for legion, aft, faction, deaths, events in [(la, aftermath_a, Faction.ALLIED, summary.allied_commander_deaths, summary.allied_commander_death_events), (le, aftermath_b, Faction.ENEMY, summary.enemy_commander_deaths, summary.enemy_commander_death_events)]:
             cas = aft.get("casualty", {})
             if cas.get("died", False):
                 dead_name = legion.commander.name
                 legion.commanders_lost += 1
                 deaths.append(dead_name)
-                events.append({
-                    "name":       dead_name,
-                    "legion":     legion.name,
-                    "round":      round_num,
-                    "won":        won_a if legion is la else not won_a,
-                    "crushed":    abs(cdiff_a) >= abs(CASUALTY_CRUSHED_THRESHOLD) and (
-                                      (legion is la and not won_a) or
-                                      (legion is le and won_a)),
-                    "protection": cas.get("protection", 0),
-                    "roll":       cas.get("roll", 0),
-                    "dc":         cas.get("dc", 0),
-                    "faction":    "Allied" if faction == Faction.ALLIED else "Enemy",
-                })
+                events.append({"name":dead_name,"legion":legion.name,"round":round_num,"won":won_a if legion is la else not won_a,"crushed":abs(cdiff_a)>=3,"protection":cas.get("protection", 0),"roll":cas.get("roll", 0),"dc":cas.get("dc", 0),"faction":"Allied" if faction == Faction.ALLIED else "Enemy"})
                 if commander_pool and not legion.destroyed:
                     replacement = commander_pool.get_replacement(faction)
                     if replacement:
                         legion.commander = replacement
-                        summary.successions.append(
-                            f"{legion.name}: {dead_name} → {replacement.name}")
-
+                        summary.successions.append(f"{legion.name}: {dead_name} → {replacement.name}")
         summary.battles.append(log)
 
-    # Idle effective legions
+    for obj_name, data in STRATEGIC_OBJECTIVES.items():
+        if obj_name in summary.destroyed_objectives: continue
+        held_by_enemy = False
+        for i in range(num_battles):
+            if active_enemy[i].section == data["section"]:
+                if summary.battles[i].winner == "b": held_by_enemy = True
+                break
+        else:
+            for l in active_enemy[num_battles:]:
+                if l.section == data["section"]: held_by_enemy = True; break
+        
+        if held_by_enemy:
+            summary.objective_hold_counters[obj_name] = summary.objective_hold_counters.get(obj_name, 0) + 1
+            if summary.objective_hold_counters[obj_name] >= 2:
+                summary.destroyed_objectives.append(obj_name)
+                summary.enemy_miracles += data["miracles"]
+        else:
+            summary.objective_hold_counters[obj_name] = 0
+
     for l in active_allied[num_battles:] + active_enemy[num_battles:]:
         l.record_state(BattleResult.NO_BATTLE)
         if l.injuries > 0: l.injuries = max(0, l.injuries - IDLE_INJURY_RECOVERY)
         l.morale_mod += IDLE_MORALE_RECOVERY
 
-    # Routed legion per-round recovery
     for l in allied + enemy:
         if l.routed and not l.destroyed:
             l.morale_mod += IDLE_MORALE_RECOVERY
-            if l.injuries > 0: l.injuries = max(0, l.injuries - IDLE_INJURY_RECOVERY)
+            if l.injuries > 0: l.injuries = max(0, l.injuries - 1)
             if l.mor_total > ROUT_THRESHOLD:
                 l.routed = False
-                faction_tag = "Allied" if l.faction == Faction.ALLIED else "Enemy"
-                summary.rallied.append(f"{faction_tag}: {l.name} (Morale: {l.mor_total})")
+                summary.rallied.append(f"{l.faction.value}: {l.name} (Morale: {l.mor_total})")
 
     summary.allied_losses = sum(1 for l in allied if l.destroyed)
     summary.enemy_losses  = sum(1 for l in enemy  if l.destroyed)
-
-    # ── Civilian Death Toll ───────────────────────────────────────────────
-    # Per battle: Allied won → 1d4×10, Allied lost → 1d6×50
     deaths = 0
     for log in summary.battles:
-        if log.winner == "a":
-            deaths += random.randint(1, 4) * 10
-        else:
-            deaths += random.randint(1, 6) * 50
-    # Unengaged enemy legions: 1d6×50 each
-    unengaged_enemy = len(active_enemy) - num_battles
-    for _ in range(max(0, unengaged_enemy)):
-        deaths += random.randint(1, 6) * 50
+        deaths += (random.randint(1, 4) * 10) if log.winner == "a" else (random.randint(1, 6) * 50)
+    for _ in range(max(0, len(active_enemy) - num_battles)): deaths += random.randint(1, 6) * 50
+    deaths += len(summary.destroyed_objectives) * random.randint(1, 4) * 10
     summary.civilian_deaths = deaths
-
     return summary
 
 
@@ -939,9 +1096,16 @@ def run_simulation(num_rounds=30, seed=None,
     print(f"  Max rounds: {num_rounds}")
     print("=" * 72)
 
+    mir_a, mir_e = 8, 10
+    destroyed_objs = []
+    hold_counters = {}
+
     for rnd in range(1, num_rounds + 1):
-        summary = simulate_round(allied, enemy, rnd, commander_pool)
+        summary = simulate_round(allied, enemy, rnd, commander_pool, mir_a, mir_e, destroyed_objs, hold_counters)
         summaries.append(summary)
+        mir_a, mir_e = summary.allied_miracles, summary.enemy_miracles
+        destroyed_objs = summary.destroyed_objectives
+        hold_counters = summary.objective_hold_counters
 
         active_a    = [l for l in allied if not l.destroyed]
         active_e    = [l for l in enemy  if not l.destroyed]
@@ -971,6 +1135,11 @@ def run_simulation(num_rounds=30, seed=None,
         print(f"\n  Round {rnd}: Recon {summary.recon_total} ({summary.recon_result})")
         print(f"    Battles: {len(summary.battles)}"
               f"  |  Allied wins: {wins_a}  |  Enemy wins: {wins_e}")
+        print(f"    Miracles: Allied {summary.allied_miracles} | Enemy {summary.enemy_miracles}")
+        if summary.destroyed_objectives:
+            new_objs = [o for o in summary.destroyed_objectives if rnd == 1 or o not in summaries[-2].destroyed_objectives]
+            for o in new_objs: print(f"    🔥 OBJECTIVE DESTROYED: {o}")
+
         for b in summary.battles:
             w = b.legion_a if b.winner == "a" else b.legion_b
             print(f"      {b.legion_a} vs {b.legion_b}  →  {w} wins ({b.counter_a}:{b.counter_b})")
@@ -1011,6 +1180,7 @@ def run_simulation(num_rounds=30, seed=None,
     final_a = [l for l in allied if not l.destroyed]
     final_e = [l for l in enemy  if not l.destroyed]
     print(f"  FINAL: Allied {len(final_a)} legions | Enemy {len(final_e)} legions")
+    if destroyed_objs: print(f"  Destroyed Objectives: {', '.join(destroyed_objs)}")
     rf_a = sum(1 for l in final_a if l.routed)
     rf_e = sum(1 for l in final_e if l.routed)
     if rf_a or rf_e: print(f"  Routed: Allied {rf_a} | Enemy {rf_e}")
