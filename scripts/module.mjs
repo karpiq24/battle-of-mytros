@@ -137,7 +137,9 @@ Hooks.on("canvasReady", async () => {
 });
 
 Hooks.on("getSceneControlButtons", (controls) => {
-    const tokenControls = controls.find(c => c.name === "token");
+    const tokenControls = Array.isArray(controls)
+        ? controls.find(c => c.name === "token")
+        : controls.token ?? controls.get?.("token");
     if (tokenControls) {
         tokenControls.tools.push({
             name: "battleDashboard",
