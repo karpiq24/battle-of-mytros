@@ -492,11 +492,12 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
                 currentMorale, mods.flatBonus, mods.advantage, mods.disadvantage, isVeteran, support.dice
             );
 
-            const success = rollResult.total >= 12;
+            const hopeDC = game.settings.get("battle-of-mytros", "hopeDC") ?? 12;
+            const success = rollResult.total >= hopeDC;
             const moraleDelta = isWinner ? (success ? 2 : 1) : (success ? -1 : -2);
 
             results[side] = { rollTotal: rollResult.total, success, moraleDelta };
-            this.state.log.push(`${side} Hope (Morale ${currentMorale}): ${rollResult.total} vs DC 12 — ${success ? "SUCCESS" : "FAIL"} → ${moraleDelta >= 0 ? "+" : ""}${moraleDelta} Morale`);
+            this.state.log.push(`${side} Hope (Morale ${currentMorale}): ${rollResult.total} vs DC ${hopeDC} — ${success ? "SUCCESS" : "FAIL"} → ${moraleDelta >= 0 ? "+" : ""}${moraleDelta} Morale`);
         }
 
         this.state.hopeResult = results;
@@ -521,11 +522,12 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
                 stats.wit, mods.flatBonus, mods.advantage, mods.disadvantage, isVeteran, support.dice
             );
 
-            const success = rollResult.total >= 12;
+            const salvageDC = game.settings.get("battle-of-mytros", "salvageDC") ?? 12;
+            const success = rollResult.total >= salvageDC;
             const benefitCount = !success ? 0 : (rollResult.isNat20 ? 2 : 1);
 
             results[side] = { rollTotal: rollResult.total, success, nat20: rollResult.isNat20, benefitCount };
-            this.state.log.push(`${side} Salvage (Wit ${stats.wit}): ${rollResult.total} vs DC 12 — ${!success ? "FAIL" : rollResult.isNat20 ? "NAT 20! (2 benefits)" : "SUCCESS (1 benefit)"}`);
+            this.state.log.push(`${side} Salvage (Wit ${stats.wit}): ${rollResult.total} vs DC ${salvageDC} — ${!success ? "FAIL" : rollResult.isNat20 ? "NAT 20! (2 benefits)" : "SUCCESS (1 benefit)"}`);
         }
 
         this.state.salvageResult = results;
@@ -674,10 +676,11 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
             }
         }
 
-        // Clamp: Relentless min 2, others min 0, max 10
+        // Clamp: Relentless min 2, others min 0, max maxMorale
+        const maxMorale = game.settings.get("battle-of-mytros", "maxMorale") ?? 10;
         for (const side of ["allied", "sydon"]) {
             const minMorale = this.hasTag(this.state[side], "relentless") ? 2 : 0;
-            statsCopy[side].morale = Math.min(10, Math.max(minMorale, statsCopy[side].morale ?? 5));
+            statsCopy[side].morale = Math.min(maxMorale, Math.max(minMorale, statsCopy[side].morale ?? 5));
             statsCopy[side].injuries = Math.max(0, statsCopy[side].injuries || 0);
         }
 
@@ -690,7 +693,8 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
         const statusData = {};
         for (const side of ["allied", "sydon"]) {
             const s = statsCopy[side];
-            const destroyAt = this.hasTag(this.state[side], "bulwark") ? 7 : 6;
+            const baseDestroy = game.settings.get("battle-of-mytros", "destroyThreshold") ?? 6;
+            const destroyAt = this.hasTag(this.state[side], "bulwark") ? baseDestroy + 1 : baseDestroy;
             if (s.injuries >= destroyAt) {
                 this.state.log.push(`⚠ ${side} LEGION DESTROYED (${s.injuries} injuries)!`);
                 await this.state[side].setFlag("battle-of-mytros", "isDestroyed", true);

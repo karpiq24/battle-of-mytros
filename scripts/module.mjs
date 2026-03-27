@@ -122,6 +122,51 @@ Hooks.once('init', async function() {
         type: String,
         default: "[]"
     });
+
+    game.settings.register("battle-of-mytros", "sectionPrefix", {
+        name: "Section Region Prefix",
+        hint: "Regions whose names start with this prefix are treated as battle sections.",
+        scope: "world",
+        config: false,
+        type: String,
+        default: "Section:"
+    });
+
+    game.settings.register("battle-of-mytros", "maxMorale", {
+        name: "Maximum Morale",
+        hint: "Hard cap for legion morale.",
+        scope: "world",
+        config: false,
+        type: Number,
+        default: 10
+    });
+
+    game.settings.register("battle-of-mytros", "destroyThreshold", {
+        name: "Injury Destroy Threshold",
+        hint: "Injuries at which a legion is destroyed (Bulwark adds +1).",
+        scope: "world",
+        config: false,
+        type: Number,
+        default: 6
+    });
+
+    game.settings.register("battle-of-mytros", "hopeDC", {
+        name: "Hope Roll DC",
+        hint: "DC for the Hope aftermath roll.",
+        scope: "world",
+        config: false,
+        type: Number,
+        default: 12
+    });
+
+    game.settings.register("battle-of-mytros", "salvageDC", {
+        name: "Salvage Roll DC",
+        hint: "DC for the Salvage aftermath roll.",
+        scope: "world",
+        config: false,
+        type: Number,
+        default: 12
+    });
 });
 
 Hooks.on("canvasReady", async () => {

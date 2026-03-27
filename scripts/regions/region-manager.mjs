@@ -2,7 +2,9 @@ import { MytrosActorData } from "../models/actor-data.mjs";
 
 export class MytrosRegionManager {
     static MODULE_ID = "battle-of-mytros";
-    static SECTION_PREFIX = "Section:";
+    static get SECTION_PREFIX() {
+        return game.settings.get(this.MODULE_ID, "sectionPrefix") || "Section:";
+    }
 
     // Get all valid sections in the current scene
     static getActiveSections() {

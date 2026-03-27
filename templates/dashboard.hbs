@@ -187,6 +187,8 @@
 
         {{#if (eq tab 'setup')}}
             <div class="setup-form">
+
+                <h3><i class="fas fa-map"></i> {{localize "MYTROS.SetupSectionScene"}}</h3>
                 <div class="form-group">
                     <label>{{localize "MYTROS.SetupBattleScene"}}</label>
                     <select data-action="updateSetting" data-setting="battleSceneId">
@@ -196,7 +198,13 @@
                         {{/each}}
                     </select>
                 </div>
+                <div class="form-group">
+                    <label>{{localize "MYTROS.SetupSectionPrefix"}}</label>
+                    <input type="text" data-action="updateSetting" data-setting="sectionPrefix" value="{{sectionPrefix}}">
+                </div>
+
                 <hr>
+                <h3><i class="fas fa-calendar"></i> {{localize "MYTROS.SetupBattleState"}}</h3>
                 <div class="form-group">
                     <label>{{localize "MYTROS.SetupRoundLabel"}}</label>
                     <input type="number" data-action="updateSetting" data-setting="currentRound" value="{{round}}">
@@ -216,6 +224,36 @@
                 <div class="form-group">
                     <label>{{localize "MYTROS.SetupDeathTollLabel"}}</label>
                     <input type="number" data-action="updateSetting" data-setting="deathToll" value="{{deathToll}}">
+                </div>
+                <div class="form-group form-group-checkbox">
+                    <label>{{localize "MYTROS.SetupDeathTollFrozen"}}</label>
+                    <input type="checkbox" data-action="updateSetting" data-setting="deathTollFrozen" {{#if deathTollFrozen}}checked{{/if}}>
+                </div>
+                <div class="form-group form-group-checkbox">
+                    <label>{{localize "MYTROS.SetupSydonObjectiveHalved"}}</label>
+                    <input type="checkbox" data-action="updateSetting" data-setting="sydonObjectiveHalved" {{#if sydonObjectiveHalved}}checked{{/if}}>
+                </div>
+                <div class="form-group">
+                    <button type="button" data-action="resetCompletedEvents" class="btn-danger-subtle"><i class="fas fa-rotate-left"></i> {{localize "MYTROS.SetupResetEvents"}}</button>
+                </div>
+
+                <hr>
+                <h3><i class="fas fa-sliders"></i> {{localize "MYTROS.SetupRules"}}</h3>
+                <div class="form-group">
+                    <label>{{localize "MYTROS.SetupMaxMorale"}}</label>
+                    <input type="number" data-action="updateSetting" data-setting="maxMorale" value="{{maxMorale}}" min="1">
+                </div>
+                <div class="form-group">
+                    <label>{{localize "MYTROS.SetupDestroyThreshold"}}</label>
+                    <input type="number" data-action="updateSetting" data-setting="destroyThreshold" value="{{destroyThreshold}}" min="1">
+                </div>
+                <div class="form-group">
+                    <label>{{localize "MYTROS.SetupHopeDC"}}</label>
+                    <input type="number" data-action="updateSetting" data-setting="hopeDC" value="{{hopeDC}}" min="1">
+                </div>
+                <div class="form-group">
+                    <label>{{localize "MYTROS.SetupSalvageDC"}}</label>
+                    <input type="number" data-action="updateSetting" data-setting="salvageDC" value="{{salvageDC}}" min="1">
                 </div>
 
                 <hr>

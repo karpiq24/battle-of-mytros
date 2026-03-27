@@ -160,6 +160,18 @@ body.theme-dark,
 .mytros-dashboard .event-trigger-btn:hover { background: #b8860b; }
 .mytros-dashboard .event-done { font-size: 0.8em; color: #27ae60; white-space: nowrap; }
 
+/* Setup Form */
+.mytros-dashboard .setup-form h3 { font-size: 0.95em; margin: 8px 0 4px 0; color: var(--mytros-text-muted); text-transform: uppercase; letter-spacing: 0.05em; border: none; }
+.mytros-dashboard .setup-form .form-group { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.mytros-dashboard .setup-form .form-group label { flex: 1; font-size: 0.9em; }
+.mytros-dashboard .setup-form .form-group input[type="number"],
+.mytros-dashboard .setup-form .form-group input[type="text"],
+.mytros-dashboard .setup-form .form-group select { flex: 1; max-width: 200px; }
+.mytros-dashboard .setup-form .form-group-checkbox { align-items: center; }
+.mytros-dashboard .setup-form .form-group-checkbox input[type="checkbox"] { flex: none; width: 18px; height: 18px; }
+.mytros-dashboard .btn-danger-subtle { background: rgba(192, 57, 43, 0.1); border: 1px solid rgba(192, 57, 43, 0.4); color: #c0392b; border-radius: 3px; padding: 4px 10px; font-size: 0.85em; cursor: pointer; }
+.mytros-dashboard .btn-danger-subtle:hover { background: rgba(192, 57, 43, 0.2); }
+
 /* Chat Card */
 .mytros-battle-card { font-size: 0.9em; }
 .mytros-battle-card .card-header { font-size: 1.1em; border-bottom: 2px solid #555; padding-bottom: 4px; margin-bottom: 6px; }

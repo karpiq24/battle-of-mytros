@@ -51,7 +51,8 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
             disbandRoutedLegions: BattleDashboard.disbandRoutedLegions,
             toggleLegionFlag: BattleDashboard.toggleLegionFlag,
             addAdjacencyPair: BattleDashboard.addAdjacencyPair,
-            removeAdjacencyPair: BattleDashboard.removeAdjacencyPair
+            removeAdjacencyPair: BattleDashboard.removeAdjacencyPair,
+            resetCompletedEvents: BattleDashboard.resetCompletedEvents
         }
     };
 
@@ -251,7 +252,8 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
 
             if (!fought) {
                 const wasRouted = (stats.morale ?? 0) <= 0;
-                stats.morale = Math.min(10, (stats.morale ?? 0) + 1);
+                const maxMorale = game.settings.get("battle-of-mytros", "maxMorale") ?? 10;
+                stats.morale = Math.min(maxMorale, (stats.morale ?? 0) + 1);
                 stats.injuries = Math.max(0, (stats.injuries || 0) - 1);
                 await legion.setFlag("battle-of-mytros", "stats", stats);
 
@@ -394,9 +396,18 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
 
     static async updateSetting(event, target) {
         const settingName = target.dataset.setting;
-        const isNumeric = target.type === "number";
-        let value = isNumeric ? Number(target.value) : target.value;
+        let value;
+        if (target.type === "number") value = Number(target.value);
+        else if (target.type === "checkbox") value = target.checked;
+        else value = target.value;
         await game.settings.set("battle-of-mytros", settingName, value);
+        this.render();
+    }
+
+    static async resetCompletedEvents(_event, _target) {
+        if (!game.user.isGM) return;
+        await game.settings.set("battle-of-mytros", "completedEvents", "[]");
+        ui.notifications.info("Major events reset.");
         this.render();
     }
 
@@ -447,6 +458,12 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
         context.reconResult = game.settings.get("battle-of-mytros", "reconResult");
         context.reconBonus = game.settings.get("battle-of-mytros", "reconBonus");
         context.deathTollFrozen = game.settings.get("battle-of-mytros", "deathTollFrozen");
+        context.sydonObjectiveHalved = game.settings.get("battle-of-mytros", "sydonObjectiveHalved");
+        context.sectionPrefix = game.settings.get("battle-of-mytros", "sectionPrefix") || "Section:";
+        context.maxMorale = game.settings.get("battle-of-mytros", "maxMorale") ?? 10;
+        context.destroyThreshold = game.settings.get("battle-of-mytros", "destroyThreshold") ?? 6;
+        context.hopeDC = game.settings.get("battle-of-mytros", "hopeDC") ?? 12;
+        context.salvageDC = game.settings.get("battle-of-mytros", "salvageDC") ?? 12;
 
         const completedEventIds = JSON.parse(game.settings.get("battle-of-mytros", "completedEvents") || "[]");
         context.majorEvents = BattleDashboard.MAJOR_EVENTS.map(e => ({
