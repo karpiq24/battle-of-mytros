@@ -67,6 +67,23 @@ body.theme-dark,
 }
 
 /* ── Dashboard layout ────────────────────────────────────────────────────── */
+.mytros-dashboard {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.mytros-dashboard .tabs {
+    flex-shrink: 0;
+}
+.mytros-dashboard .dashboard-header {
+    flex-shrink: 0;
+}
+.mytros-dashboard .dashboard-body {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+}
+
 .mytros-dashboard .sections-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));

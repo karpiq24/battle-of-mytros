@@ -441,6 +441,9 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
             name: a.name
         }));
 
+        const battleSceneId = game.settings.get("battle-of-mytros", "battleSceneId");
+        context.scenes = game.scenes.map(s => ({ id: s.id, name: s.name, selected: s.id === battleSceneId }));
+
         context.reconResult = game.settings.get("battle-of-mytros", "reconResult");
         context.reconBonus = game.settings.get("battle-of-mytros", "reconBonus");
         context.deathTollFrozen = game.settings.get("battle-of-mytros", "deathTollFrozen");
@@ -452,7 +455,6 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
         }));
 
         // Grab regions if we are on the battle scene
-        const battleSceneId = game.settings.get("battle-of-mytros", "battleSceneId");
         context.isBattleScene = canvas.scene?.id === battleSceneId;
 
         if (context.isBattleScene) {

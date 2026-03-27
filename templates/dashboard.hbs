@@ -188,6 +188,16 @@
         {{#if (eq tab 'setup')}}
             <div class="setup-form">
                 <div class="form-group">
+                    <label>{{localize "MYTROS.SetupBattleScene"}}</label>
+                    <select data-action="updateSetting" data-setting="battleSceneId">
+                        <option value="">— {{localize "MYTROS.SetupBattleSceneNone"}} —</option>
+                        {{#each scenes}}
+                        <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.name}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+                <hr>
+                <div class="form-group">
                     <label>{{localize "MYTROS.SetupRoundLabel"}}</label>
                     <input type="number" data-action="updateSetting" data-setting="currentRound" value="{{round}}">
                 </div>
