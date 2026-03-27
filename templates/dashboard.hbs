@@ -8,7 +8,28 @@
     </nav>
 
     <header class="dashboard-header">
-        <h2>{{localize "MYTROS.Round"}} {{round}} - {{localize "MYTROS.Phase"}} {{phase}}</h2>
+        <div class="round-label">{{localize "MYTROS.Round"}} {{round}}</div>
+        <div class="phase-track">
+            {{#each phaseNames}}
+            <div class="phase-pip {{#if (eq (add @index 1) @root.phase)}}active{{/if}}" title="{{localize "MYTROS.Phase"}} {{add @index 1}}: {{this}}">
+                <span class="pip-number">{{add @index 1}}</span>
+                <span class="pip-label">{{this}}</span>
+            </div>
+            {{/each}}
+        </div>
+        {{#if isGM}}
+        <div class="phase-controls">
+            <button type="button" class="phase-btn" data-action="prevPhase" {{#if (eq phase 1)}}disabled{{/if}} title="{{localize "MYTROS.PrevPhase"}}"><i class="fas fa-chevron-left"></i></button>
+            <span class="phase-current-label">{{phaseName}}</span>
+            {{#if (eq phase 5)}}
+            <button type="button" class="phase-btn phase-btn-advance" data-action="advanceRound" title="{{localize "MYTROS.AdvanceRoundTooltip"}}">
+                {{localize "MYTROS.AdvanceRound"}} {{round}} + 1 <i class="fas fa-forward"></i>
+            </button>
+            {{else}}
+            <button type="button" class="phase-btn phase-btn-next" data-action="nextPhase" title="{{localize "MYTROS.NextPhase"}}"><i class="fas fa-chevron-right"></i></button>
+            {{/if}}
+        </div>
+        {{/if}}
     </header>
 
     <main class="dashboard-body">

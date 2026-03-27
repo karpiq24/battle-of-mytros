@@ -44,6 +44,15 @@
   "MYTROS.Miracles": "Cudów",
   "MYTROS.EventTriggerBtn": "Rozstrzygnij",
 
+  "MYTROS.Phase1Name": "Rozpoznanie",
+  "MYTROS.Phase2Name": "Ruch",
+  "MYTROS.Phase3Name": "Rozmieszczenie",
+  "MYTROS.Phase4Name": "Bitwa",
+  "MYTROS.Phase5Name": "Rozstrzygnięcie",
+  "MYTROS.PrevPhase": "Poprzednia faza",
+  "MYTROS.NextPhase": "Następna faza",
+  "MYTROS.AdvanceRoundTooltip": "Zakończ tę rundę i rozpocznij następną",
+
   "MYTROS.SetupSectionScene": "Scena i regiony",
   "MYTROS.SetupBattleScene": "Scena bitwy",
   "MYTROS.SetupBattleSceneNone": "Brak",

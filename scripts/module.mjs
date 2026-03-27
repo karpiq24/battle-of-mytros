@@ -22,6 +22,10 @@ Hooks.once('init', async function() {
         return a !== b;
     });
 
+    Handlebars.registerHelper('add', function (a, b) {
+        return a + b;
+    });
+
     game.settings.register("battle-of-mytros", "battleSceneId", {
         name: "Battlemap Scene ID",
         hint: "The ID of the scene acting as the main Battle of Mytros map. Region tracking only runs here.",

@@ -44,6 +44,15 @@
   "MYTROS.Miracles": "Miracles",
   "MYTROS.EventTriggerBtn": "Resolve",
 
+  "MYTROS.Phase1Name": "Reconnaissance",
+  "MYTROS.Phase2Name": "Movement",
+  "MYTROS.Phase3Name": "Deployment",
+  "MYTROS.Phase4Name": "Battle",
+  "MYTROS.Phase5Name": "Resolution",
+  "MYTROS.PrevPhase": "Previous Phase",
+  "MYTROS.NextPhase": "Next Phase",
+  "MYTROS.AdvanceRoundTooltip": "End this round and begin the next",
+
   "MYTROS.SetupSectionScene": "Scene & Regions",
   "MYTROS.SetupBattleScene": "Battle Scene",
   "MYTROS.SetupBattleSceneNone": "None",

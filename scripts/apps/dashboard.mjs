@@ -52,7 +52,9 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
             toggleLegionFlag: BattleDashboard.toggleLegionFlag,
             addAdjacencyPair: BattleDashboard.addAdjacencyPair,
             removeAdjacencyPair: BattleDashboard.removeAdjacencyPair,
-            resetCompletedEvents: BattleDashboard.resetCompletedEvents
+            resetCompletedEvents: BattleDashboard.resetCompletedEvents,
+            nextPhase: BattleDashboard.nextPhase,
+            prevPhase: BattleDashboard.prevPhase
         }
     };
 
@@ -377,6 +379,24 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
         this.render();
     }
 
+    static async nextPhase(_event, _target) {
+        if (!game.user.isGM) return;
+        const phase = game.settings.get("battle-of-mytros", "currentPhase");
+        if (phase < 5) {
+            await game.settings.set("battle-of-mytros", "currentPhase", phase + 1);
+            this.render();
+        }
+    }
+
+    static async prevPhase(_event, _target) {
+        if (!game.user.isGM) return;
+        const phase = game.settings.get("battle-of-mytros", "currentPhase");
+        if (phase > 1) {
+            await game.settings.set("battle-of-mytros", "currentPhase", phase - 1);
+            this.render();
+        }
+    }
+
     static async importCSV(event, target) {
         const type = target.dataset.type; // 'legion' or 'commander'
         const input = document.createElement('input');
@@ -443,6 +463,14 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
         context.phase = game.settings.get("battle-of-mytros", "currentPhase");
         
         context.tab = this.tab;
+        context.phaseNames = [
+            game.i18n.localize("MYTROS.Phase1Name"),
+            game.i18n.localize("MYTROS.Phase2Name"),
+            game.i18n.localize("MYTROS.Phase3Name"),
+            game.i18n.localize("MYTROS.Phase4Name"),
+            game.i18n.localize("MYTROS.Phase5Name"),
+        ];
+        context.phaseName = context.phaseNames[(context.phase ?? 1) - 1];
         context.deathToll = game.settings.get("battle-of-mytros", "deathToll");
         context.alliedMiracles = game.settings.get("battle-of-mytros", "alliedMiracles");
         context.sydonMiracles = game.settings.get("battle-of-mytros", "sydonMiracles");
