@@ -137,20 +137,31 @@ Hooks.on("canvasReady", async () => {
 });
 
 Hooks.on("getSceneControlButtons", (controls) => {
-    const tokenControls = Array.isArray(controls)
-        ? controls.find(c => c.name === "token")
-        : controls.token ?? controls.get?.("token");
-    if (tokenControls) {
-        tokenControls.tools.push({
+    // v12: controls is an Array — find by name
+    // v13: controls is a Record<string, SceneControl> — access by key
+    if (Array.isArray(controls)) {
+        const tokenControls = controls.find(c => c.name === "token");
+        if (tokenControls) {
+            tokenControls.tools.push({
+                name: "battleDashboard",
+                title: "Battle of Mytros",
+                icon: "fas fa-swords",
+                visible: true,
+                onClick: () => new BattleDashboard().render({ force: true }),
+                button: true
+            });
+        }
+    } else if (controls.tokens) {
+        // v13: tools is also a Record keyed by tool name
+        controls.tokens.tools.battleDashboard = {
             name: "battleDashboard",
             title: "Battle of Mytros",
             icon: "fas fa-swords",
-            visible: true, 
-            onClick: () => {
-                new BattleDashboard().render({ force: true });
-            },
-            button: true
-        });
+            order: Object.keys(controls.tokens.tools).length,
+            button: true,
+            visible: true,
+            onChange: () => new BattleDashboard().render({ force: true })
+        };
     }
 });
 
@@ -164,31 +175,19 @@ Hooks.on("regionEvent", (region, event) => {
         // Re-render dashboard; routedContested sections will show a DM-confirmation button.
         // No auto-disbanding here — tokenEnter fires for every region a token passes through
         // during a drag, not just the destination.
-        for (const app of Object.values(ui.windows)) {
-            if (app.id === "mytros-battle-dashboard") {
-                app.render({ force: true });
-            }
-        }
+        foundry.applications.instances.get("mytros-battle-dashboard")?.render({ force: true });
     }
 });
 
 Hooks.on("updateRegion", (region, changes, options, userId) => {
     if (changes.flags && changes.flags["battle-of-mytros"]) {
-        for (const app of Object.values(ui.windows)) {
-            if (app.id === "mytros-battle-dashboard") {
-                app.render({ force: true });
-            }
-        }
+        foundry.applications.instances.get("mytros-battle-dashboard")?.render({ force: true });
     }
 });
 
 Hooks.on("updateActor", (actor, changes, options, userId) => {
     if (globalThis.MytrosActorData.isLegion(actor) && changes.flags?.["battle-of-mytros"]) {
-        for (const app of Object.values(ui.windows)) {
-            if (app.id === "mytros-battle-dashboard") {
-                app.render({ force: true });
-            }
-        }
+        foundry.applications.instances.get("mytros-battle-dashboard")?.render({ force: true });
     }
 });
 
