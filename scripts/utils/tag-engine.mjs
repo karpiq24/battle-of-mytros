@@ -35,7 +35,6 @@ export class TagEngine {
         if (phase === "charge" && tags.includes("inspiring")) mods.flatBonus += 2;
         if (phase === "maneuver" && tags.includes("cunning")) mods.flatBonus += 2;
         if (phase === "clash" && tags.includes("warden")) mods.flatBonus += 2;
-        if (phase === "clash" && context.adjacentWarden) mods.flatBonus += 2;
         if (phase === "charge" && tags.includes("vanguard") && context.movedThree) mods.advantage = true;
 
         // --- Check Enemy Tags (Debuffs) ---
@@ -54,8 +53,7 @@ export class TagEngine {
         }
 
         // --- Maneuver Benefits ---
-        if (phase === "charge" && context.maneuverBenefit === "flanking") mods.flatBonus += 2; // Default to average if not specified as dice
-        if (phase === "clash" && context.maneuverBenefit === "defensive") mods.flatBonus += 1; 
+        if (phase === "clash" && context.maneuverBenefit === "defensive") mods.flatBonus += 1;
         if (context.enemyManeuverBenefit === "disrupted" && (phase === "charge" || phase === "clash")) mods.flatBonus -= 1;
 
         return mods;
@@ -85,19 +83,23 @@ export class TagEngine {
             if (tags.includes("fanatic")) mods.disadvantage = true;
             if (tags.includes("ironclad")) mods.flatBonus += 2;
             if (context.adjacentWarden) mods.flatBonus += 2;
+            // Mage: enemy's magical attacks force this legion to recover with disadvantage
+            if (enemyTags.includes("mage")) mods.disadvantage = true;
             // Brutal: only the winner's tag causes the loser's disadvantage
             if (!context.isWinner && enemyTags.includes("brutal")) mods.disadvantage = true;
         }
 
         if (phase === "hope") {
             if (tags.includes("rallier")) mods.flatBonus += 2;
-            if (context.adjacentRallier) mods.flatBonus += 2;
+            if (context.adjacentRallier) mods.flatBonus += 1;
             if (tags.includes("inspiring")) mods.flatBonus += 2;
             if (enemyTags.includes("terrorizer")) mods.disadvantage = true;
         }
 
         if (phase === "salvage") {
             if (tags.includes("cunning")) mods.flatBonus += 2;
+            const tacBonus = legion.getFlag("battle-of-mytros", "tacInsightBonus");
+            if (tacBonus) mods.flatBonus += tacBonus;
         }
 
         return mods;

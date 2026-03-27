@@ -193,17 +193,17 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
         let tied = true;
         let attempt = 1;
 
-        while (tied && attempt <= 3) {
+        while (tied && attempt <= 4) {
             alliedRoll = await globalThis.BattleRoller.executeRoll(alliedStats.wit, alliedMods.flatBonus, alliedMods.advantage || aSupport.advantage, alliedMods.disadvantage, aVeteran, aSupport.dice);
             sydonRoll = await globalThis.BattleRoller.executeRoll(sydonStats.wit, sydonMods.flatBonus, sydonMods.advantage || sSupport.advantage, sydonMods.disadvantage, sVeteran, sSupport.dice);
 
             this.state.log.push(`Maneuver Attempt ${attempt} — Allied: ${alliedRoll.total}, Sydon: ${sydonRoll.total}`);
-            
+
             if (alliedRoll.total !== sydonRoll.total) {
                 tied = false;
             } else {
                 attempt++;
-                if (attempt <= 3) this.state.log.push("Maneuver is tied! Rerolling...");
+                if (attempt <= 4) this.state.log.push("Maneuver is tied! Rerolling...");
             }
         }
 
@@ -214,13 +214,13 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
             this.state.log.push("Sydon side won the Maneuver!");
             this.state.maneuverWinner = "sydon";
         } else {
-            this.state.log.push("Maneuver remains tied after 3 attempts! No benefit.");
+            this.state.log.push("Maneuver remains tied after 4 attempts! No benefit.");
             this.state.maneuverWinner = "tie";
         }
 
         this.state.counter = { allied: 0, sydon: 0 };
-        if (this.state.maneuverWinner === "allied") this.state.counter.allied += 1;
-        if (this.state.maneuverWinner === "sydon") this.state.counter.sydon += 1;
+        if (this.state.maneuverWinner === "allied") { this.state.counter.allied += 1; this.state.counter.sydon -= 1; }
+        if (this.state.maneuverWinner === "sydon") { this.state.counter.sydon += 1; this.state.counter.allied -= 1; }
 
         // Nat20 bonus / Nat1 penalty (consistent with Charge and Clash)
         if (alliedRoll.isNat20 && alliedRoll.total > sydonRoll.total) this.state.counter.allied += 1;
@@ -273,9 +273,12 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
         let tied = true;
         let attempt = 1;
 
+        const aFlankDice = (this.state.maneuverWinner === "allied" && this.state.maneuverBenefit === "flanking") ? ["1d4"] : [];
+        const sFlankDice = (this.state.maneuverWinner === "sydon" && this.state.maneuverBenefit === "flanking") ? ["1d4"] : [];
+
         while (tied && attempt <= 2) {
-            aRoll = await globalThis.BattleRoller.executeRoll(aStats.morale, alliedMods.flatBonus, alliedMods.advantage || aSupport.advantage, alliedMods.disadvantage, aVeteran, aSupport.dice);
-            sRoll = await globalThis.BattleRoller.executeRoll(sStats.morale, sydonMods.flatBonus, sydonMods.advantage || sSupport.advantage, sydonMods.disadvantage, sVeteran, sSupport.dice);
+            aRoll = await globalThis.BattleRoller.executeRoll(aStats.morale, alliedMods.flatBonus, alliedMods.advantage || aSupport.advantage, alliedMods.disadvantage, aVeteran, aSupport.dice.concat(aFlankDice));
+            sRoll = await globalThis.BattleRoller.executeRoll(sStats.morale, sydonMods.flatBonus, sydonMods.advantage || sSupport.advantage, sydonMods.disadvantage, sVeteran, sSupport.dice.concat(sFlankDice));
 
             this.state.log.push(`Charge Attempt ${attempt} — Allied: ${aRoll.total}, Sydon: ${sRoll.total}`);
 
@@ -290,10 +293,12 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
         if (aRoll.total > sRoll.total) {
             this.state.log.push("Allied won Charge! (+1 Clash)");
             this.state.counter.allied += 1;
+            this.state.counter.sydon -= 1;
             this.state.chargeWinner = "allied";
         } else if (sRoll.total > aRoll.total) {
             this.state.log.push("Sydon won Charge! (+1 Clash)");
             this.state.counter.sydon += 1;
+            this.state.counter.allied -= 1;
             this.state.chargeWinner = "sydon";
         } else {
             this.state.log.push("Charge remains tied after 2 attempts!");
@@ -323,16 +328,12 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
         if (this.state.chargeWinner === "allied") aMods.flatBonus += 1;
         if (this.state.chargeWinner === "sydon") sMods.flatBonus += 1;
 
-        // Apply Maneuver bonus dice if selected
+        // Apply Maneuver bonus dice if selected (Defensive Footing: +1d2 to Clash)
         if (this.state.maneuverWinner === "allied") {
-            if (this.state.maneuverBenefit === "flanking") aMods.flatBonus -= 2; // Remove average
-            if (this.state.maneuverBenefit === "flanking") aMods.bonusDice = (aMods.bonusDice || []).concat("1d4");
-            if (this.state.maneuverBenefit === "defensive") aMods.flatBonus -= 1; // Remove average
+            if (this.state.maneuverBenefit === "defensive") aMods.flatBonus -= 1; // Remove flat average, use die instead
             if (this.state.maneuverBenefit === "defensive") aMods.bonusDice = (aMods.bonusDice || []).concat("1d2");
         }
         if (this.state.maneuverWinner === "sydon") {
-            if (this.state.maneuverBenefit === "flanking") sMods.flatBonus -= 2;
-            if (this.state.maneuverBenefit === "flanking") sMods.bonusDice = (sMods.bonusDice || []).concat("1d4");
             if (this.state.maneuverBenefit === "defensive") sMods.flatBonus -= 1;
             if (this.state.maneuverBenefit === "defensive") sMods.bonusDice = (sMods.bonusDice || []).concat("1d2");
         }
@@ -355,9 +356,11 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
         if (aRoll.total > sRoll.total) {
             this.state.log.push("Allied won Clash!");
             this.state.counter.allied += 2;
+            this.state.counter.sydon -= 1;
         } else if (sRoll.total > aRoll.total) {
             this.state.log.push("Sydon won Clash!");
             this.state.counter.sydon += 2;
+            this.state.counter.allied -= 1;
         }
 
         if (aRoll.isNat20 && aRoll.total > sRoll.total) this.state.counter.allied += 1;

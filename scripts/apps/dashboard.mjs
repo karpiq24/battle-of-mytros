@@ -2,9 +2,22 @@ import { BattleResolverApp } from "./resolver.mjs";
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
+    static OBJECTIVE_MIRACLE_REWARDS = {
+        "Temple of the Five": 3,
+        "Royal Palace": 2,
+        "The Dockyard": 2,
+        "Soldier's Gate": 2,
+        "The Agora": 2,
+        "The Academy": 2,
+        "The Gymnasium": 2,
+        "The Harp Bridge": 2,
+        "The Vineyards of Mytros": 2,
+        "Fish Market & Commerce Gate": 1,
+    };
+
     static MAJOR_EVENTS = [
         { id: "icarus",    name: "Icarus Subdued or Calmed",          reward: 2, description: "A dragon fights to protect the city rather than destroy it.", specialEffect: null },
-        { id: "acastus",   name: "Acastus Redeemed",                  reward: 2, description: "Acastus hands over the Rod of Rulership. His captains stand down.", specialEffect: null },
+        { id: "acastus",   name: "Acastus Redeemed",                  reward: 2, description: "Acastus hands over the Rod of Rulership. His captains stand down.", specialEffect: "acastus_redeemed" },
         { id: "colossus",  name: "The Colossus Awakened",             reward: 2, description: "The great guardian rises. Manually fortify the section it occupies.", specialEffect: null },
         { id: "hergeron",  name: "Hergeron Driven from the Temple",   reward: 2, description: "Son of Sydon repelled from the Temple of the Five.", specialEffect: null },
         { id: "sydon",     name: "Sydon Defeated",                    reward: 2, description: "The Lord of Storms falls. Objective deaths halved for remaining rounds.", specialEffect: "sydon_defeated" },
@@ -125,7 +138,15 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
         const current = game.settings.get("battle-of-mytros", "alliedMiracles");
         await game.settings.set("battle-of-mytros", "alliedMiracles", current + event.reward);
 
-        if (event.specialEffect === "sydon_defeated") {
+        if (event.specialEffect === "acastus_redeemed") {
+            const acastus = game.actors.find(a => a.name.toLowerCase().includes("acastus"));
+            if (acastus) {
+                await acastus.setFlag("battle-of-mytros", "isCommander", true);
+                ui.notifications.info(`Acastus has joined the battle as a Commander!`);
+            } else {
+                ui.notifications.warn(`Acastus Redeemed: No actor named "Acastus" found. Add him manually as a Commander.`);
+            }
+        } else if (event.specialEffect === "sydon_defeated") {
             await game.settings.set("battle-of-mytros", "sydonObjectiveHalved", true);
         } else if (event.specialEffect === "lutheria_defeated") {
             const toll = game.settings.get("battle-of-mytros", "deathToll");
@@ -270,6 +291,13 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
                     if (section.getFlag("battle-of-mytros", "sydonHeldLastRound")) {
                         await section.setFlag("battle-of-mytros", "objectiveDestroyed", true);
                         ui.notifications.warn(`Objective in ${section.name} has been DESTROYED!`);
+                        const objName = section.name.replace(globalThis.MytrosRegionManager.SECTION_PREFIX, "").trim();
+                        const miracleReward = BattleDashboard.OBJECTIVE_MIRACLE_REWARDS[objName] ?? 0;
+                        if (miracleReward > 0) {
+                            const currentSydon = game.settings.get("battle-of-mytros", "sydonMiracles");
+                            await game.settings.set("battle-of-mytros", "sydonMiracles", currentSydon + miracleReward);
+                            ui.notifications.info(`Sydon gains ${miracleReward} Miracle Point(s) for destroying ${objName}!`);
+                        }
                     } else {
                         await section.setFlag("battle-of-mytros", "sydonHeldLastRound", true);
                     }
@@ -284,6 +312,14 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
                     const deaths = r.total * 10;
                     totalDeaths += sydonObjectiveHalved ? Math.floor(deaths / 2) : deaths;
                 }
+            }
+        }
+
+        // Reset PC deployment flags for the new round
+        for (const section of sections) {
+            const supportTokens = globalThis.MytrosRegionManager.getSupportUnitsInSection(section);
+            for (const token of supportTokens) {
+                await token.setFlag("battle-of-mytros", "deploymentMode", "none");
             }
         }
 
