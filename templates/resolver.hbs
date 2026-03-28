@@ -1,156 +1,186 @@
 <div class="mytros-resolver">
     <header>
-        <h2>{{localize "MYTROS.ResolverBattleIn"}} {{regionName}}</h2>
+        <h2><i class="fas fa-swords"></i> {{localize "MYTROS.ResolverBattleIn"}} {{regionName}}</h2>
         <div class="matchup">
             <span class="allied">{{alliedName}}</span> {{localize "MYTROS.ResolverVS"}} <span class="sydon">{{sydonName}}</span>
         </div>
     </header>
 
     <main>
-        <div class="battle-log" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; height: 200px; overflow-y: auto;">
-            <ul style="list-style: none; padding: 0; margin: 0;">
-                {{#each state.log}}<li>{{this}}</li>{{/each}}
+        <div class="battle-log">
+            <ul>
+                {{#each state.log}}
+                <li class="log-entry {{#if this.type}}log-{{this.type}}{{/if}}">
+                    <div class="log-text">{{#if this.text}}{{this.text}}{{else}}{{this}}{{/if}}</div>
+                    {{#if this.mods}}
+                    <div class="mod-chips">
+                        {{#if this.mods.allied}}
+                        <div class="mod-chip-group">
+                            <span class="mod-chip-label mod-allied">Allied:</span>
+                            {{#each this.mods.allied}}<span class="mod-chip">{{this}}</span>{{/each}}
+                        </div>
+                        {{/if}}
+                        {{#if this.mods.sydon}}
+                        <div class="mod-chip-group">
+                            <span class="mod-chip-label mod-sydon">Sydon:</span>
+                            {{#each this.mods.sydon}}<span class="mod-chip">{{this}}</span>{{/each}}
+                        </div>
+                        {{/if}}
+                    </div>
+                    {{/if}}
+                </li>
+                {{/each}}
             </ul>
         </div>
 
-        <div class="controls" style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+        <div class="controls">
 
             {{!-- Battle Phases --}}
 
             {{#if (eq state.phase 'setup')}}
-                <button type="button" data-action="runManeuver">{{localize "MYTROS.RollManeuver"}}</button>
+                <button type="button" data-action="runManeuver"><i class="fas fa-chess-knight"></i> {{localize "MYTROS.RollManeuver"}}</button>
             {{/if}}
 
             {{#if (eq state.phase 'maneuver_choice')}}
-                <h3>{{state.maneuverWinner}} {{localize "MYTROS.ManeuverWonBenefit"}}</h3>
-                <button type="button" data-action="selectManeuverBenefit" data-benefit="flanking">{{localize "MYTROS.BenefitFlanking"}}</button>
-                <button type="button" data-action="selectManeuverBenefit" data-benefit="defensive">{{localize "MYTROS.BenefitDefensive"}}</button>
-                <button type="button" data-action="selectManeuverBenefit" data-benefit="disrupted">{{localize "MYTROS.BenefitDisrupted"}}</button>
-                <button type="button" data-action="selectManeuverBenefit" data-benefit="seized_initiative">{{localize "MYTROS.BenefitSeizedInit"}}</button>
+                <h3><i class="fas fa-trophy"></i> {{state.maneuverWinner}} {{localize "MYTROS.ManeuverWonBenefit"}}</h3>
+                <div class="benefit-group">
+                    <button type="button" data-action="selectManeuverBenefit" data-benefit="flanking"><i class="fas fa-arrows-alt-h"></i> {{localize "MYTROS.BenefitFlanking"}}</button>
+                    <button type="button" data-action="selectManeuverBenefit" data-benefit="defensive"><i class="fas fa-shield-alt"></i> {{localize "MYTROS.BenefitDefensive"}}</button>
+                    <button type="button" data-action="selectManeuverBenefit" data-benefit="disrupted"><i class="fas fa-bomb"></i> {{localize "MYTROS.BenefitDisrupted"}}</button>
+                    <button type="button" data-action="selectManeuverBenefit" data-benefit="seized_initiative"><i class="fas fa-bolt"></i> {{localize "MYTROS.BenefitSeizedInit"}}</button>
+                </div>
             {{/if}}
 
             {{#if (eq state.phase 'charge')}}
-                <button type="button" data-action="runCharge">{{localize "MYTROS.RollCharge"}}</button>
+                <button type="button" data-action="runCharge"><i class="fas fa-horse-head"></i> {{localize "MYTROS.RollCharge"}}</button>
             {{/if}}
 
             {{#if (eq state.phase 'clash')}}
-                <button type="button" data-action="runClash">{{localize "MYTROS.RollClash"}}</button>
+                <button type="button" data-action="runClash"><i class="fas fa-swords"></i> {{localize "MYTROS.RollClash"}}</button>
             {{/if}}
 
             {{#if (eq state.phase 'tiebreaker')}}
-                <h3>{{localize "MYTROS.TiebreakerTitle"}}</h3>
-                <p style="font-size:0.9em; color:#666;">{{localize "MYTROS.TiebreakerHint"}}</p>
-                <button type="button" data-action="runTiebreaker">{{localize "MYTROS.RollTiebreaker"}}</button>
+                <h3><i class="fas fa-dice"></i> {{localize "MYTROS.TiebreakerTitle"}}</h3>
+                <p>{{localize "MYTROS.TiebreakerHint"}}</p>
+                <button type="button" data-action="runTiebreaker"><i class="fas fa-dice-d20"></i> {{localize "MYTROS.RollTiebreaker"}}</button>
             {{/if}}
 
             {{!-- Aftermath Phases --}}
 
             {{#if (eq state.phase 'aftermath_recovery')}}
-                <h3>{{localize "MYTROS.AftermathRecovery"}}</h3>
-                <p style="font-size:0.9em;">{{localize "MYTROS.RecoveryWinner"}} <strong>{{state.overallWinner}}</strong> | {{localize "MYTROS.RecoveryDC"}}</p>
-                <p style="font-size:0.9em; color:#666;">{{localize "MYTROS.RecoveryHint"}}</p>
-                <button type="button" data-action="runRecovery">{{localize "MYTROS.RollRecovery"}}</button>
+                <h3><i class="fas fa-heart"></i> {{localize "MYTROS.AftermathRecovery"}}</h3>
+                <p>{{localize "MYTROS.RecoveryWinner"}} <strong>{{state.overallWinner}}</strong> | {{localize "MYTROS.RecoveryDC"}}</p>
+                <p>{{localize "MYTROS.RecoveryHint"}}</p>
+                <button type="button" data-action="runRecovery"><i class="fas fa-dice-d20"></i> {{localize "MYTROS.RollRecovery"}}</button>
             {{/if}}
 
             {{#if (eq state.phase 'aftermath_hope')}}
-                <h3>{{localize "MYTROS.AftermathHope"}}</h3>
-                <p style="font-size:0.9em; color:#666;">{{localize "MYTROS.HopeHint"}}</p>
-                <button type="button" data-action="runHope">{{localize "MYTROS.RollHope"}}</button>
+                <h3><i class="fas fa-sun"></i> {{localize "MYTROS.AftermathHope"}}</h3>
+                <p>{{localize "MYTROS.HopeHint"}}</p>
+                <button type="button" data-action="runHope"><i class="fas fa-dice-d20"></i> {{localize "MYTROS.RollHope"}}</button>
             {{/if}}
 
             {{#if (eq state.phase 'aftermath_salvage')}}
-                <h3>{{localize "MYTROS.AftermathSalvage"}}</h3>
-                <p style="font-size:0.9em; color:#666;">{{localize "MYTROS.SalvageHint"}}</p>
-                <button type="button" data-action="runSalvage">{{localize "MYTROS.RollSalvage"}}</button>
+                <h3><i class="fas fa-search"></i> {{localize "MYTROS.AftermathSalvage"}}</h3>
+                <p>{{localize "MYTROS.SalvageHint"}}</p>
+                <button type="button" data-action="runSalvage"><i class="fas fa-dice-d20"></i> {{localize "MYTROS.RollSalvage"}}</button>
             {{/if}}
 
             {{#if (eq state.phase 'aftermath_salvage_allied_choice')}}
-                <h3>{{localize "MYTROS.AlliedSalvageChoice"}} ({{state.salvageBenefits.allied.length}}/{{state.salvageResult.allied.benefitCount}})</h3>
-                <button type="button" data-action="selectSalvageBenefit" data-benefit="captured_supplies">{{localize "MYTROS.SalvageCapturedSupplies"}}</button>
-                <button type="button" data-action="selectSalvageBenefit" data-benefit="tactical_insight">{{localize "MYTROS.SalvageTacticalInsight"}}</button>
-                <button type="button" data-action="selectSalvageBenefit" data-benefit="enemy_shaken">{{localize "MYTROS.SalvageEnemyShaken"}}</button>
-                <button type="button" data-action="selectSalvageBenefit" data-benefit="quick_fortify">{{localize "MYTROS.SalvageQuickFortify"}}</button>
+                <h3><i class="fas fa-hand-holding"></i> {{localize "MYTROS.AlliedSalvageChoice"}} ({{state.salvageBenefits.allied.length}}/{{state.salvageResult.allied.benefitCount}})</h3>
+                <div class="benefit-group">
+                    <button type="button" data-action="selectSalvageBenefit" data-benefit="captured_supplies"><i class="fas fa-medkit"></i> {{localize "MYTROS.SalvageCapturedSupplies"}}</button>
+                    <button type="button" data-action="selectSalvageBenefit" data-benefit="tactical_insight"><i class="fas fa-lightbulb"></i> {{localize "MYTROS.SalvageTacticalInsight"}}</button>
+                    <button type="button" data-action="selectSalvageBenefit" data-benefit="enemy_shaken"><i class="fas fa-heart-broken"></i> {{localize "MYTROS.SalvageEnemyShaken"}}</button>
+                    <button type="button" data-action="selectSalvageBenefit" data-benefit="quick_fortify"><i class="fas fa-chess-rook"></i> {{localize "MYTROS.SalvageQuickFortify"}}</button>
+                </div>
             {{/if}}
 
             {{#if (eq state.phase 'aftermath_salvage_sydon_choice')}}
-                <h3>{{localize "MYTROS.SydonSalvageChoice"}} ({{state.salvageBenefits.sydon.length}}/{{state.salvageResult.sydon.benefitCount}})</h3>
-                <button type="button" data-action="selectSalvageBenefit" data-benefit="captured_supplies">{{localize "MYTROS.SalvageCapturedSupplies"}}</button>
-                <button type="button" data-action="selectSalvageBenefit" data-benefit="tactical_insight">{{localize "MYTROS.SalvageTacticalInsight"}}</button>
-                <button type="button" data-action="selectSalvageBenefit" data-benefit="enemy_shaken">{{localize "MYTROS.SalvageEnemyShaken"}}</button>
-                <button type="button" data-action="selectSalvageBenefit" data-benefit="quick_fortify">{{localize "MYTROS.SalvageQuickFortify"}}</button>
+                <h3><i class="fas fa-hand-holding"></i> {{localize "MYTROS.SydonSalvageChoice"}} ({{state.salvageBenefits.sydon.length}}/{{state.salvageResult.sydon.benefitCount}})</h3>
+                <div class="benefit-group">
+                    <button type="button" data-action="selectSalvageBenefit" data-benefit="captured_supplies"><i class="fas fa-medkit"></i> {{localize "MYTROS.SalvageCapturedSupplies"}}</button>
+                    <button type="button" data-action="selectSalvageBenefit" data-benefit="tactical_insight"><i class="fas fa-lightbulb"></i> {{localize "MYTROS.SalvageTacticalInsight"}}</button>
+                    <button type="button" data-action="selectSalvageBenefit" data-benefit="enemy_shaken"><i class="fas fa-heart-broken"></i> {{localize "MYTROS.SalvageEnemyShaken"}}</button>
+                    <button type="button" data-action="selectSalvageBenefit" data-benefit="quick_fortify"><i class="fas fa-chess-rook"></i> {{localize "MYTROS.SalvageQuickFortify"}}</button>
+                </div>
             {{/if}}
 
             {{#if (eq state.phase 'aftermath_divine_blood')}}
-                <h3>{{localize "MYTROS.DivineBloodTitle"}}</h3>
-                <p style="font-size:0.9em; color:#666;">{{localize "MYTROS.DivineBloodHint"}}</p>
+                <h3><i class="fas fa-tint"></i> {{localize "MYTROS.DivineBloodTitle"}}</h3>
+                <p>{{localize "MYTROS.DivineBloodHint"}}</p>
 
                 {{#if state.divineBloodPending.allied}}
-                <div style="margin: 8px 0; padding: 8px; border: 1px solid #c0a060; border-radius:4px; background:rgba(192,160,96,0.08);">
+                <div class="divine-panel divine-panel-allied">
                     <strong>{{alliedName}} (Divine Blood) — {{localize "MYTROS.DivineBloodChoose"}}</strong>
                     {{#if state.divineBloodPending.allied.recovery}}
-                    <button type="button" data-action="runDivineBloodReroll" data-side="allied" data-check="recovery">{{localize "MYTROS.DivineBloodRerollRecovery"}} ({{localize "MYTROS.Rolled"}} {{state.divineBloodPending.allied.recovery}})</button>
+                    <button type="button" data-action="runDivineBloodReroll" data-side="allied" data-check="recovery"><i class="fas fa-redo"></i> {{localize "MYTROS.DivineBloodRerollRecovery"}} ({{localize "MYTROS.Rolled"}} {{state.divineBloodPending.allied.recovery}})</button>
                     {{/if}}
                     {{#if state.divineBloodPending.allied.hope}}
-                    <button type="button" data-action="runDivineBloodReroll" data-side="allied" data-check="hope">{{localize "MYTROS.DivineBloodRerollHope"}} ({{localize "MYTROS.Rolled"}} {{state.divineBloodPending.allied.hope}})</button>
+                    <button type="button" data-action="runDivineBloodReroll" data-side="allied" data-check="hope"><i class="fas fa-redo"></i> {{localize "MYTROS.DivineBloodRerollHope"}} ({{localize "MYTROS.Rolled"}} {{state.divineBloodPending.allied.hope}})</button>
                     {{/if}}
                     {{#if state.divineBloodPending.allied.salvage}}
-                    <button type="button" data-action="runDivineBloodReroll" data-side="allied" data-check="salvage">{{localize "MYTROS.DivineBloodRerollSalvage"}}</button>
+                    <button type="button" data-action="runDivineBloodReroll" data-side="allied" data-check="salvage"><i class="fas fa-redo"></i> {{localize "MYTROS.DivineBloodRerollSalvage"}}</button>
                     {{/if}}
                 </div>
                 {{/if}}
 
                 {{#if state.divineBloodSalvageNeedChoice.allied}}
-                <div style="margin: 8px 0; padding: 8px; border: 1px solid #5dade2; border-radius:4px; background:rgba(93,173,226,0.08);">
+                <div class="divine-panel divine-panel-salvage-allied">
                     <strong>{{localize "MYTROS.DivineBloodSalvageChoice"}} — {{alliedName}} ({{state.salvageBenefits.allied.length}}/{{state.divineBloodSalvageNeedChoice.allied}})</strong>
-                    <button type="button" data-action="selectDivineBloodSalvageBenefit" data-side="allied" data-benefit="captured_supplies">{{localize "MYTROS.SalvageCapturedSupplies"}}</button>
-                    <button type="button" data-action="selectDivineBloodSalvageBenefit" data-side="allied" data-benefit="tactical_insight">{{localize "MYTROS.SalvageTacticalInsight"}}</button>
-                    <button type="button" data-action="selectDivineBloodSalvageBenefit" data-side="allied" data-benefit="enemy_shaken">{{localize "MYTROS.SalvageEnemyShaken"}}</button>
-                    <button type="button" data-action="selectDivineBloodSalvageBenefit" data-side="allied" data-benefit="quick_fortify">{{localize "MYTROS.SalvageQuickFortify"}}</button>
+                    <div class="benefit-group">
+                        <button type="button" data-action="selectDivineBloodSalvageBenefit" data-side="allied" data-benefit="captured_supplies"><i class="fas fa-medkit"></i> {{localize "MYTROS.SalvageCapturedSupplies"}}</button>
+                        <button type="button" data-action="selectDivineBloodSalvageBenefit" data-side="allied" data-benefit="tactical_insight"><i class="fas fa-lightbulb"></i> {{localize "MYTROS.SalvageTacticalInsight"}}</button>
+                        <button type="button" data-action="selectDivineBloodSalvageBenefit" data-side="allied" data-benefit="enemy_shaken"><i class="fas fa-heart-broken"></i> {{localize "MYTROS.SalvageEnemyShaken"}}</button>
+                        <button type="button" data-action="selectDivineBloodSalvageBenefit" data-side="allied" data-benefit="quick_fortify"><i class="fas fa-chess-rook"></i> {{localize "MYTROS.SalvageQuickFortify"}}</button>
+                    </div>
                 </div>
                 {{/if}}
 
                 {{#if state.divineBloodPending.sydon}}
-                <div style="margin: 8px 0; padding: 8px; border: 1px solid #c0392b; border-radius:4px; background:rgba(192,57,43,0.08);">
+                <div class="divine-panel divine-panel-sydon">
                     <strong>{{sydonName}} (Divine Blood) — {{localize "MYTROS.DivineBloodChoose"}}</strong>
                     {{#if state.divineBloodPending.sydon.recovery}}
-                    <button type="button" data-action="runDivineBloodReroll" data-side="sydon" data-check="recovery">{{localize "MYTROS.DivineBloodRerollRecovery"}} ({{localize "MYTROS.Rolled"}} {{state.divineBloodPending.sydon.recovery}})</button>
+                    <button type="button" data-action="runDivineBloodReroll" data-side="sydon" data-check="recovery"><i class="fas fa-redo"></i> {{localize "MYTROS.DivineBloodRerollRecovery"}} ({{localize "MYTROS.Rolled"}} {{state.divineBloodPending.sydon.recovery}})</button>
                     {{/if}}
                     {{#if state.divineBloodPending.sydon.hope}}
-                    <button type="button" data-action="runDivineBloodReroll" data-side="sydon" data-check="hope">{{localize "MYTROS.DivineBloodRerollHope"}} ({{localize "MYTROS.Rolled"}} {{state.divineBloodPending.sydon.hope}})</button>
+                    <button type="button" data-action="runDivineBloodReroll" data-side="sydon" data-check="hope"><i class="fas fa-redo"></i> {{localize "MYTROS.DivineBloodRerollHope"}} ({{localize "MYTROS.Rolled"}} {{state.divineBloodPending.sydon.hope}})</button>
                     {{/if}}
                     {{#if state.divineBloodPending.sydon.salvage}}
-                    <button type="button" data-action="runDivineBloodReroll" data-side="sydon" data-check="salvage">{{localize "MYTROS.DivineBloodRerollSalvage"}}</button>
+                    <button type="button" data-action="runDivineBloodReroll" data-side="sydon" data-check="salvage"><i class="fas fa-redo"></i> {{localize "MYTROS.DivineBloodRerollSalvage"}}</button>
                     {{/if}}
                 </div>
                 {{/if}}
 
                 {{#if state.divineBloodSalvageNeedChoice.sydon}}
-                <div style="margin: 8px 0; padding: 8px; border: 1px solid #c0392b; border-radius:4px; background:rgba(192,57,43,0.08);">
+                <div class="divine-panel divine-panel-salvage-sydon">
                     <strong>{{localize "MYTROS.DivineBloodSalvageChoice"}} — {{sydonName}} ({{state.salvageBenefits.sydon.length}}/{{state.divineBloodSalvageNeedChoice.sydon}})</strong>
-                    <button type="button" data-action="selectDivineBloodSalvageBenefit" data-side="sydon" data-benefit="captured_supplies">{{localize "MYTROS.SalvageCapturedSupplies"}}</button>
-                    <button type="button" data-action="selectDivineBloodSalvageBenefit" data-side="sydon" data-benefit="tactical_insight">{{localize "MYTROS.SalvageTacticalInsight"}}</button>
-                    <button type="button" data-action="selectDivineBloodSalvageBenefit" data-side="sydon" data-benefit="enemy_shaken">{{localize "MYTROS.SalvageEnemyShaken"}}</button>
-                    <button type="button" data-action="selectDivineBloodSalvageBenefit" data-side="sydon" data-benefit="quick_fortify">{{localize "MYTROS.SalvageQuickFortify"}}</button>
+                    <div class="benefit-group">
+                        <button type="button" data-action="selectDivineBloodSalvageBenefit" data-side="sydon" data-benefit="captured_supplies"><i class="fas fa-medkit"></i> {{localize "MYTROS.SalvageCapturedSupplies"}}</button>
+                        <button type="button" data-action="selectDivineBloodSalvageBenefit" data-side="sydon" data-benefit="tactical_insight"><i class="fas fa-lightbulb"></i> {{localize "MYTROS.SalvageTacticalInsight"}}</button>
+                        <button type="button" data-action="selectDivineBloodSalvageBenefit" data-side="sydon" data-benefit="enemy_shaken"><i class="fas fa-heart-broken"></i> {{localize "MYTROS.SalvageEnemyShaken"}}</button>
+                        <button type="button" data-action="selectDivineBloodSalvageBenefit" data-side="sydon" data-benefit="quick_fortify"><i class="fas fa-chess-rook"></i> {{localize "MYTROS.SalvageQuickFortify"}}</button>
+                    </div>
                 </div>
                 {{/if}}
 
-                <button type="button" data-action="proceedToCommander">{{localize "MYTROS.ProceedToCommander"}}</button>
+                <button type="button" data-action="proceedToCommander"><i class="fas fa-arrow-right"></i> {{localize "MYTROS.ProceedToCommander"}}</button>
             {{/if}}
 
             {{#if (eq state.phase 'aftermath_commander')}}
-                <h3>{{localize "MYTROS.AftermathCommander"}}</h3>
-                <p style="font-size:0.9em; color:#666;">{{localize "MYTROS.CommanderHint"}}</p>
-                <button type="button" data-action="runCommanderCasualty">{{localize "MYTROS.RollCommander"}}</button>
+                <h3><i class="fas fa-user-shield"></i> {{localize "MYTROS.AftermathCommander"}}</h3>
+                <p>{{localize "MYTROS.CommanderHint"}}</p>
+                <button type="button" data-action="runCommanderCasualty"><i class="fas fa-dice"></i> {{localize "MYTROS.RollCommander"}}</button>
             {{/if}}
 
             {{#if (eq state.phase 'done')}}
-                <h3>{{localize "MYTROS.CommitTitle"}}</h3>
-                <p style="font-size:0.9em; color:#666;">{{localize "MYTROS.CommitHint"}}</p>
-                <button type="button" data-action="commitAftermath">{{localize "MYTROS.CommitButton"}}</button>
+                <h3><i class="fas fa-save"></i> {{localize "MYTROS.CommitTitle"}}</h3>
+                <p>{{localize "MYTROS.CommitHint"}}</p>
+                <button type="button" data-action="commitAftermath"><i class="fas fa-check-circle"></i> {{localize "MYTROS.CommitButton"}}</button>
             {{/if}}
 
             {{#if (eq state.phase 'complete')}}
-                <h3>{{localize "MYTROS.BattleComplete"}}</h3>
+                <h3><i class="fas fa-flag-checkered"></i> {{localize "MYTROS.BattleComplete"}}</h3>
                 <p>{{localize "MYTROS.BattleCompleteHint"}}</p>
             {{/if}}
 

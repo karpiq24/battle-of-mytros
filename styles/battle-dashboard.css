@@ -1,292 +1,365 @@
-/* styles/battle-dashboard.css */
+/* styles/battle-dashboard.css — Battle of Mytros Premium UI */
 
-/* ── Light-mode defaults ─────────────────────────────────────────────────── */
+/* ── Design Tokens: Light Mode ─────────────────────────────────────────── */
 :root {
-    --mytros-surface: rgba(0, 0, 0, 0.05);
-    --mytros-surface-alt: rgba(0, 0, 0, 0.04);
-    --mytros-surface-header: rgba(0, 0, 0, 0.07);
-    --mytros-surface-completed: rgba(0, 0, 0, 0.03);
+    --mytros-allied: #1a6fa0;
+    --mytros-allied-light: #2196c8;
+    --mytros-allied-bg: rgba(26, 111, 160, 0.08);
+    --mytros-allied-border: rgba(26, 111, 160, 0.3);
+    --mytros-sydon: #9c2a1e;
+    --mytros-sydon-light: #c4392b;
+    --mytros-sydon-bg: rgba(156, 42, 30, 0.08);
+    --mytros-sydon-border: rgba(156, 42, 30, 0.3);
+    --mytros-surface: rgba(0, 0, 0, 0.035);
+    --mytros-surface-alt: rgba(0, 0, 0, 0.025);
+    --mytros-surface-header: rgba(0, 0, 0, 0.055);
+    --mytros-surface-completed: rgba(0, 0, 0, 0.02);
+    --mytros-surface-card: rgba(255, 255, 255, 0.6);
     --mytros-divider: rgba(0, 0, 0, 0.1);
-    --mytros-text-muted: #666;
+    --mytros-text: #1a1a2e;
+    --mytros-text-muted: #555;
     --mytros-text-muted-alt: #888;
     --mytros-btn-primary-bg: #2c3e50;
     --mytros-btn-primary-hover: #1a252f;
     --mytros-btn-secondary-bg: #f4f6f7;
-    --mytros-btn-secondary-hover: #e8e8e8;
-    --mytros-btn-secondary-border: #ccc;
+    --mytros-btn-secondary-hover: #e2e5e8;
+    --mytros-btn-secondary-border: #c0c5ca;
     --mytros-border-light: #ddd;
+    --mytros-accent: #d4a017;
+    --mytros-accent-bg: rgba(212, 160, 23, 0.1);
+    --mytros-success: #27ae60;
+    --mytros-danger: #c0392b;
+    --mytros-warning: #e67e22;
+    --mytros-info: #5dade2;
+    --mytros-chip-bg: rgba(0, 0, 0, 0.06);
+    --mytros-chip-border: rgba(0, 0, 0, 0.12);
     --mytros-recon-bonus-bg: rgba(241, 196, 15, 0.15);
     --mytros-recon-bonus-text: #7d6608;
     --mytros-recon-frozen-bg: rgba(52, 73, 94, 0.1);
     --mytros-recon-frozen-text: #2c3e50;
+    --mytros-radius: 6px;
+    --mytros-radius-lg: 10px;
+    --mytros-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    --mytros-shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+    --mytros-transition: 0.2s ease;
 }
 
-/* ── System dark mode ────────────────────────────────────────────────────── */
-@media (prefers-color-scheme: dark) {
-    :root {
-        --mytros-surface: rgba(255, 255, 255, 0.06);
-        --mytros-surface-alt: rgba(255, 255, 255, 0.04);
-        --mytros-surface-header: rgba(255, 255, 255, 0.08);
-        --mytros-surface-completed: rgba(255, 255, 255, 0.02);
-        --mytros-divider: rgba(255, 255, 255, 0.12);
-        --mytros-text-muted: #999;
-        --mytros-text-muted-alt: #777;
-        --mytros-btn-primary-bg: #1e3448;
-        --mytros-btn-primary-hover: #152535;
-        --mytros-btn-secondary-bg: #2a2a2e;
-        --mytros-btn-secondary-hover: #38383e;
-        --mytros-btn-secondary-border: #4a4a55;
-        --mytros-border-light: #3a3a40;
-        --mytros-recon-bonus-bg: rgba(241, 196, 15, 0.12);
-        --mytros-recon-bonus-text: #d4b84a;
-        --mytros-recon-frozen-bg: rgba(93, 140, 174, 0.15);
-        --mytros-recon-frozen-text: #7aadcc;
-    }
-}
-
-/* ── Foundry VTT v13 dark theme selectors ────────────────────────────────── */
-body.theme-dark,
-[data-theme="dark"] {
-    --mytros-surface: rgba(255, 255, 255, 0.06);
-    --mytros-surface-alt: rgba(255, 255, 255, 0.04);
-    --mytros-surface-header: rgba(255, 255, 255, 0.08);
+/* ── Dark Mode (system + Foundry v13) ──────────────────────────────────── */
+@media (prefers-color-scheme: dark) { :root { 
+    --mytros-allied: #4db8e8;
+    --mytros-allied-light: #6ec8f0;
+    --mytros-allied-bg: rgba(77, 184, 232, 0.1);
+    --mytros-allied-border: rgba(77, 184, 232, 0.25);
+    --mytros-sydon: #e85548;
+    --mytros-sydon-light: #f06b5e;
+    --mytros-sydon-bg: rgba(232, 85, 72, 0.1);
+    --mytros-sydon-border: rgba(232, 85, 72, 0.25);
+    --mytros-surface: rgba(255, 255, 255, 0.05);
+    --mytros-surface-alt: rgba(255, 255, 255, 0.03);
+    --mytros-surface-header: rgba(255, 255, 255, 0.07);
     --mytros-surface-completed: rgba(255, 255, 255, 0.02);
-    --mytros-divider: rgba(255, 255, 255, 0.12);
+    --mytros-surface-card: rgba(255, 255, 255, 0.06);
+    --mytros-divider: rgba(255, 255, 255, 0.1);
+    --mytros-text: #e0e0e0;
     --mytros-text-muted: #999;
     --mytros-text-muted-alt: #777;
-    --mytros-btn-primary-bg: #1e3448;
-    --mytros-btn-primary-hover: #152535;
-    --mytros-btn-secondary-bg: #2a2a2e;
-    --mytros-btn-secondary-hover: #38383e;
+    --mytros-btn-primary-bg: #34516a;
+    --mytros-btn-primary-hover: #263d52;
+    --mytros-btn-secondary-bg: #2a2a30;
+    --mytros-btn-secondary-hover: #38383f;
     --mytros-btn-secondary-border: #4a4a55;
-    --mytros-border-light: #3a3a40;
+    --mytros-border-light: #3a3a42;
+    --mytros-accent: #e8b828;
+    --mytros-accent-bg: rgba(232, 184, 40, 0.12);
+    --mytros-chip-bg: rgba(255, 255, 255, 0.08);
+    --mytros-chip-border: rgba(255, 255, 255, 0.15);
     --mytros-recon-bonus-bg: rgba(241, 196, 15, 0.12);
-    --mytros-recon-bonus-text: #d4b84a;
+    --mytros-recon-bonus-text: #e8c840;
     --mytros-recon-frozen-bg: rgba(93, 140, 174, 0.15);
     --mytros-recon-frozen-text: #7aadcc;
+    --mytros-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    --mytros-shadow-lg: 0 4px 12px rgba(0,0,0,0.4);
+} }
+body.theme-dark, [data-theme="dark"] {
+    --mytros-allied: #4db8e8;
+    --mytros-allied-light: #6ec8f0;
+    --mytros-allied-bg: rgba(77, 184, 232, 0.1);
+    --mytros-allied-border: rgba(77, 184, 232, 0.25);
+    --mytros-sydon: #e85548;
+    --mytros-sydon-light: #f06b5e;
+    --mytros-sydon-bg: rgba(232, 85, 72, 0.1);
+    --mytros-sydon-border: rgba(232, 85, 72, 0.25);
+    --mytros-surface: rgba(255, 255, 255, 0.05);
+    --mytros-surface-alt: rgba(255, 255, 255, 0.03);
+    --mytros-surface-header: rgba(255, 255, 255, 0.07);
+    --mytros-surface-completed: rgba(255, 255, 255, 0.02);
+    --mytros-surface-card: rgba(255, 255, 255, 0.06);
+    --mytros-divider: rgba(255, 255, 255, 0.1);
+    --mytros-text: #e0e0e0;
+    --mytros-text-muted: #999;
+    --mytros-text-muted-alt: #777;
+    --mytros-btn-primary-bg: #34516a;
+    --mytros-btn-primary-hover: #263d52;
+    --mytros-btn-secondary-bg: #2a2a30;
+    --mytros-btn-secondary-hover: #38383f;
+    --mytros-btn-secondary-border: #4a4a55;
+    --mytros-border-light: #3a3a42;
+    --mytros-accent: #e8b828;
+    --mytros-accent-bg: rgba(232, 184, 40, 0.12);
+    --mytros-chip-bg: rgba(255, 255, 255, 0.08);
+    --mytros-chip-border: rgba(255, 255, 255, 0.15);
+    --mytros-recon-bonus-bg: rgba(241, 196, 15, 0.12);
+    --mytros-recon-bonus-text: #e8c840;
+    --mytros-recon-frozen-bg: rgba(93, 140, 174, 0.15);
+    --mytros-recon-frozen-text: #7aadcc;
+    --mytros-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    --mytros-shadow-lg: 0 4px 12px rgba(0,0,0,0.4);
 }
 
-/* ── Header & Phase Tracker ──────────────────────────────────────────────── */
-.mytros-dashboard .dashboard-header {
-    flex-shrink: 0;
-    padding: 8px 10px 6px;
-    border-bottom: 1px solid var(--mytros-divider);
-    background: var(--mytros-surface-header);
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-.mytros-dashboard .round-label {
-    font-size: 0.8em;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--mytros-text-muted);
-    text-align: center;
-}
-.mytros-dashboard .phase-track {
-    display: flex;
-    gap: 4px;
-}
-.mytros-dashboard .phase-pip {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 4px 2px;
-    border-radius: 4px;
-    border: 1px solid var(--mytros-divider);
-    background: var(--mytros-surface);
-    cursor: default;
-    transition: background 0.15s, border-color 0.15s;
-}
-.mytros-dashboard .phase-pip.active {
-    background: rgba(44, 62, 80, 0.15);
-    border-color: #2c3e50;
-}
-body.theme-dark .mytros-dashboard .phase-pip.active,
-[data-theme="dark"] .mytros-dashboard .phase-pip.active {
-    background: rgba(100, 149, 190, 0.2);
-    border-color: #6495be;
-}
-.mytros-dashboard .pip-number {
-    font-size: 0.75em;
-    font-weight: bold;
-    color: var(--mytros-text-muted);
-    line-height: 1;
-}
-.mytros-dashboard .phase-pip.active .pip-number {
-    color: #2c3e50;
-}
-body.theme-dark .mytros-dashboard .phase-pip.active .pip-number,
-[data-theme="dark"] .mytros-dashboard .phase-pip.active .pip-number {
-    color: #a8c8e8;
-}
-.mytros-dashboard .pip-label {
-    font-size: 0.7em;
-    color: var(--mytros-text-muted-alt);
-    text-align: center;
-    line-height: 1.2;
-    margin-top: 2px;
-}
-.mytros-dashboard .phase-pip.active .pip-label {
-    color: inherit;
-    font-weight: bold;
-}
-.mytros-dashboard .phase-controls {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    justify-content: center;
-}
-.mytros-dashboard .phase-current-label {
-    flex: 1;
-    text-align: center;
-    font-size: 0.85em;
-    font-weight: bold;
-}
-.mytros-dashboard .phase-btn {
-    padding: 3px 8px;
-    background: var(--mytros-btn-secondary-bg);
-    border: 1px solid var(--mytros-btn-secondary-border);
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 0.85em;
-    line-height: 1.4;
-}
+/* ── Dashboard Layout ──────────────────────────────────────────────────── */
+.mytros-dashboard { display: flex; flex-direction: column; height: 100%; font-family: inherit; }
+.mytros-dashboard .tabs { flex-shrink: 0; display: flex; gap: 0; border-bottom: 2px solid var(--mytros-divider); background: var(--mytros-surface-header); }
+.mytros-dashboard .tabs .item { flex: 1; text-align: center; padding: 8px 12px; font-size: 0.85em; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--mytros-text-muted); border-bottom: 2px solid transparent; margin-bottom: -2px; cursor: pointer; transition: all var(--mytros-transition); }
+.mytros-dashboard .tabs .item:hover { color: var(--mytros-text); background: var(--mytros-surface); }
+.mytros-dashboard .tabs .item.active { color: var(--mytros-accent); border-bottom-color: var(--mytros-accent); }
+.mytros-dashboard .dashboard-body { flex: 1; overflow-y: auto; min-height: 0; }
+
+/* ── Header & Phase Tracker ────────────────────────────────────────────── */
+.mytros-dashboard .dashboard-header { flex-shrink: 0; padding: 10px 12px 8px; border-bottom: 1px solid var(--mytros-divider); background: var(--mytros-surface-header); display: flex; flex-direction: column; gap: 8px; }
+.mytros-dashboard .round-label { font-size: 0.75em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--mytros-accent); text-align: center; }
+.mytros-dashboard .phase-track { display: flex; gap: 4px; }
+.mytros-dashboard .phase-pip { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 5px 2px; border-radius: var(--mytros-radius); border: 1px solid var(--mytros-divider); background: var(--mytros-surface); cursor: default; transition: all var(--mytros-transition); }
+.mytros-dashboard .phase-pip.active { background: var(--mytros-accent-bg); border-color: var(--mytros-accent); box-shadow: 0 0 8px rgba(212, 160, 23, 0.15); }
+.mytros-dashboard .pip-number { font-size: 0.75em; font-weight: 700; color: var(--mytros-text-muted); line-height: 1; }
+.mytros-dashboard .phase-pip.active .pip-number { color: var(--mytros-accent); }
+.mytros-dashboard .pip-label { font-size: 0.65em; color: var(--mytros-text-muted-alt); text-align: center; line-height: 1.2; margin-top: 2px; }
+.mytros-dashboard .phase-pip.active .pip-label { color: var(--mytros-text); font-weight: 600; }
+.mytros-dashboard .phase-controls { display: flex; align-items: center; gap: 6px; justify-content: center; }
+.mytros-dashboard .phase-current-label { flex: 1; text-align: center; font-size: 0.85em; font-weight: 700; color: var(--mytros-text); }
+
+/* ── Buttons ───────────────────────────────────────────────────────────── */
+.mytros-dashboard .phase-btn { padding: 4px 10px; background: var(--mytros-btn-secondary-bg); border: 1px solid var(--mytros-btn-secondary-border); border-radius: var(--mytros-radius); cursor: pointer; font-size: 0.85em; line-height: 1.4; transition: all var(--mytros-transition); color: var(--mytros-text); }
 .mytros-dashboard .phase-btn:hover:not(:disabled) { background: var(--mytros-btn-secondary-hover); }
 .mytros-dashboard .phase-btn:disabled { opacity: 0.35; cursor: default; }
-.mytros-dashboard .phase-btn-advance {
-    background: var(--mytros-btn-primary-bg);
-    border-color: var(--mytros-btn-primary-bg);
-    color: #fff;
-    font-weight: bold;
-    padding: 3px 12px;
-}
-.mytros-dashboard .phase-btn-advance:hover { background: var(--mytros-btn-primary-hover); }
-.mytros-dashboard .phase-btn-next { padding: 3px 10px; }
+.mytros-dashboard .phase-btn-advance { background: var(--mytros-accent); border-color: var(--mytros-accent); color: #fff; font-weight: 700; padding: 4px 14px; }
+.mytros-dashboard .phase-btn-advance:hover { background: #b8860b; border-color: #b8860b; }
+.mytros-dashboard .phase-btn-next { padding: 4px 12px; }
+.mytros-dashboard .advance-round-btn { width: 100%; margin-top: 10px; background: var(--mytros-accent); color: #fff; border: none; padding: 10px; border-radius: var(--mytros-radius); cursor: pointer; font-weight: 700; font-size: 0.95em; transition: all var(--mytros-transition); }
+.mytros-dashboard .advance-round-btn:hover { background: #b8860b; transform: translateY(-1px); box-shadow: var(--mytros-shadow-lg); }
+.mytros-dashboard .resolve-btn { padding: 4px 10px; font-size: 0.8em; font-weight: 600; background: var(--mytros-accent); color: #fff; border: none; border-radius: var(--mytros-radius); cursor: pointer; transition: all var(--mytros-transition); white-space: nowrap; }
+.mytros-dashboard .resolve-btn:hover { background: #b8860b; }
+.mytros-dashboard .resolve-btn.resolve-rout { background: var(--mytros-warning); }
+.mytros-dashboard .resolve-btn.resolve-rout:hover { background: #cf6d17; }
 
-/* ── Dashboard layout ────────────────────────────────────────────────────── */
-.mytros-dashboard {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-.mytros-dashboard .tabs {
-    flex-shrink: 0;
-}
-.mytros-dashboard .dashboard-body {
-    flex: 1;
-    overflow-y: auto;
-    min-height: 0;
-}
+/* ── Section Cards ─────────────────────────────────────────────────────── */
+.mytros-dashboard .sections-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; padding: 10px; }
+.mytros-dashboard .section-card { border: 1px solid var(--mytros-divider); border-radius: var(--mytros-radius-lg); padding: 10px; background: var(--mytros-surface-card); box-shadow: var(--mytros-shadow); transition: box-shadow var(--mytros-transition); }
+.mytros-dashboard .section-card:hover { box-shadow: var(--mytros-shadow-lg); }
+.mytros-dashboard .section-card.control-allied { border-top: 3px solid var(--mytros-allied); }
+.mytros-dashboard .section-card.control-sydon { border-top: 3px solid var(--mytros-sydon); }
 
-.mytros-dashboard .sections-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 10px;
-    padding: 10px;
-}
-.mytros-dashboard .section-card {
-    border: 1px solid var(--color-border-dark-primary);
-    border-radius: 5px;
-    padding: 8px;
-    background: var(--mytros-surface);
-}
-.mytros-dashboard .section-card.control-allied { border-top: 3px solid #1a5276; }
-.mytros-dashboard .section-card.control-sydon { border-top: 3px solid #7b241c; }
-.mytros-dashboard .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--mytros-divider);
-    margin-bottom: 5px;
-    padding-bottom: 5px;
-}
-.mytros-dashboard .section-header h3 { margin: 0; font-size: 1.1em; border: none; }
-.mytros-dashboard .badge { margin-left: 5px; }
-.mytros-dashboard .badge.fortified { color: #5dade2; }
-.mytros-dashboard .badge.objective { color: #f1c40f; }
-.mytros-dashboard .legion-item { font-weight: bold; }
-.mytros-dashboard .legion-item.faction-allied { color: #1a5276; }
-.mytros-dashboard .legion-item.faction-sydon { color: #7b241c; }
-.mytros-dashboard .empty-state { font-style: italic; color: var(--mytros-text-muted-alt); margin: 0; }
-.mytros-dashboard .badge.destroyed { color: #e74c3c; }
-.mytros-dashboard .badge.routed { color: #e67e22; }
+.mytros-dashboard .section-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--mytros-divider); margin-bottom: 6px; padding-bottom: 6px; }
+.mytros-dashboard .section-header h3 { margin: 0; font-size: 1em; border: none; font-weight: 700; }
+.mytros-dashboard .section-controls { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.mytros-dashboard .section-controls select { font-size: 0.8em; padding: 2px 4px; border-radius: var(--mytros-radius); border: 1px solid var(--mytros-btn-secondary-border); background: var(--mytros-btn-secondary-bg); color: var(--mytros-text); }
+.mytros-dashboard .section-controls button { padding: 3px 6px; background: var(--mytros-btn-secondary-bg); border: 1px solid var(--mytros-btn-secondary-border); border-radius: var(--mytros-radius); cursor: pointer; color: var(--mytros-text-muted-alt); font-size: 0.8em; transition: all var(--mytros-transition); }
+.mytros-dashboard .section-controls button:hover { background: var(--mytros-btn-secondary-hover); }
+.mytros-dashboard .section-controls button.active { color: var(--mytros-accent); border-color: var(--mytros-accent); background: var(--mytros-accent-bg); }
+
+/* ── Badges ────────────────────────────────────────────────────────────── */
+.mytros-dashboard .badge { font-size: 0.75em; font-weight: 600; padding: 1px 5px; border-radius: 3px; display: inline-flex; align-items: center; gap: 3px; }
+.mytros-dashboard .badge.fortified { color: var(--mytros-info); }
+.mytros-dashboard .badge.objective { color: var(--mytros-accent); }
+.mytros-dashboard .badge.destroyed { color: var(--mytros-danger); background: rgba(192, 57, 43, 0.08); }
+.mytros-dashboard .badge.routed { color: var(--mytros-warning); background: rgba(230, 126, 34, 0.08); }
+
+/* ── Legion Items ──────────────────────────────────────────────────────── */
+.mytros-dashboard .section-legions ul { list-style: none; padding: 0; margin: 0; }
+.mytros-dashboard .legion-item { font-weight: 600; padding: 4px 0; }
+.mytros-dashboard .legion-item.faction-allied { color: var(--mytros-allied); }
+.mytros-dashboard .legion-item.faction-sydon { color: var(--mytros-sydon); }
+.mytros-dashboard .legion-item.is-routed { opacity: 0.6; font-style: italic; }
+.mytros-dashboard .legion-item.is-destroyed { opacity: 0.35; text-decoration: line-through; }
 .mytros-dashboard .legion-header { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-.mytros-dashboard .legion-stats { font-size: 0.8em; color: var(--mytros-text-muted); font-weight: normal; }
-.mytros-dashboard .legion-flag-btn { padding: 0 4px; font-size: 0.8em; background: none; border: 1px solid var(--mytros-divider); border-radius: 3px; cursor: pointer; color: var(--mytros-text-muted-alt); }
+.mytros-dashboard .legion-stats { font-size: 0.8em; color: var(--mytros-text-muted); font-weight: 400; background: var(--mytros-chip-bg); padding: 1px 6px; border-radius: 3px; }
+.mytros-dashboard .legion-flag-btn { padding: 1px 5px; font-size: 0.8em; background: none; border: 1px solid var(--mytros-divider); border-radius: 3px; cursor: pointer; color: var(--mytros-text-muted-alt); transition: all var(--mytros-transition); }
 .mytros-dashboard .legion-flag-btn:hover { background: var(--mytros-surface-alt); }
-.mytros-dashboard .legion-flag-btn.active { color: #d4a017; border-color: #d4a017; background: rgba(212, 160, 23, 0.1); }
-.mytros-dashboard .legion-item.is-routed { opacity: 0.7; font-style: italic; }
-.mytros-dashboard .legion-item.is-destroyed { opacity: 0.4; text-decoration: line-through; }
-.mytros-dashboard .advance-round-btn { width: 100%; margin-top: 10px; background: var(--mytros-btn-primary-bg); color: #fff; border: none; padding: 8px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-.mytros-dashboard .advance-round-btn:hover { background: var(--mytros-btn-primary-hover); }
+.mytros-dashboard .legion-flag-btn.active { color: var(--mytros-accent); border-color: var(--mytros-accent); background: var(--mytros-accent-bg); }
+.mytros-dashboard .legion-item select { font-size: 0.8em; margin-top: 3px; width: 100%; padding: 2px 4px; border-radius: var(--mytros-radius); border: 1px solid var(--mytros-btn-secondary-border); background: var(--mytros-btn-secondary-bg); color: var(--mytros-text); }
+.mytros-dashboard .commander-tag { font-size: 0.8em; color: var(--mytros-text-muted); display: inline-flex; align-items: center; gap: 3px; background: var(--mytros-chip-bg); padding: 2px 6px; border-radius: 3px; margin-top: 3px; }
+.mytros-dashboard .empty-state { font-style: italic; color: var(--mytros-text-muted-alt); margin: 4px 0; font-size: 0.85em; }
 
-/* Reconnaissance Panel */
-.mytros-dashboard .recon-panel { background: var(--mytros-surface-alt); border: 1px solid var(--color-border-dark-primary); border-radius: 4px; padding: 8px 10px; margin-bottom: 10px; }
+/* ── Support Units ─────────────────────────────────────────────────────── */
+.mytros-dashboard .support-units { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--mytros-divider); }
+.mytros-dashboard .support-units h4 { font-size: 0.75em; margin: 0 0 4px 0; color: var(--mytros-text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+.mytros-dashboard .support-item { display: flex; justify-content: space-between; align-items: center; font-size: 0.85em; padding: 2px 0; }
+.mytros-dashboard .support-item select { font-size: 0.8em; max-width: 180px; padding: 2px 4px; border-radius: var(--mytros-radius); border: 1px solid var(--mytros-btn-secondary-border); background: var(--mytros-btn-secondary-bg); color: var(--mytros-text); }
+.mytros-dashboard .support-mode-badge { font-size: 0.7em; background: var(--mytros-chip-bg); padding: 2px 6px; border-radius: 3px; border: 1px solid var(--mytros-chip-border); color: var(--mytros-text-muted); }
+
+/* ── Reconnaissance Panel ──────────────────────────────────────────────── */
+.mytros-dashboard .recon-panel { background: var(--mytros-surface-alt); border: 1px solid var(--mytros-divider); border-radius: var(--mytros-radius-lg); padding: 10px 12px; margin: 10px 10px 0; }
 .mytros-dashboard .recon-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-.mytros-dashboard .recon-btn { padding: 4px 10px; font-size: 0.85em; background: var(--mytros-btn-primary-bg); color: #fff; border: none; border-radius: 3px; cursor: pointer; }
+.mytros-dashboard .recon-header strong { font-size: 0.9em; }
+.mytros-dashboard .recon-btn { padding: 5px 12px; font-size: 0.82em; font-weight: 600; background: var(--mytros-btn-primary-bg); color: #fff; border: none; border-radius: var(--mytros-radius); cursor: pointer; transition: all var(--mytros-transition); }
 .mytros-dashboard .recon-btn:hover { background: var(--mytros-btn-primary-hover); }
-.mytros-dashboard .recon-result { margin-top: 6px; font-size: 0.9em; padding: 4px 8px; background: var(--mytros-surface); border-radius: 3px; }
-.mytros-dashboard .recon-result.recon-bonus { background: var(--mytros-recon-bonus-bg); color: var(--mytros-recon-bonus-text); font-weight: bold; }
-.mytros-dashboard .recon-result.recon-frozen { background: var(--mytros-recon-frozen-bg); color: var(--mytros-recon-frozen-text); }
+.mytros-dashboard .recon-result { margin-top: 8px; font-size: 0.88em; padding: 6px 10px; background: var(--mytros-surface); border-radius: var(--mytros-radius); border-left: 3px solid var(--mytros-divider); }
+.mytros-dashboard .recon-result.recon-bonus { background: var(--mytros-recon-bonus-bg); color: var(--mytros-recon-bonus-text); font-weight: 600; border-left-color: var(--mytros-accent); }
+.mytros-dashboard .recon-result.recon-frozen { background: var(--mytros-recon-frozen-bg); color: var(--mytros-recon-frozen-text); border-left-color: var(--mytros-info); }
 
-/* Miracles Panel */
-.mytros-dashboard .miracles-panel { padding: 10px; }
+/* ── Miracles Panel ────────────────────────────────────────────────────── */
+.mytros-dashboard .miracles-panel { padding: 12px; }
+.mytros-dashboard .miracles-panel > hr { border: none; border-top: 1px solid var(--mytros-divider); margin: 14px 0; }
+.mytros-dashboard .miracles-panel > h3 { font-size: 1em; margin: 0 0 10px 0; font-weight: 700; border: none; display: flex; align-items: center; gap: 6px; }
 .mytros-dashboard .miracle-pools { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 10px; }
-.mytros-dashboard .miracle-pool { border: 1px solid var(--color-border-dark-primary); border-radius: 5px; padding: 10px; }
-.mytros-dashboard .miracle-pool h3 { margin: 0 0 6px 0; font-size: 1em; border: none; }
-.mytros-dashboard .pool-allied h3 { color: #1a5276; }
-.mytros-dashboard .pool-sydon h3 { color: #7b241c; }
-.mytros-dashboard .pool-count { font-size: 2em; font-weight: bold; text-align: center; margin: 6px 0; }
-.mytros-dashboard .pool-allied .pool-count { color: #1a5276; }
-.mytros-dashboard .pool-sydon .pool-count { color: #7b241c; }
+.mytros-dashboard .miracle-pool { border: 1px solid var(--mytros-divider); border-radius: var(--mytros-radius-lg); padding: 12px; background: var(--mytros-surface-card); box-shadow: var(--mytros-shadow); }
+.mytros-dashboard .miracle-pool h3 { margin: 0 0 6px 0; font-size: 0.95em; border: none; font-weight: 700; display: flex; align-items: center; gap: 5px; }
+.mytros-dashboard .pool-allied { border-top: 3px solid var(--mytros-allied); }
+.mytros-dashboard .pool-allied h3 { color: var(--mytros-allied); }
+.mytros-dashboard .pool-sydon { border-top: 3px solid var(--mytros-sydon); }
+.mytros-dashboard .pool-sydon h3 { color: var(--mytros-sydon); }
+.mytros-dashboard .pool-count { font-size: 2.2em; font-weight: 800; text-align: center; margin: 8px 0; }
+.mytros-dashboard .pool-allied .pool-count { color: var(--mytros-allied); }
+.mytros-dashboard .pool-sydon .pool-count { color: var(--mytros-sydon); }
 .mytros-dashboard .miracle-spend-group { display: flex; flex-direction: column; gap: 4px; }
-.mytros-dashboard .miracle-spend-btn { padding: 4px 8px; font-size: 0.8em; background: var(--mytros-btn-secondary-bg); border: 1px solid var(--mytros-btn-secondary-border); border-radius: 3px; cursor: pointer; text-align: left; }
+.mytros-dashboard .miracle-spend-btn { padding: 5px 10px; font-size: 0.8em; background: var(--mytros-btn-secondary-bg); border: 1px solid var(--mytros-btn-secondary-border); border-radius: var(--mytros-radius); cursor: pointer; text-align: left; font-weight: 500; transition: all var(--mytros-transition); color: var(--mytros-text); }
 .mytros-dashboard .miracle-spend-btn:hover { background: var(--mytros-btn-secondary-hover); }
 
-/* Major Events */
+/* ── Major Events ──────────────────────────────────────────────────────── */
 .mytros-dashboard .major-events-list { display: flex; flex-direction: column; gap: 6px; }
-.mytros-dashboard .event-item { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--color-border-dark-primary); border-radius: 4px; }
-.mytros-dashboard .event-item.event-completed { opacity: 0.6; background: var(--mytros-surface-completed); }
+.mytros-dashboard .event-item { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 9px 12px; border: 1px solid var(--mytros-divider); border-radius: var(--mytros-radius); background: var(--mytros-surface-card); box-shadow: var(--mytros-shadow); transition: all var(--mytros-transition); }
+.mytros-dashboard .event-item:hover { box-shadow: var(--mytros-shadow-lg); }
+.mytros-dashboard .event-item.event-completed { opacity: 0.55; }
 .mytros-dashboard .event-info { flex: 1; }
-.mytros-dashboard .event-info strong { display: block; font-size: 0.95em; }
-.mytros-dashboard .event-desc { font-size: 0.8em; color: var(--mytros-text-muted); }
-.mytros-dashboard .event-trigger-btn { padding: 5px 10px; font-size: 0.8em; background: #d4a017; color: #fff; border: none; border-radius: 3px; cursor: pointer; white-space: nowrap; }
+.mytros-dashboard .event-info strong { display: block; font-size: 0.92em; }
+.mytros-dashboard .event-desc { font-size: 0.78em; color: var(--mytros-text-muted); margin-top: 2px; }
+.mytros-dashboard .event-trigger-btn { padding: 5px 12px; font-size: 0.8em; font-weight: 600; background: var(--mytros-accent); color: #fff; border: none; border-radius: var(--mytros-radius); cursor: pointer; white-space: nowrap; transition: all var(--mytros-transition); }
 .mytros-dashboard .event-trigger-btn:hover { background: #b8860b; }
-.mytros-dashboard .event-done { font-size: 0.8em; color: #27ae60; white-space: nowrap; }
+.mytros-dashboard .event-done { font-size: 0.8em; color: var(--mytros-success); white-space: nowrap; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
 
-/* Setup Form */
-.mytros-dashboard .setup-form h3 { font-size: 0.95em; margin: 8px 0 4px 0; color: var(--mytros-text-muted); text-transform: uppercase; letter-spacing: 0.05em; border: none; }
-.mytros-dashboard .setup-form .form-group { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-.mytros-dashboard .setup-form .form-group label { flex: 1; font-size: 0.9em; }
+/* ── Setup Form ────────────────────────────────────────────────────────── */
+.mytros-dashboard .setup-form { padding: 12px; }
+.mytros-dashboard .setup-form > hr { border: none; border-top: 1px solid var(--mytros-divider); margin: 14px 0; }
+.mytros-dashboard .setup-form h3 { font-size: 0.9em; margin: 10px 0 6px 0; color: var(--mytros-text-muted); text-transform: uppercase; letter-spacing: 0.06em; border: none; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+.mytros-dashboard .setup-form .form-group { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.mytros-dashboard .setup-form .form-group label { flex: 1; font-size: 0.88em; font-weight: 500; }
 .mytros-dashboard .setup-form .form-group input[type="number"],
 .mytros-dashboard .setup-form .form-group input[type="text"],
-.mytros-dashboard .setup-form .form-group select { flex: 1; max-width: 200px; }
+.mytros-dashboard .setup-form .form-group select { flex: 1; max-width: 200px; padding: 4px 6px; border-radius: var(--mytros-radius); border: 1px solid var(--mytros-btn-secondary-border); background: var(--mytros-btn-secondary-bg); color: var(--mytros-text); font-size: 0.88em; }
 .mytros-dashboard .setup-form .form-group-checkbox { align-items: center; }
-.mytros-dashboard .setup-form .form-group-checkbox input[type="checkbox"] { flex: none; width: 18px; height: 18px; }
-.mytros-dashboard .btn-danger-subtle { background: rgba(192, 57, 43, 0.1); border: 1px solid rgba(192, 57, 43, 0.4); color: #c0392b; border-radius: 3px; padding: 4px 10px; font-size: 0.85em; cursor: pointer; }
-.mytros-dashboard .btn-danger-subtle:hover { background: rgba(192, 57, 43, 0.2); }
+.mytros-dashboard .setup-form .form-group-checkbox input[type="checkbox"] { flex: none; width: 18px; height: 18px; accent-color: var(--mytros-accent); }
+.mytros-dashboard .setup-form .form-group button { font-weight: 600; }
+.mytros-dashboard .btn-danger-subtle { background: rgba(192, 57, 43, 0.08); border: 1px solid rgba(192, 57, 43, 0.3); color: var(--mytros-danger); border-radius: var(--mytros-radius); padding: 5px 12px; font-size: 0.82em; cursor: pointer; font-weight: 600; transition: all var(--mytros-transition); }
+.mytros-dashboard .btn-danger-subtle:hover { background: rgba(192, 57, 43, 0.18); }
 
-/* Chat Card */
-.mytros-battle-card { font-size: 0.9em; }
-.mytros-battle-card .card-header { font-size: 1.1em; border-bottom: 2px solid #555; padding-bottom: 4px; margin-bottom: 6px; }
-.mytros-battle-card .card-matchup { display: flex; gap: 8px; align-items: center; margin-bottom: 4px; }
-.mytros-battle-card .card-vs { color: var(--mytros-text-muted-alt); font-size: 0.85em; }
-.mytros-battle-card .faction-allied { color: #1a5276; font-weight: bold; }
-.mytros-battle-card .faction-sydon { color: #7b241c; font-weight: bold; }
-.mytros-battle-card .card-result { margin-bottom: 8px; }
-.mytros-battle-card .card-score { color: var(--mytros-text-muted); }
-.mytros-battle-card .card-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
-.mytros-battle-card .card-table th, .mytros-battle-card .card-table td { padding: 3px 6px; border: 1px solid var(--mytros-border-light); }
-.mytros-battle-card .card-table th { background: var(--mytros-surface-header); }
+/* ── Adjacency Config ──────────────────────────────────────────────────── */
+.mytros-dashboard .adjacency-hint { font-size: 0.8em; color: var(--mytros-text-muted); margin: 0 0 8px 0; }
+.mytros-dashboard .adjacency-pairs { margin-bottom: 10px; }
+.mytros-dashboard .adjacency-pair { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; font-size: 0.88em; }
+.mytros-dashboard .adjacency-pair button { padding: 2px 7px; font-size: 0.85em; background: var(--mytros-btn-secondary-bg); border: 1px solid var(--mytros-btn-secondary-border); border-radius: var(--mytros-radius); cursor: pointer; color: var(--mytros-danger); transition: all var(--mytros-transition); }
+.mytros-dashboard .adjacency-pair button:hover { background: rgba(192, 57, 43, 0.1); }
+.mytros-dashboard .adjacency-add-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.mytros-dashboard .adjacency-add-row select { flex: 1; font-size: 0.88em; padding: 3px 5px; border-radius: var(--mytros-radius); border: 1px solid var(--mytros-btn-secondary-border); background: var(--mytros-btn-secondary-bg); color: var(--mytros-text); }
+.mytros-dashboard .adjacency-add-row span { color: var(--mytros-text-muted); }
+.mytros-dashboard .adjacency-add-row button { padding: 4px 10px; font-size: 0.85em; font-weight: 600; background: var(--mytros-btn-primary-bg); color: #fff; border: none; border-radius: var(--mytros-radius); cursor: pointer; transition: all var(--mytros-transition); }
+.mytros-dashboard .adjacency-add-row button:hover { background: var(--mytros-btn-primary-hover); }
+
+/* ── Data Management Buttons ───────────────────────────────────────────── */
+.mytros-dashboard .setup-form .data-mgmt-group button { padding: 5px 10px; font-size: 0.82em; font-weight: 600; background: var(--mytros-btn-secondary-bg); border: 1px solid var(--mytros-btn-secondary-border); border-radius: var(--mytros-radius); cursor: pointer; transition: all var(--mytros-transition); color: var(--mytros-text); display: inline-flex; align-items: center; gap: 4px; }
+.mytros-dashboard .setup-form .data-mgmt-group button:hover { background: var(--mytros-btn-secondary-hover); }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   RESOLVER
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.mytros-resolver { display: flex; flex-direction: column; height: 100%; font-family: inherit; }
+.mytros-resolver > header { padding: 12px 14px 10px; border-bottom: 2px solid var(--mytros-divider); background: var(--mytros-surface-header); }
+.mytros-resolver > header h2 { margin: 0 0 4px 0; font-size: 1.15em; font-weight: 700; border: none; }
+.mytros-resolver .matchup { font-size: 0.95em; display: flex; align-items: center; gap: 6px; }
+.mytros-resolver .allied { color: var(--mytros-allied); font-weight: 700; }
+.mytros-resolver .sydon { color: var(--mytros-sydon); font-weight: 700; }
+.mytros-resolver > main { flex: 1; overflow-y: auto; min-height: 0; padding: 12px; }
+
+/* ── Battle Log ────────────────────────────────────────────────────────── */
+.mytros-resolver .battle-log { border: 1px solid var(--mytros-divider); border-radius: var(--mytros-radius-lg); padding: 10px; margin-bottom: 12px; height: 220px; overflow-y: auto; background: var(--mytros-surface); }
+.mytros-resolver .battle-log ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 4px; }
+.mytros-resolver .log-entry { padding: 5px 8px; border-radius: var(--mytros-radius); font-size: 0.85em; background: var(--mytros-surface-card); border-left: 3px solid var(--mytros-divider); transition: background var(--mytros-transition); }
+.mytros-resolver .log-entry:hover { background: var(--mytros-surface-alt); }
+.mytros-resolver .log-entry.log-allied-win { border-left-color: var(--mytros-allied); }
+.mytros-resolver .log-entry.log-sydon-win { border-left-color: var(--mytros-sydon); }
+.mytros-resolver .log-entry.log-allied-loss { border-left-color: var(--mytros-danger); }
+.mytros-resolver .log-entry.log-sydon-loss { border-left-color: var(--mytros-danger); }
+.mytros-resolver .log-entry.log-score { font-weight: 700; background: var(--mytros-accent-bg); border-left-color: var(--mytros-accent); }
+.mytros-resolver .log-entry.log-neutral { border-left-color: var(--mytros-text-muted-alt); }
+.mytros-resolver .log-text { line-height: 1.4; }
+
+/* ── Modifier Chips ────────────────────────────────────────────────────── */
+.mytros-resolver .mod-chips { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 4px; }
+.mytros-resolver .mod-chip-group { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; }
+.mytros-resolver .mod-chip-label { font-size: 0.72em; font-weight: 600; text-transform: uppercase; color: var(--mytros-text-muted-alt); margin-right: 2px; }
+.mytros-resolver .mod-chip-label.mod-allied { color: var(--mytros-allied); }
+.mytros-resolver .mod-chip-label.mod-sydon { color: var(--mytros-sydon); }
+.mytros-resolver .mod-chip { font-size: 0.72em; background: var(--mytros-chip-bg); border: 1px solid var(--mytros-chip-border); padding: 1px 6px; border-radius: 3px; color: var(--mytros-text-muted); white-space: nowrap; }
+
+/* ── Resolver Controls ─────────────────────────────────────────────────── */
+.mytros-resolver .controls { display: flex; flex-direction: column; gap: 10px; }
+.mytros-resolver .controls h3 { font-size: 1em; font-weight: 700; margin: 4px 0 2px 0; border: none; }
+.mytros-resolver .controls p { font-size: 0.88em; color: var(--mytros-text-muted); margin: 0 0 4px 0; }
+.mytros-resolver .controls button { padding: 8px 14px; font-size: 0.88em; font-weight: 600; background: var(--mytros-btn-primary-bg); color: #fff; border: none; border-radius: var(--mytros-radius); cursor: pointer; transition: all var(--mytros-transition); display: inline-flex; align-items: center; gap: 6px; }
+.mytros-resolver .controls button:hover { background: var(--mytros-btn-primary-hover); transform: translateY(-1px); box-shadow: var(--mytros-shadow); }
+
+/* ── Resolver Benefit Buttons ──────────────────────────────────────────── */
+.mytros-resolver .benefit-group { display: flex; flex-direction: column; gap: 4px; }
+.mytros-resolver .benefit-group button { padding: 7px 12px; font-size: 0.85em; font-weight: 500; background: var(--mytros-btn-secondary-bg); border: 1px solid var(--mytros-btn-secondary-border); border-radius: var(--mytros-radius); cursor: pointer; text-align: left; color: var(--mytros-text); transition: all var(--mytros-transition); }
+.mytros-resolver .benefit-group button:hover { background: var(--mytros-btn-secondary-hover); border-color: var(--mytros-accent); }
+
+/* ── Resolver Divine Blood Panels ──────────────────────────────────────── */
+.mytros-resolver .divine-panel { margin: 8px 0; padding: 10px 12px; border-radius: var(--mytros-radius); }
+.mytros-resolver .divine-panel strong { display: block; margin-bottom: 6px; font-size: 0.9em; }
+.mytros-resolver .divine-panel button { margin-top: 4px; margin-right: 4px; }
+.mytros-resolver .divine-panel-allied { border: 1px solid var(--mytros-accent-bg); background: rgba(212, 160, 23, 0.05); border-color: rgba(192, 160, 96, 0.4); }
+.mytros-resolver .divine-panel-sydon { border: 1px solid var(--mytros-sydon-border); background: var(--mytros-sydon-bg); }
+.mytros-resolver .divine-panel-salvage-allied { border: 1px solid var(--mytros-allied-border); background: var(--mytros-allied-bg); }
+.mytros-resolver .divine-panel-salvage-sydon { border: 1px solid var(--mytros-sydon-border); background: var(--mytros-sydon-bg); }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   CHAT CARD
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.mytros-battle-card { font-size: 0.9em; border-radius: var(--mytros-radius); overflow: hidden; }
+.mytros-battle-card .card-header { font-size: 1.05em; font-weight: 700; padding: 8px 10px; background: linear-gradient(135deg, rgba(44,62,80,0.12), transparent); border-bottom: 2px solid var(--mytros-divider); display: flex; align-items: center; gap: 6px; }
+body.theme-dark .mytros-battle-card .card-header,
+[data-theme="dark"] .mytros-battle-card .card-header { background: linear-gradient(135deg, rgba(255,255,255,0.06), transparent); }
+
+.mytros-battle-card .card-matchup { display: flex; gap: 8px; align-items: center; padding: 6px 10px; font-size: 0.95em; }
+.mytros-battle-card .card-vs { color: var(--mytros-text-muted-alt); font-size: 0.82em; font-weight: 400; }
+.mytros-battle-card .faction-allied { color: var(--mytros-allied); font-weight: 700; }
+.mytros-battle-card .faction-sydon { color: var(--mytros-sydon); font-weight: 700; }
+
+.mytros-battle-card .card-result { padding: 6px 10px 8px; display: flex; align-items: center; gap: 6px; }
+.mytros-battle-card .card-result strong { font-size: 1em; }
+.mytros-battle-card .card-score { color: var(--mytros-text-muted); font-size: 0.88em; font-weight: 500; background: var(--mytros-chip-bg); padding: 2px 8px; border-radius: 3px; }
+
+.mytros-battle-card .card-table { width: 100%; border-collapse: collapse; margin: 4px 0 8px; }
+.mytros-battle-card .card-table th,
+.mytros-battle-card .card-table td { padding: 5px 8px; border: 1px solid var(--mytros-border-light); font-size: 0.88em; }
+.mytros-battle-card .card-table th { background: var(--mytros-surface-header); font-weight: 600; text-transform: uppercase; font-size: 0.78em; letter-spacing: 0.04em; }
+.mytros-battle-card .card-table td { vertical-align: top; }
 .mytros-battle-card .card-final td { font-size: 0.85em; }
-.mytros-battle-card .text-good { color: #27ae60; }
-.mytros-battle-card .text-bad { color: #c0392b; }
+
+/* ── Roll Detail in Chat Card ──────────────────────────────────────────── */
+.mytros-battle-card .roll-detail { font-size: 0.78em; color: var(--mytros-text-muted-alt); margin-top: 2px; }
+.mytros-battle-card .card-mod-chips { display: flex; flex-wrap: wrap; gap: 2px; margin-top: 3px; }
+.mytros-battle-card .card-mod-chip { font-size: 0.72em; background: var(--mytros-chip-bg); border: 1px solid var(--mytros-chip-border); padding: 0 5px; border-radius: 2px; color: var(--mytros-text-muted); }
+
+.mytros-battle-card .text-good { color: var(--mytros-success); font-weight: 600; }
+.mytros-battle-card .text-bad { color: var(--mytros-danger); font-weight: 600; }
 .mytros-battle-card .text-neutral { color: var(--mytros-text-muted-alt); }
-.mytros-battle-card .card-death { color: #c0392b; font-weight: bold; margin: 4px 0; }
-.mytros-battle-card .card-status { margin: 3px 0; font-weight: bold; }
-.mytros-battle-card .card-status-destroyed { color: #e74c3c; }
-.mytros-battle-card .card-status-routed { color: #e67e22; }
-.mytros-battle-card .card-toll { color: var(--mytros-text-muted-alt); font-size: 0.85em; margin-top: 6px; border-top: 1px solid var(--mytros-border-light); padding-top: 4px; }
+
+.mytros-battle-card .card-death { color: var(--mytros-danger); font-weight: 700; margin: 6px 10px; padding: 4px 0; display: flex; align-items: center; gap: 5px; }
+.mytros-battle-card .card-status { margin: 4px 10px; font-weight: 700; display: flex; align-items: center; gap: 5px; padding: 4px 8px; border-radius: var(--mytros-radius); }
+.mytros-battle-card .card-status-destroyed { color: var(--mytros-danger); background: rgba(192, 57, 43, 0.08); }
+.mytros-battle-card .card-status-routed { color: var(--mytros-warning); background: rgba(230, 126, 34, 0.08); }
+.mytros-battle-card .card-toll { color: var(--mytros-text-muted); font-size: 0.82em; margin: 0; padding: 6px 10px; border-top: 1px solid var(--mytros-border-light); display: flex; align-items: center; gap: 5px; background: var(--mytros-surface); }
+
+/* ── Warning Message ───────────────────────────────────────────────────── */
+.mytros-dashboard .warning { text-align: center; padding: 20px; color: var(--mytros-text-muted); font-style: italic; }

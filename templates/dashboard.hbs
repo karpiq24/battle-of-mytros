@@ -1,9 +1,9 @@
 <div class="mytros-dashboard">
     <nav class="tabs">
-        <a class="item {{#if (eq tab 'overview')}}active{{/if}}" data-action="changeTab" data-tab="overview">{{localize "MYTROS.TabOverview"}}</a>
-        <a class="item {{#if (eq tab 'miracles')}}active{{/if}}" data-action="changeTab" data-tab="miracles">{{localize "MYTROS.TabMiracles"}}</a>
+        <a class="item {{#if (eq tab 'overview')}}active{{/if}}" data-action="changeTab" data-tab="overview"><i class="fas fa-map-marked-alt"></i> {{localize "MYTROS.TabOverview"}}</a>
+        <a class="item {{#if (eq tab 'miracles')}}active{{/if}}" data-action="changeTab" data-tab="miracles"><i class="fas fa-sun"></i> {{localize "MYTROS.TabMiracles"}}</a>
         {{#if isGM}}
-        <a class="item {{#if (eq tab 'setup')}}active{{/if}}" data-action="changeTab" data-tab="setup">{{localize "MYTROS.TabSetup"}}</a>
+        <a class="item {{#if (eq tab 'setup')}}active{{/if}}" data-action="changeTab" data-tab="setup"><i class="fas fa-cog"></i> {{localize "MYTROS.TabSetup"}}</a>
         {{/if}}
     </nav>
 
@@ -39,7 +39,7 @@
             <div class="recon-panel">
                 <div class="recon-header">
                     <strong><i class="fas fa-eye"></i> {{localize "MYTROS.ReconTitle"}}</strong>
-                    <button type="button" class="recon-btn" data-action="rollRecon">{{localize "MYTROS.ReconButton"}}</button>
+                    <button type="button" class="recon-btn" data-action="rollRecon"><i class="fas fa-dice-d20"></i> {{localize "MYTROS.ReconButton"}}</button>
                 </div>
                 {{#if reconResult}}
                 <div class="recon-result {{#if reconBonus}}recon-bonus{{/if}}">
@@ -71,14 +71,14 @@
                                         <option value="allied" {{#if (eq this.control 'allied')}}selected{{/if}}>{{localize "MYTROS.ControlAllied"}}</option>
                                         <option value="sydon" {{#if (eq this.control 'sydon')}}selected{{/if}}>{{localize "MYTROS.ControlSydon"}}</option>
                                     </select>
-                                    <button type="button" data-action="toggleSectionFlag" data-region-id="{{this.id}}" data-flag="fortified" class="{{#if this.fortified}}active{{/if}}"><i class="fas fa-shield-alt"></i></button>
-                                    <button type="button" data-action="toggleSectionFlag" data-region-id="{{this.id}}" data-flag="hasObjective" class="{{#if this.hasObjective}}active{{/if}}"><i class="fas fa-star"></i></button>
+                                    <button type="button" data-action="toggleSectionFlag" data-region-id="{{this.id}}" data-flag="fortified" class="{{#if this.fortified}}active{{/if}}" title="{{localize "MYTROS.FortifiedLabel"}}"><i class="fas fa-shield-alt"></i></button>
+                                    <button type="button" data-action="toggleSectionFlag" data-region-id="{{this.id}}" data-flag="hasObjective" class="{{#if this.hasObjective}}active{{/if}}" title="{{localize "MYTROS.ObjectiveLabel"}}"><i class="fas fa-star"></i></button>
                                 </div>
                                 {{else}}
                                 <div class="section-badges">
-                                    {{#if this.fortified}}<span class="badge fortified" title="Fortified"><i class="fas fa-shield-alt"></i></span>{{/if}}
-                                    {{#if this.hasObjective}}<span class="badge objective" title="Strategic Objective"><i class="fas fa-star"></i></span>{{/if}}
-                                    {{#if this.objectiveDestroyed}}<span class="badge destroyed" title="Objective Destroyed"><i class="fas fa-fire"></i></span>{{/if}}
+                                    {{#if this.fortified}}<span class="badge fortified" title="{{localize "MYTROS.FortifiedLabel"}}"><i class="fas fa-shield-alt"></i></span>{{/if}}
+                                    {{#if this.hasObjective}}<span class="badge objective" title="{{localize "MYTROS.ObjectiveLabel"}}"><i class="fas fa-star"></i></span>{{/if}}
+                                    {{#if this.objectiveDestroyed}}<span class="badge destroyed" title="{{localize "MYTROS.ObjectiveDestroyedLabel"}}"><i class="fas fa-fire"></i></span>{{/if}}
                                 </div>
                                 {{/if}}
                             </div>
@@ -91,12 +91,12 @@
                                                 <span class="legion-name">{{this.name}}</span>
                                                 <span class="legion-stats">{{localize "MYTROS.InjShort"}} {{this.injuries}} · {{localize "MYTROS.MorShort"}} {{this.morale}}</span>
                                                 {{#if @root.isGM}}
-                                                <button type="button" data-action="toggleLegionFlag" data-legion-id="{{this.id}}" data-flag="movedThree" class="legion-flag-btn {{#if this.movedThree}}active{{/if}}" title="Vanguard: Moved 3 sections this round">
+                                                <button type="button" data-action="toggleLegionFlag" data-legion-id="{{this.id}}" data-flag="movedThree" class="legion-flag-btn {{#if this.movedThree}}active{{/if}}" title="{{localize "MYTROS.VanguardLabel"}}">
                                                     <i class="fas fa-horse"></i>
                                                 </button>
                                                 {{/if}}
-                                                {{#if this.isRouted}}<span class="badge routed" title="Routed"><i class="fas fa-flag"></i> {{localize "MYTROS.Routed"}}</span>{{/if}}
-                                                {{#if this.isDestroyed}}<span class="badge destroyed" title="Destroyed"><i class="fas fa-skull"></i> {{localize "MYTROS.Destroyed"}}</span>{{/if}}
+                                                {{#if this.isRouted}}<span class="badge routed" title="{{localize "MYTROS.Routed"}}"><i class="fas fa-flag"></i> {{localize "MYTROS.Routed"}}</span>{{/if}}
+                                                {{#if this.isDestroyed}}<span class="badge destroyed" title="{{localize "MYTROS.Destroyed"}}"><i class="fas fa-skull"></i> {{localize "MYTROS.Destroyed"}}</span>{{/if}}
                                             </div>
                                             {{#if @root.isGM}}
                                                 <select data-action="assignCommander" data-legion-id="{{this.id}}">
@@ -119,10 +119,10 @@
                             </div>
 
                             {{#if this.supportUnits.length}}
-                            <div class="support-units" style="margin-top: 5px; padding-top: 5px; border-top: 1px solid #ddd;">
-                                <h4 style="font-size: 0.8em; margin: 0; color: #666;">{{localize "MYTROS.Support"}}</h4>
+                            <div class="support-units">
+                                <h4><i class="fas fa-users"></i> {{localize "MYTROS.Support"}}</h4>
                                 {{#each this.supportUnits}}
-                                <div class="support-item" style="display: flex; justify-content: space-between; align-items: center; font-size: 0.9em;">
+                                <div class="support-item">
                                     <span>{{this.name}}</span>
                                     {{#if (eq @root.phase 3)}}
                                         {{#if @root.isGM}}
@@ -140,7 +140,7 @@
                                         {{/if}}
                                     {{else}}
                                         {{#if (ne this.deploymentMode 'none')}}
-                                            <span class="badge mode-{{this.deploymentMode}}" style="font-size: 0.7em; background: #eee; padding: 2px 4px; border-radius: 3px;">{{this.deploymentMode}}</span>
+                                            <span class="support-mode-badge">{{this.deploymentMode}}</span>
                                         {{/if}}
                                     {{/if}}
                                 </div>
@@ -163,10 +163,10 @@
                         <div class="pool-count">{{alliedMiracles}}</div>
                         {{#if isGM}}
                         <div class="miracle-spend-group">
-                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-cost="1">{{localize "MYTROS.SpendRollBonus"}}</button>
-                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-cost="2">{{localize "MYTROS.SpendDivineAdvantage"}}</button>
-                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-cost="2">{{localize "MYTROS.SpendShortRest"}}</button>
-                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-cost="4">{{localize "MYTROS.SpendLongRest"}}</button>
+                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-cost="1"><i class="fas fa-dice-d20"></i> {{localize "MYTROS.SpendRollBonus"}}</button>
+                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-cost="2"><i class="fas fa-star"></i> {{localize "MYTROS.SpendDivineAdvantage"}}</button>
+                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-cost="2"><i class="fas fa-campground"></i> {{localize "MYTROS.SpendShortRest"}}</button>
+                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-cost="4"><i class="fas fa-bed"></i> {{localize "MYTROS.SpendLongRest"}}</button>
                         </div>
                         {{/if}}
                     </div>
@@ -175,8 +175,8 @@
                         <div class="pool-count">{{sydonMiracles}}</div>
                         {{#if isGM}}
                         <div class="miracle-spend-group">
-                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="sydon" data-cost="1">{{localize "MYTROS.SpendRollBonus"}}</button>
-                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="sydon" data-cost="2">{{localize "MYTROS.SpendDivineAdvantage"}}</button>
+                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="sydon" data-cost="1"><i class="fas fa-dice-d20"></i> {{localize "MYTROS.SpendRollBonus"}}</button>
+                            <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="sydon" data-cost="2"><i class="fas fa-star"></i> {{localize "MYTROS.SpendDivineAdvantage"}}</button>
                         </div>
                         {{/if}}
                     </div>
@@ -283,36 +283,36 @@
                 </div>
 
                 <hr>
-                <h3>{{localize "MYTROS.AdjacencyTitle"}}</h3>
-                <p style="font-size:0.8em; color:#666;">{{localize "MYTROS.AdjacencyHint"}}</p>
+                <h3><i class="fas fa-link"></i> {{localize "MYTROS.AdjacencyTitle"}}</h3>
+                <p class="adjacency-hint">{{localize "MYTROS.AdjacencyHint"}}</p>
                 {{#if adjacencyPairs.length}}
-                <div style="margin-bottom:8px;">
+                <div class="adjacency-pairs">
                     {{#each adjacencyPairs}}
-                    <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px; font-size:0.9em;">
+                    <div class="adjacency-pair">
                         <span>{{this.aName}} ↔ {{this.bName}}</span>
-                        <button type="button" data-action="removeAdjacencyPair" data-index="{{this.index}}" style="padding:1px 6px; font-size:0.85em;">×</button>
+                        <button type="button" data-action="removeAdjacencyPair" data-index="{{this.index}}">×</button>
                     </div>
                     {{/each}}
                 </div>
                 {{/if}}
-                <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
-                    <select data-ref="adjA" style="flex:1;">
+                <div class="adjacency-add-row">
+                    <select data-ref="adjA">
                         {{#each sectionOpts}}<option value="{{this.id}}">{{this.name}}</option>{{/each}}
                     </select>
                     <span>↔</span>
-                    <select data-ref="adjB" style="flex:1;">
+                    <select data-ref="adjB">
                         {{#each sectionOpts}}<option value="{{this.id}}">{{this.name}}</option>{{/each}}
                     </select>
-                    <button type="button" data-action="addAdjacencyPair">{{localize "MYTROS.AdjacencyAdd"}}</button>
+                    <button type="button" data-action="addAdjacencyPair"><i class="fas fa-plus"></i> {{localize "MYTROS.AdjacencyAdd"}}</button>
                 </div>
 
                 <hr>
-                <h3>{{localize "MYTROS.DataManagement"}}</h3>
-                <div class="form-group">
+                <h3><i class="fas fa-database"></i> {{localize "MYTROS.DataManagement"}}</h3>
+                <div class="form-group data-mgmt-group">
                     <button type="button" data-action="importCSV" data-type="legion"><i class="fas fa-file-import"></i> {{localize "MYTROS.ImportLegions"}}</button>
                     <button type="button" data-action="exportCSV" data-type="legion"><i class="fas fa-file-export"></i> {{localize "MYTROS.ExportLegions"}}</button>
                 </div>
-                <div class="form-group">
+                <div class="form-group data-mgmt-group">
                     <button type="button" data-action="importCSV" data-type="commander"><i class="fas fa-file-import"></i> {{localize "MYTROS.ImportCommanders"}}</button>
                     <button type="button" data-action="exportCSV" data-type="commander"><i class="fas fa-file-export"></i> {{localize "MYTROS.ExportCommanders"}}</button>
                 </div>

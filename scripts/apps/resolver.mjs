@@ -68,6 +68,12 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
+    _buildModSummary(mods, extras = []) {
+        const parts = [...(mods.descriptions || [])];
+        if (extras.length) parts.push(...extras);
+        return parts;
+    }
+
     hasTag(legion, tagName) {
         if (!legion) return false;
         const commanderId = legion.getFlag("battle-of-mytros", "commanderId");
@@ -177,7 +183,7 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
         const reconBonus = game.settings.get("battle-of-mytros", "reconBonus") ?? 0;
         if (reconBonus > 0) {
             alliedMods.flatBonus += reconBonus;
-            this.state.log.push(`Allied Maneuver: +${reconBonus} from Reconnaissance Intel.`);
+            alliedMods.descriptions.push(`Recon Intel: +${reconBonus}`);
         }
 
         const alliedStats = this.state.allied.getFlag("battle-of-mytros", "stats");
@@ -193,28 +199,35 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
         let tied = true;
         let attempt = 1;
 
+        const aModSummary = this._buildModSummary(alliedMods, aSupport.dice.map(d => `Support: +${d}`));
+        const sModSummary = this._buildModSummary(sydonMods, sSupport.dice.map(d => `Support: +${d}`));
+        if (aVeteran) aModSummary.push("Veteran: floor 5");
+        if (sVeteran) sModSummary.push("Veteran: floor 5");
+        if (aSupport.advantage) aModSummary.push("Support: Advantage");
+        if (sSupport.advantage) sModSummary.push("Support: Advantage");
+
         while (tied && attempt <= 4) {
             alliedRoll = await globalThis.BattleRoller.executeRoll(alliedStats.wit, alliedMods.flatBonus, alliedMods.advantage || aSupport.advantage, alliedMods.disadvantage, aVeteran, aSupport.dice);
             sydonRoll = await globalThis.BattleRoller.executeRoll(sydonStats.wit, sydonMods.flatBonus, sydonMods.advantage || sSupport.advantage, sydonMods.disadvantage, sVeteran, sSupport.dice);
 
-            this.state.log.push(`Maneuver Attempt ${attempt} — Allied: ${alliedRoll.total}, Sydon: ${sydonRoll.total}`);
+            this.state.log.push({ text: `Maneuver #${attempt} — Allied: ${alliedRoll.total} (Wit ${alliedStats.wit}), Sydon: ${sydonRoll.total} (Wit ${sydonStats.wit})`, mods: { allied: aModSummary, sydon: sModSummary } });
 
             if (alliedRoll.total !== sydonRoll.total) {
                 tied = false;
             } else {
                 attempt++;
-                if (attempt <= 4) this.state.log.push("Maneuver is tied! Rerolling...");
+                if (attempt <= 4) this.state.log.push({ text: "Maneuver is tied! Rerolling..." });
             }
         }
 
         if (alliedRoll.total > sydonRoll.total) {
-            this.state.log.push("Allied side won the Maneuver!");
+            this.state.log.push({ text: "Allied side won the Maneuver!", type: "allied-win" });
             this.state.maneuverWinner = "allied";
         } else if (sydonRoll.total > alliedRoll.total) {
-            this.state.log.push("Sydon side won the Maneuver!");
+            this.state.log.push({ text: "Sydon side won the Maneuver!", type: "sydon-win" });
             this.state.maneuverWinner = "sydon";
         } else {
-            this.state.log.push("Maneuver remains tied after 4 attempts! No benefit.");
+            this.state.log.push({ text: "Maneuver remains tied after 4 attempts! No benefit.", type: "neutral" });
             this.state.maneuverWinner = "tie";
         }
 
@@ -235,7 +248,7 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
     static async selectManeuverBenefit(_event, target) {
         const benefit = target.dataset.benefit;
         this.state.maneuverBenefit = benefit;
-        this.state.log.push(`${this.state.maneuverWinner} selected benefit: ${benefit}`);
+        this.state.log.push({ text: `${this.state.maneuverWinner} selected benefit: ${benefit}` });
         this.state.phase = "charge";
         this.render();
     }
@@ -276,32 +289,41 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
         const aFlankDice = (this.state.maneuverWinner === "allied" && this.state.maneuverBenefit === "flanking") ? ["1d4"] : [];
         const sFlankDice = (this.state.maneuverWinner === "sydon" && this.state.maneuverBenefit === "flanking") ? ["1d4"] : [];
 
+        const aModSummary = this._buildModSummary(alliedMods, aSupport.dice.concat(aFlankDice).map(d => `Support: +${d}`));
+        const sModSummary = this._buildModSummary(sydonMods, sSupport.dice.concat(sFlankDice).map(d => `Support: +${d}`));
+        if (aVeteran) aModSummary.push("Veteran: floor 5");
+        if (sVeteran) sModSummary.push("Veteran: floor 5");
+        if (aSupport.advantage) aModSummary.push("Support: Advantage");
+        if (sSupport.advantage) sModSummary.push("Support: Advantage");
+        if (aFlankDice.length) aModSummary.push("Flanking: +1d4");
+        if (sFlankDice.length) sModSummary.push("Flanking: +1d4");
+
         while (tied && attempt <= 2) {
             aRoll = await globalThis.BattleRoller.executeRoll(aStats.morale, alliedMods.flatBonus, alliedMods.advantage || aSupport.advantage, alliedMods.disadvantage, aVeteran, aSupport.dice.concat(aFlankDice));
             sRoll = await globalThis.BattleRoller.executeRoll(sStats.morale, sydonMods.flatBonus, sydonMods.advantage || sSupport.advantage, sydonMods.disadvantage, sVeteran, sSupport.dice.concat(sFlankDice));
 
-            this.state.log.push(`Charge Attempt ${attempt} — Allied: ${aRoll.total}, Sydon: ${sRoll.total}`);
+            this.state.log.push({ text: `Charge #${attempt} — Allied: ${aRoll.total} (Morale ${aStats.morale}), Sydon: ${sRoll.total} (Morale ${sStats.morale})`, mods: { allied: aModSummary, sydon: sModSummary } });
 
             if (aRoll.total !== sRoll.total) {
                 tied = false;
             } else {
                 attempt++;
-                if (attempt <= 2) this.state.log.push("Charge is tied! Rerolling...");
+                if (attempt <= 2) this.state.log.push({ text: "Charge is tied! Rerolling..." });
             }
         }
 
         if (aRoll.total > sRoll.total) {
-            this.state.log.push("Allied won Charge! (+1 Clash)");
+            this.state.log.push({ text: "Allied won Charge! (+1 Clash)", type: "allied-win" });
             this.state.counter.allied += 1;
             this.state.counter.sydon -= 1;
             this.state.chargeWinner = "allied";
         } else if (sRoll.total > aRoll.total) {
-            this.state.log.push("Sydon won Charge! (+1 Clash)");
+            this.state.log.push({ text: "Sydon won Charge! (+1 Clash)", type: "sydon-win" });
             this.state.counter.sydon += 1;
             this.state.counter.allied -= 1;
             this.state.chargeWinner = "sydon";
         } else {
-            this.state.log.push("Charge remains tied after 2 attempts!");
+            this.state.log.push({ text: "Charge remains tied after 2 attempts!", type: "neutral" });
             this.state.chargeWinner = "tie";
         }
 
@@ -325,8 +347,8 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
         const aMods = globalThis.TagEngine.getRollModifiers(this.state.allied, this.state.sydon, "clash", aContext);
         const sMods = globalThis.TagEngine.getRollModifiers(this.state.sydon, this.state.allied, "clash", sContext);
 
-        if (this.state.chargeWinner === "allied") aMods.flatBonus += 1;
-        if (this.state.chargeWinner === "sydon") sMods.flatBonus += 1;
+        if (this.state.chargeWinner === "allied") { aMods.flatBonus += 1; aMods.descriptions.push("Charge Victor: +1"); }
+        if (this.state.chargeWinner === "sydon") { sMods.flatBonus += 1; sMods.descriptions.push("Charge Victor: +1"); }
 
         // Apply Maneuver bonus dice if selected (Defensive Footing: +1d2 to Clash)
         if (this.state.maneuverWinner === "allied") {
@@ -347,18 +369,24 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
         const aSupport = this.getSupportBonuses("allied", "clash");
         const sSupport = this.getSupportBonuses("sydon", "clash");
 
+        const aModSummary = this._buildModSummary(aMods, (aMods.bonusDice || []).concat(aSupport.dice).map(d => `+${d}`));
+        const sModSummary = this._buildModSummary(sMods, (sMods.bonusDice || []).concat(sSupport.dice).map(d => `+${d}`));
+        if (aVeteran) aModSummary.push("Veteran: floor 5");
+        if (sVeteran) sModSummary.push("Veteran: floor 5");
+        if (aSupport.advantage) aModSummary.push("Support: Advantage");
+        if (sSupport.advantage) sModSummary.push("Support: Advantage");
+
         const aRoll = await globalThis.BattleRoller.executeRoll(aStats.vitality, aMods.flatBonus, aMods.advantage || aSupport.advantage, aMods.disadvantage, aVeteran, (aMods.bonusDice || []).concat(aSupport.dice));
         const sRoll = await globalThis.BattleRoller.executeRoll(sStats.vitality, sMods.flatBonus, sMods.advantage || sSupport.advantage, sMods.disadvantage, sVeteran, (sMods.bonusDice || []).concat(sSupport.dice));
 
-        this.state.log.push(`Allied Clash (Vitality ${aStats.vitality}): ${aRoll.total}`);
-        this.state.log.push(`Sydon Clash (Vitality ${sStats.vitality}): ${sRoll.total}`);
+        this.state.log.push({ text: `Clash — Allied: ${aRoll.total} (Vit ${aStats.vitality}), Sydon: ${sRoll.total} (Vit ${sStats.vitality})`, mods: { allied: aModSummary, sydon: sModSummary } });
 
         if (aRoll.total > sRoll.total) {
-            this.state.log.push("Allied won Clash!");
+            this.state.log.push({ text: "Allied won Clash!", type: "allied-win" });
             this.state.counter.allied += 2;
             this.state.counter.sydon -= 1;
         } else if (sRoll.total > aRoll.total) {
-            this.state.log.push("Sydon won Clash!");
+            this.state.log.push({ text: "Sydon won Clash!", type: "sydon-win" });
             this.state.counter.sydon += 2;
             this.state.counter.allied -= 1;
         }
@@ -368,16 +396,16 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
         if (aRoll.isNat1 && sRoll.total > aRoll.total) this.state.counter.allied -= 1;
         if (sRoll.isNat1 && aRoll.total > sRoll.total) this.state.counter.sydon -= 1;
 
-        this.state.log.push(`FINAL SCORE — Allied: ${this.state.counter.allied} | Sydon: ${this.state.counter.sydon}`);
+        this.state.log.push({ text: `FINAL SCORE — Allied: ${this.state.counter.allied} | Sydon: ${this.state.counter.sydon}`, type: "score" });
 
         if (this.state.counter.allied > this.state.counter.sydon) {
-            this.state.log.push(">>> ALLIED LEGION WINS THE BATTLE <<<");
+            this.state.log.push({ text: "▶ ALLIED LEGION WINS THE BATTLE", type: "allied-win" });
             this.state.overallWinner = "allied";
         } else if (this.state.counter.sydon > this.state.counter.allied) {
-            this.state.log.push(">>> SYDON LEGION WINS THE BATTLE <<<");
+            this.state.log.push({ text: "▶ SYDON LEGION WINS THE BATTLE", type: "sydon-win" });
             this.state.overallWinner = "sydon";
         } else {
-            this.state.log.push(">>> BATTLE TIED — Sudden Death Required <<<");
+            this.state.log.push({ text: "BATTLE TIED — Sudden Death Required", type: "neutral" });
             this.state.phase = "tiebreaker";
             this.render();
             return;
@@ -394,18 +422,18 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
         const aRoll = await globalThis.BattleRoller.executeRoll(aStats.vitality, 0, false, false, this.hasTag(this.state.allied, "veteran"), []);
         const sRoll = await globalThis.BattleRoller.executeRoll(sStats.vitality, 0, false, false, this.hasTag(this.state.sydon, "veteran"), []);
 
-        this.state.log.push(`Tiebreaker — Allied Vitality: ${aRoll.total} | Sydon Vitality: ${sRoll.total}`);
+        this.state.log.push({ text: `Tiebreaker — Allied Vit: ${aRoll.total} | Sydon Vit: ${sRoll.total}` });
 
         if (aRoll.total > sRoll.total) {
-            this.state.log.push(">>> ALLIED WINS THE TIEBREAKER <<<");
+            this.state.log.push({ text: "▶ ALLIED WINS THE TIEBREAKER", type: "allied-win" });
             this.state.overallWinner = "allied";
             this.state.phase = "aftermath_recovery";
         } else if (sRoll.total > aRoll.total) {
-            this.state.log.push(">>> SYDON WINS THE TIEBREAKER <<<");
+            this.state.log.push({ text: "▶ SYDON WINS THE TIEBREAKER", type: "sydon-win" });
             this.state.overallWinner = "sydon";
             this.state.phase = "aftermath_recovery";
         } else {
-            this.state.log.push("Still tied! Rerolling automatically...");
+            this.state.log.push({ text: "Still tied! Rerolling automatically..." });
             return BattleResolverApp.runTiebreaker.call(this);
         }
 
@@ -448,15 +476,19 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
                 injuries = success ? 1 : 2;
             }
 
-            results[side] = { rollTotal: rollResult.total, dc, success, injuries };
-            this.state.log.push(`${side} Recovery (Vit ${stats.vitality}): ${rollResult.total} vs DC ${dc} — ${success ? "SUCCESS" : "FAIL"} → ${injuries >= 0 ? "+" : ""}${injuries} injuries`);
+            const modSummary = this._buildModSummary(mods, support.dice.map(d => `Support: +${d}`));
+            if (isVeteran) modSummary.push("Veteran: floor 5");
+            if (isWinner) modSummary.push("Winner");
+
+            results[side] = { rollTotal: rollResult.total, dc, success, injuries, modSummary };
+            this.state.log.push({ text: `${side} Recovery (Vit ${stats.vitality}): ${rollResult.total} vs DC ${dc} — ${success ? "SUCCESS" : "FAIL"} → ${injuries >= 0 ? "+" : ""}${injuries} injuries`, mods: { [side]: modSummary } });
         }
 
         // Seized Initiative: maneuver winner = overall winner AND chose seized_initiative
         if (this.state.maneuverWinner === winner && this.state.maneuverBenefit === "seized_initiative") {
             const seizedRoll = await new Roll("1d2").evaluate();
             results[loser].injuries += seizedRoll.total;
-            this.state.log.push(`Seized Initiative! ${loser} takes +${seizedRoll.total} extra injuries.`);
+            this.state.log.push({ text: `Seized Initiative! ${loser} takes +${seizedRoll.total} extra injuries.`, type: "neutral" });
         }
 
         // Brutal: winner has Brutal, loser projected ≥4 injuries → +1 more
@@ -464,7 +496,7 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
         const loserProjected = (loserStats.injuries || 0) + results[loser].injuries;
         if (this.hasTag(this.state[winner], "brutal") && loserProjected >= 4) {
             results[loser].injuries += 1;
-            this.state.log.push(`Brutal! ${loser} takes +1 additional injury (≥4 injuries total).`);
+            this.state.log.push({ text: `Brutal! ${loser} takes +1 additional injury (≥4 injuries total).`, type: "neutral" });
         }
 
         this.state.recoveryResult = results;
@@ -496,8 +528,12 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
             const success = rollResult.total >= hopeDC;
             const moraleDelta = isWinner ? (success ? 2 : 1) : (success ? -1 : -2);
 
-            results[side] = { rollTotal: rollResult.total, success, moraleDelta };
-            this.state.log.push(`${side} Hope (Morale ${currentMorale}): ${rollResult.total} vs DC ${hopeDC} — ${success ? "SUCCESS" : "FAIL"} → ${moraleDelta >= 0 ? "+" : ""}${moraleDelta} Morale`);
+            const modSummary = this._buildModSummary(mods, support.dice.map(d => `Support: +${d}`));
+            if (isVeteran) modSummary.push("Veteran: floor 5");
+            if (isWinner) modSummary.push("Winner");
+
+            results[side] = { rollTotal: rollResult.total, success, moraleDelta, modSummary };
+            this.state.log.push({ text: `${side} Hope (Morale ${currentMorale}): ${rollResult.total} vs DC ${hopeDC} — ${success ? "SUCCESS" : "FAIL"} → ${moraleDelta >= 0 ? "+" : ""}${moraleDelta} Morale`, mods: { [side]: modSummary } });
         }
 
         this.state.hopeResult = results;
@@ -526,8 +562,11 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
             const success = rollResult.total >= salvageDC;
             const benefitCount = !success ? 0 : (rollResult.isNat20 ? 2 : 1);
 
-            results[side] = { rollTotal: rollResult.total, success, nat20: rollResult.isNat20, benefitCount };
-            this.state.log.push(`${side} Salvage (Wit ${stats.wit}): ${rollResult.total} vs DC ${salvageDC} — ${!success ? "FAIL" : rollResult.isNat20 ? "NAT 20! (2 benefits)" : "SUCCESS (1 benefit)"}`);
+            const modSummary = this._buildModSummary(mods, support.dice.map(d => `Support: +${d}`));
+            if (isVeteran) modSummary.push("Veteran: floor 5");
+
+            results[side] = { rollTotal: rollResult.total, success, nat20: rollResult.isNat20, benefitCount, modSummary };
+            this.state.log.push({ text: `${side} Salvage (Wit ${stats.wit}): ${rollResult.total} vs DC ${salvageDC} — ${!success ? "FAIL" : rollResult.isNat20 ? "NAT 20! (2 benefits)" : "SUCCESS (1 benefit)"}`, mods: { [side]: modSummary } });
         }
 
         this.state.salvageResult = results;
@@ -549,7 +588,7 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
         const side = this.state.phase === "aftermath_salvage_allied_choice" ? "allied" : "sydon";
 
         this.state.salvageBenefits[side].push(benefit);
-        this.state.log.push(`${side} salvage benefit: ${benefit}`);
+        this.state.log.push({ text: `${side} salvage benefit: ${benefit}` });
 
         const chosen = this.state.salvageBenefits[side].length;
         const needed = this.state.salvageResult[side].benefitCount;
@@ -579,7 +618,7 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
 
             if (!commander) {
                 results[side] = { skipped: true, reason: "no commander" };
-                this.state.log.push(`${side}: No commander assigned — skipping check.`);
+                this.state.log.push({ text: `${side}: No commander assigned — skipping check.` });
                 continue;
             }
 
@@ -589,7 +628,7 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
 
             if (isProtected) {
                 results[side] = { skipped: true, reason: "protected", commanderName: commander.name };
-                this.state.log.push(`${side} commander (${commander.name}) is protected by a PC — no check.`);
+                this.state.log.push({ text: `${side} commander (${commander.name}) is protected by a PC — no check.` });
                 continue;
             }
 
@@ -608,13 +647,18 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
 
             if (this.hasTag(legion, "unbreakable pact")) {
                 const roll2 = await new Roll("1d100").evaluate();
-                this.state.log.push(`${side} Unbreakable Pact: rolled ${roll1.total} & ${roll2.total}`);
+                this.state.log.push({ text: `${side} Unbreakable Pact: rolled ${roll1.total} & ${roll2.total}` });
                 finalRoll = Math.min(roll1.total, roll2.total);
             }
 
             const died = finalRoll <= finalTarget;
+            const cmdrMods = [];
+            if (this.hasTag(this.state[enemySide], "headhunter")) cmdrMods.push("Headhunter (enemy): +5%");
+            if (this.hasTag(legion, "divine blood")) cmdrMods.push("Divine Blood: −5%");
+            if (this.hasTag(legion, "unbreakable pact")) cmdrMods.push("Unbreakable Pact: best of 2");
+
             results[side] = { baseChance, finalTarget, finalRoll, died, commanderName: commander.name };
-            this.state.log.push(`${side} Commander (${commander.name}): ${finalRoll} vs ${finalTarget}% — ${died ? "FALLS IN BATTLE" : "SURVIVES"}`);
+            this.state.log.push({ text: `${side} Commander (${commander.name}): ${finalRoll} vs ${finalTarget}% — ${died ? "FALLS IN BATTLE" : "SURVIVES"}`, mods: cmdrMods.length ? { [side]: cmdrMods } : undefined });
         }
 
         this.state.commanderResult = results;
@@ -648,21 +692,21 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
             for (const benefit of (this.state.salvageBenefits?.[side] || [])) {
                 if (benefit === "captured_supplies") {
                     statsCopy[side].injuries = Math.max(0, (statsCopy[side].injuries || 0) - 1);
-                    this.state.log.push(`${side} Captured Supplies: removed 1 injury.`);
+                    this.state.log.push({ text: `${side} Captured Supplies: removed 1 injury.` });
                 }
                 if (benefit === "enemy_shaken") {
                     statsCopy[enemySide].morale = (statsCopy[enemySide].morale ?? 5) - 1;
-                    this.state.log.push(`${side} Enemy Shaken: ${enemySide} loses 1 Morale.`);
+                    this.state.log.push({ text: `${side} Enemy Shaken: ${enemySide} loses 1 Morale.` });
                 }
                 if (benefit === "tactical_insight") {
                     const tacRoll = await new Roll("1d2").evaluate();
                     await this.state[side].setFlag("battle-of-mytros", "tacInsightBonus", tacRoll.total);
-                    this.state.log.push(`${side} Tactical Insight: +${tacRoll.total} to Wit rolls next round.`);
+                    this.state.log.push({ text: `${side} Tactical Insight: +${tacRoll.total} to Wit rolls next round.` });
                 }
                 if (benefit === "quick_fortify") {
                     await this.region.setFlag("battle-of-mytros", "fortified", true);
                     await this.region.setFlag("battle-of-mytros", "control", side);
-                    this.state.log.push(`${side} Quick Fortify: section is now fortified.`);
+                    this.state.log.push({ text: `${side} Quick Fortify: section is now fortified.` });
                 }
             }
         }
@@ -672,7 +716,7 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
             if (this.state.commanderResult?.[side]?.died) {
                 statsCopy[side].morale = (statsCopy[side].morale ?? 5) - 1;
                 await this.state[side].setFlag("battle-of-mytros", "commanderId", null);
-                this.state.log.push(`${side} commander lost — 1 Morale penalty applied.`);
+                this.state.log.push({ text: `${side} commander lost — 1 Morale penalty applied.` });
             }
         }
 
@@ -696,16 +740,16 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
             const baseDestroy = game.settings.get("battle-of-mytros", "destroyThreshold") ?? 6;
             const destroyAt = this.hasTag(this.state[side], "bulwark") ? baseDestroy + 1 : baseDestroy;
             if (s.injuries >= destroyAt) {
-                this.state.log.push(`⚠ ${side} LEGION DESTROYED (${s.injuries} injuries)!`);
+                this.state.log.push({ text: `⚠ ${side} LEGION DESTROYED (${s.injuries} injuries)!`, type: side === 'allied' ? 'allied-loss' : 'sydon-loss' });
                 await this.state[side].setFlag("battle-of-mytros", "isDestroyed", true);
                 await this.state[side].setFlag("battle-of-mytros", "isRouted", false);
                 statusData[side] = { text: "LEGION DESTROYED", type: "destroyed" };
             } else if (s.morale <= 0) {
-                this.state.log.push(`⚠ ${side} LEGION ROUTED (0 Morale)!`);
+                this.state.log.push({ text: `⚠ ${side} LEGION ROUTED (0 Morale)!`, type: side === 'allied' ? 'allied-loss' : 'sydon-loss' });
                 await this.state[side].setFlag("battle-of-mytros", "isRouted", true);
                 statusData[side] = { text: "LEGION ROUTED", type: "routed" };
             } else {
-                this.state.log.push(`${side} final: Injuries ${s.injuries}, Morale ${s.morale}`);
+                this.state.log.push({ text: `${side} final: Injuries ${s.injuries}, Morale ${s.morale}` });
                 await this.state[side].setFlag("battle-of-mytros", "isRouted", false);
                 statusData[side] = null;
             }
@@ -716,9 +760,9 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
         if (currentControl !== this.state.overallWinner) {
             await this.region.setFlag("battle-of-mytros", "control", this.state.overallWinner);
             await this.region.setFlag("battle-of-mytros", "fortified", false);
-            this.state.log.push(`${this.state.overallWinner} claims the section. Fortification lost.`);
+            this.state.log.push({ text: `${this.state.overallWinner} claims the section. Fortification lost.` });
         } else {
-            this.state.log.push(`${this.state.overallWinner} holds the section.`);
+            this.state.log.push({ text: `${this.state.overallWinner} holds the section.` });
         }
 
         // Mark both legions as having fought this round
@@ -763,12 +807,20 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
             scoreSydon: this.state.counter.sydon,
             alliedRecoveryText: aRec ? (aRec.success ? (aRec.injuries === 0 ? "No injury" : signedStr(aRec.injuries)) : `${signedStr(aRec.injuries)} (failed)`) : "—",
             alliedRecoveryClass: aRec ? injClass(aRec.injuries) : "",
+            alliedRecoveryRoll: aRec ? `${aRec.rollTotal} vs DC ${aRec.dc}` : "",
+            alliedRecoveryMods: aRec?.modSummary || [],
             sydonRecoveryText: sRec ? (sRec.success ? (sRec.injuries === 0 ? "No injury" : signedStr(sRec.injuries)) : `${signedStr(sRec.injuries)} (failed)`) : "—",
             sydonRecoveryClass: sRec ? injClass(sRec.injuries) : "",
+            sydonRecoveryRoll: sRec ? `${sRec.rollTotal} vs DC ${sRec.dc}` : "",
+            sydonRecoveryMods: sRec?.modSummary || [],
             alliedHopeText: aHope ? `${signedStr(aHope.moraleDelta)} Morale` : "—",
             alliedHopeClass: aHope ? morClass(aHope.moraleDelta) : "",
+            alliedHopeRoll: aHope ? `${aHope.rollTotal} vs DC ${game.settings.get("battle-of-mytros", "hopeDC") ?? 12}` : "",
+            alliedHopeMods: aHope?.modSummary || [],
             sydonHopeText: sHope ? `${signedStr(sHope.moraleDelta)} Morale` : "—",
             sydonHopeClass: sHope ? morClass(sHope.moraleDelta) : "",
+            sydonHopeRoll: sHope ? `${sHope.rollTotal} vs DC ${game.settings.get("battle-of-mytros", "hopeDC") ?? 12}` : "",
+            sydonHopeMods: sHope?.modSummary || [],
             alliedInjuries: statsCopy.allied.injuries,
             alliedMorale: statsCopy.allied.morale,
             sydonInjuries: statsCopy.sydon.injuries,
@@ -808,9 +860,9 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
             const orig = this.state.recoveryResult[side];
             if (injuries < orig.injuries) {
                 this.state.recoveryResult[side] = { ...orig, rollTotal: reroll.total, success, injuries };
-                this.state.log.push(`Divine Blood (${side}): Recovery re-roll ${reroll.total} — improved to ${injuries >= 0 ? "+" : ""}${injuries} injuries.`);
+                this.state.log.push({ text: `Divine Blood (${side}): Recovery re-roll ${reroll.total} — improved to ${injuries >= 0 ? "+" : ""}${injuries} injuries.` });
             } else {
-                this.state.log.push(`Divine Blood (${side}): Recovery re-roll ${reroll.total} — original kept (${orig.injuries >= 0 ? "+" : ""}${orig.injuries} injuries).`);
+                this.state.log.push({ text: `Divine Blood (${side}): Recovery re-roll ${reroll.total} — original kept (${orig.injuries >= 0 ? "+" : ""}${orig.injuries} injuries).` });
             }
         } else if (check === "hope") {
             const currentMorale = stats.morale ?? 5;
@@ -821,9 +873,9 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
             const orig = this.state.hopeResult[side];
             if (moraleDelta > orig.moraleDelta) {
                 this.state.hopeResult[side] = { ...orig, rollTotal: reroll.total, success, moraleDelta };
-                this.state.log.push(`Divine Blood (${side}): Hope re-roll ${reroll.total} — improved to ${moraleDelta >= 0 ? "+" : ""}${moraleDelta} Morale.`);
+                this.state.log.push({ text: `Divine Blood (${side}): Hope re-roll ${reroll.total} — improved to ${moraleDelta >= 0 ? "+" : ""}${moraleDelta} Morale.` });
             } else {
-                this.state.log.push(`Divine Blood (${side}): Hope re-roll ${reroll.total} — original kept (${orig.moraleDelta >= 0 ? "+" : ""}${orig.moraleDelta} Morale).`);
+                this.state.log.push({ text: `Divine Blood (${side}): Hope re-roll ${reroll.total} — original kept (${orig.moraleDelta >= 0 ? "+" : ""}${orig.moraleDelta} Morale).` });
             }
         } else if (check === "salvage") {
             const mods = globalThis.TagEngine.getAftermathModifiers(legion, this.state[enemySide], "salvage", { isWinner });
@@ -835,9 +887,9 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
                 this.state.salvageResult[side] = { ...orig, rollTotal: reroll.total, success, nat20: reroll.isNat20, benefitCount };
                 this.state.salvageBenefits[side] = [];
                 this.state.divineBloodSalvageNeedChoice[side] = benefitCount;
-                this.state.log.push(`Divine Blood (${side}): Salvage re-roll ${reroll.total} — ${benefitCount} benefit(s) gained.`);
+                this.state.log.push({ text: `Divine Blood (${side}): Salvage re-roll ${reroll.total} — ${benefitCount} benefit(s) gained.` });
             } else {
-                this.state.log.push(`Divine Blood (${side}): Salvage re-roll ${reroll.total} — original kept (no benefits).`);
+                this.state.log.push({ text: `Divine Blood (${side}): Salvage re-roll ${reroll.total} — original kept (no benefits).` });
             }
         }
 
@@ -849,7 +901,7 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
         const side = target.dataset.side;
         const benefit = target.dataset.benefit;
         this.state.salvageBenefits[side].push(benefit);
-        this.state.log.push(`${side} Divine Blood salvage benefit: ${benefit}`);
+        this.state.log.push({ text: `${side} Divine Blood salvage benefit: ${benefit}` });
         this.state.divineBloodSalvageNeedChoice[side] = Math.max(0, (this.state.divineBloodSalvageNeedChoice[side] || 0) - 1);
         this.render();
     }

@@ -11,23 +11,59 @@
 
     <div class="card-result">
         <strong>{{winnerLabel}}</strong> {{localize "MYTROS.CardWins"}}
-        <span class="card-score">({{scoreAllied}}–{{scoreSydon}})</span>
+        <span class="card-score">{{scoreAllied}}–{{scoreSydon}}</span>
     </div>
 
     <table class="card-table">
         <thead>
-            <tr><th></th><th>{{localize "MYTROS.CardAllied"}}</th><th>{{localize "MYTROS.CardSydon"}}</th></tr>
+            <tr>
+                <th></th>
+                <th>{{localize "MYTROS.CardAllied"}}</th>
+                <th>{{localize "MYTROS.CardSydon"}}</th>
+            </tr>
         </thead>
         <tbody>
             <tr>
                 <td>{{localize "MYTROS.CardRecovery"}}</td>
-                <td class="{{alliedRecoveryClass}}">{{alliedRecoveryText}}</td>
-                <td class="{{sydonRecoveryClass}}">{{sydonRecoveryText}}</td>
+                <td>
+                    <span class="{{alliedRecoveryClass}}">{{alliedRecoveryText}}</span>
+                    {{#if alliedRecoveryRoll}}
+                    <div class="roll-detail">{{alliedRecoveryRoll}}</div>
+                    {{/if}}
+                    {{#if alliedRecoveryMods.length}}
+                    <div class="card-mod-chips">{{#each alliedRecoveryMods}}<span class="card-mod-chip">{{this}}</span>{{/each}}</div>
+                    {{/if}}
+                </td>
+                <td>
+                    <span class="{{sydonRecoveryClass}}">{{sydonRecoveryText}}</span>
+                    {{#if sydonRecoveryRoll}}
+                    <div class="roll-detail">{{sydonRecoveryRoll}}</div>
+                    {{/if}}
+                    {{#if sydonRecoveryMods.length}}
+                    <div class="card-mod-chips">{{#each sydonRecoveryMods}}<span class="card-mod-chip">{{this}}</span>{{/each}}</div>
+                    {{/if}}
+                </td>
             </tr>
             <tr>
                 <td>{{localize "MYTROS.CardHope"}}</td>
-                <td class="{{alliedHopeClass}}">{{alliedHopeText}}</td>
-                <td class="{{sydonHopeClass}}">{{sydonHopeText}}</td>
+                <td>
+                    <span class="{{alliedHopeClass}}">{{alliedHopeText}}</span>
+                    {{#if alliedHopeRoll}}
+                    <div class="roll-detail">{{alliedHopeRoll}}</div>
+                    {{/if}}
+                    {{#if alliedHopeMods.length}}
+                    <div class="card-mod-chips">{{#each alliedHopeMods}}<span class="card-mod-chip">{{this}}</span>{{/each}}</div>
+                    {{/if}}
+                </td>
+                <td>
+                    <span class="{{sydonHopeClass}}">{{sydonHopeText}}</span>
+                    {{#if sydonHopeRoll}}
+                    <div class="roll-detail">{{sydonHopeRoll}}</div>
+                    {{/if}}
+                    {{#if sydonHopeMods.length}}
+                    <div class="card-mod-chips">{{#each sydonHopeMods}}<span class="card-mod-chip">{{this}}</span>{{/each}}</div>
+                    {{/if}}
+                </td>
             </tr>
             <tr class="card-final">
                 <td>{{localize "MYTROS.CardFinalState"}}</td>
