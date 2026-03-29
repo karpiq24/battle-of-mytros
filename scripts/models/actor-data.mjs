@@ -50,8 +50,11 @@ export class MytrosActorData {
         });
     }
 
-    static async initCommander(actor) {
+    static async initCommander(actor, faction = "allied") {
         await actor.setFlag(this.MODULE_ID, "isCommander", true);
+        if (!actor.getFlag(this.MODULE_ID, "faction")) {
+            await actor.setFlag(this.MODULE_ID, "faction", faction);
+        }
     }
 
     /**

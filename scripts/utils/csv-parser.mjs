@@ -94,9 +94,9 @@ export class MytrosCSVParser {
                     injuries: Number(data.injuries) || 0,
                 });
             } else if (type === "commander") {
-                await globalThis.MytrosActorData.initCommander(actor);
-                // Set faction on commander for reference
                 const faction = this._normalizeFaction(data.faction);
+                await globalThis.MytrosActorData.initCommander(actor, faction);
+                // Also always overwrite to the CSV value
                 await actor.setFlag("battle-of-mytros", "faction", faction);
                 // Parse tags and create Items on the actor
                 const tagStr = data.tags || "";

@@ -237,15 +237,14 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
         context.allCommanders = allCommanders
             .map((a) => {
                 const tags = a.items.map((i) => ({ id: i.id, name: i.name }));
-                // Find which legion this commander is assigned to
-                const assignedLegion = allLegions.find((l) => l.getFlag("battle-of-mytros", "commanderId") === a.id);
+                // Use the context.allLegions objects we just built
+                const assignedLegion = context.allLegions.find((l) => l.commanderId === a.id);
+                const rawFaction = a.getFlag("battle-of-mytros", "faction") || "allied";
                 return {
                     id: a.id,
                     name: a.name,
                     tags: tags,
-                    faction: assignedLegion
-                        ? assignedLegion.faction
-                        : a.getFlag("battle-of-mytros", "faction") || "allied",
+                    faction: (assignedLegion ? assignedLegion.faction : rawFaction).toLowerCase(),
                     assignedLegionName: assignedLegion?.name ?? "—",
                 };
             })
