@@ -112,6 +112,14 @@ Hooks.once("init", async function () {
         default: "[]",
     });
 
+    game.settings.register("battle-of-mytros", "destroyedObjectives", {
+        name: "Destroyed Strategic Objectives",
+        scope: "world",
+        config: false,
+        type: String,
+        default: "[]",
+    });
+
     game.settings.register("battle-of-mytros", "deathTollFrozen", {
         name: "Death Toll Frozen",
         scope: "world",
