@@ -1,4 +1,4 @@
-import { MAJOR_EVENTS, OBJECTIVE_MIRACLE_REWARDS } from "../constants.mjs";
+import { MAJOR_EVENTS, STRATEGIC_OBJECTIVES } from "../constants.mjs";
 
 /**
  * Overview tab action handlers.

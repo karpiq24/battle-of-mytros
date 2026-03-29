@@ -1,4 +1,4 @@
-import { MAJOR_EVENTS, KNOWN_TAGS, OBJECTIVE_MIRACLE_REWARDS } from "./constants.mjs";
+import { MAJOR_EVENTS, KNOWN_TAGS, STRATEGIC_OBJECTIVES } from "./constants.mjs";
 import * as overviewActions from "./actions/overview.mjs";
 import * as sectionActions from "./actions/sections.mjs";
 import * as legionActions from "./actions/legions.mjs";
