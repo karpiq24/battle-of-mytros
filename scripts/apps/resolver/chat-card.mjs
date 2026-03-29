@@ -3,26 +3,26 @@
  */
 
 export async function _postChatCard(statsCopy, statusData, deathsThisBattle) {
-    const winner = this.state.overallWinner;
+    const winner = this.battleState.overallWinner;
 
     const signedStr = (n) => (n >= 0 ? `+${n}` : `${n}`);
     const injClass = (n) => (n > 0 ? "text-bad" : n < 0 ? "text-good" : "text-neutral");
     const morClass = (n) => (n > 0 ? "text-good" : n < 0 ? "text-bad" : "text-neutral");
 
-    const aRec = this.state.recoveryResult?.allied;
-    const sRec = this.state.recoveryResult?.sydon;
-    const aHope = this.state.hopeResult?.allied;
-    const sHope = this.state.hopeResult?.sydon;
-    const aCmdr = this.state.commanderResult?.allied;
-    const sCmdr = this.state.commanderResult?.sydon;
+    const aRec = this.battleState.recoveryResult?.allied;
+    const sRec = this.battleState.recoveryResult?.sydon;
+    const aHope = this.battleState.hopeResult?.allied;
+    const sHope = this.battleState.hopeResult?.sydon;
+    const aCmdr = this.battleState.commanderResult?.allied;
+    const sCmdr = this.battleState.commanderResult?.sydon;
 
     const cardData = {
         sectionName: this.region.name.replace(globalThis.MytrosRegionManager.SECTION_PREFIX, "").trim(),
-        alliedName: this.state.allied.name,
-        sydonName: this.state.sydon.name,
-        winnerLabel: winner === "allied" ? this.state.allied.name : this.state.sydon.name,
-        scoreAllied: this.state.counter.allied,
-        scoreSydon: this.state.counter.sydon,
+        alliedName: this.battleState.allied.name,
+        sydonName: this.battleState.sydon.name,
+        winnerLabel: winner === "allied" ? this.battleState.allied.name : this.battleState.sydon.name,
+        scoreAllied: this.battleState.counter.allied,
+        scoreSydon: this.battleState.counter.sydon,
         alliedRecoveryText: aRec
             ? aRec.success
                 ? aRec.injuries === 0

@@ -9,7 +9,7 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
     constructor(region, options = {}) {
         super(options);
         this.region = region;
-        this.state = {
+        this.battleState = {
             phase: "setup", // setup → maneuver → maneuver_choice → charge → clash → tiebreaker
             // → aftermath_recovery → aftermath_hope → aftermath_salvage
             // → aftermath_salvage_allied_choice → aftermath_salvage_sydon_choice
@@ -23,13 +23,13 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
 
     initFactions() {
         const legions = globalThis.MytrosRegionManager.getLegionsInSection(this.region);
-        this.state.allied = legions.find(
+        this.battleState.allied = legions.find(
             (l) =>
                 l.actor.getFlag("battle-of-mytros", "faction") === "allied" &&
                 !l.actor.getFlag("battle-of-mytros", "isRouted") &&
                 !l.actor.getFlag("battle-of-mytros", "isDestroyed")
         )?.actor;
-        this.state.sydon = legions.find(
+        this.battleState.sydon = legions.find(
             (l) =>
                 l.actor.getFlag("battle-of-mytros", "faction") === "sydon" &&
                 !l.actor.getFlag("battle-of-mytros", "isDestroyed")
@@ -69,9 +69,9 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
     async _prepareContext(options) {
         const context = await super._prepareContext(options);
         context.regionName = this.region.name.replace(globalThis.MytrosRegionManager.SECTION_PREFIX, "").trim();
-        context.state = this.state;
-        context.alliedName = this.state.allied?.name || "None";
-        context.sydonName = this.state.sydon?.name || "None";
+        context.state = this.battleState;
+        context.alliedName = this.battleState.allied?.name || "None";
+        context.sydonName = this.battleState.sydon?.name || "None";
         return context;
     }
 }

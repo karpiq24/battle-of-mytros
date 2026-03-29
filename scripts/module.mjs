@@ -40,7 +40,7 @@ Hooks.once("init", async function () {
         name: "Battlemap Scene ID",
         hint: "The ID of the scene acting as the main Battle of Mytros map. Region tracking only runs here.",
         scope: "world",
-        config: true,
+        config: false,
         type: String,
         default: "",
     });

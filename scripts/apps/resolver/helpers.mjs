@@ -60,10 +60,10 @@ export function getSupportBonusesAftermath(faction) {
 export function _computeDivineBloodPending() {
     const pending = { allied: null, sydon: null };
     for (const side of ["allied", "sydon"]) {
-        if (!this.hasTag(this.state[side], "divine blood")) continue;
-        const rec = this.state.recoveryResult?.[side];
-        const hope = this.state.hopeResult?.[side];
-        const salv = this.state.salvageResult?.[side];
+        if (!this.hasTag(this.battleState[side], "divine blood")) continue;
+        const rec = this.battleState.recoveryResult?.[side];
+        const hope = this.battleState.hopeResult?.[side];
+        const salv = this.battleState.salvageResult?.[side];
         const failed = {};
         if (rec && !rec.success) failed.recovery = `${rec.rollTotal} vs DC ${rec.dc}`;
         if (hope && !hope.success) failed.hope = `${hope.rollTotal} vs DC 12`;
@@ -101,8 +101,8 @@ export function _computeAdjacencyContext() {
 export function _nextPhaseAfterSalvage() {
     const pending = this._computeDivineBloodPending();
     if (pending.allied || pending.sydon) {
-        this.state.divineBloodPending = pending;
-        this.state.divineBloodSalvageNeedChoice = { allied: 0, sydon: 0 };
+        this.battleState.divineBloodPending = pending;
+        this.battleState.divineBloodSalvageNeedChoice = { allied: 0, sydon: 0 };
         return "aftermath_divine_blood";
     }
     return "aftermath_commander";
