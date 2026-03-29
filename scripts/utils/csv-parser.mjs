@@ -60,10 +60,24 @@ export class MytrosCSVParser {
 
             if (isNew) {
                 const actorType = type === "legion" ? "group" : "npc";
+                const prototypeToken =
+                    type === "legion"
+                        ? {
+                              displayName: CONST.TOKEN_DISPLAY_MODES.HOVER,
+                              displayBars: CONST.TOKEN_DISPLAY_MODES.HOVER,
+                              disposition:
+                                  this._normalizeFaction(data.faction) === "allied"
+                                      ? CONST.TOKEN_DISPOSITIONS.FRIENDLY
+                                      : CONST.TOKEN_DISPOSITIONS.HOSTILE,
+                              bar1: { attribute: "flags.battle-of-mytros.stats.morale" },
+                              bar2: { attribute: "flags.battle-of-mytros.stats.injuries" },
+                          }
+                        : {};
                 actor = await Actor.create({
                     name: data.name,
                     type: actorType,
                     folder: subFolder.id,
+                    prototypeToken: prototypeToken,
                 });
                 created++;
             } else {

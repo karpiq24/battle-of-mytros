@@ -8,15 +8,15 @@ import * as dataIoActions from "./actions/data-io.mjs";
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
-    static OBJECTIVE_MIRACLE_REWARDS = OBJECTIVE_MIRACLE_REWARDS;
+    static STRATEGIC_OBJECTIVES = STRATEGIC_OBJECTIVES;
     static MAJOR_EVENTS = MAJOR_EVENTS;
     static KNOWN_TAGS = KNOWN_TAGS;
 
     static DEFAULT_OPTIONS = {
         id: "mytros-battle-dashboard",
-        title: "Battle of Mytros Dashboard",
         tag: "form",
         window: {
+            title: "Battle of Mytros Dashboard",
             icon: "fas fa-swords",
             resizable: true,
         },
@@ -31,6 +31,7 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
             rollRecon: overviewActions.rollRecon,
             spendMiracle: overviewActions.spendMiracle,
             triggerMajorEvent: overviewActions.triggerMajorEvent,
+            triggerObjectiveDestroyed: overviewActions.triggerObjectiveDestroyed,
             disbandRoutedLegions: overviewActions.disbandRoutedLegions,
             advanceRound: overviewActions.advanceRound,
             setDeploymentMode: overviewActions.setDeploymentMode,
@@ -113,6 +114,12 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
             completed: completedEventIds.includes(e.id),
         }));
 
+        const completedObjectives = JSON.parse(game.settings.get("battle-of-mytros", "destroyedObjectives") || "[]");
+        context.strategicObjectives = STRATEGIC_OBJECTIVES.map((o) => ({
+            ...o,
+            destroyed: completedObjectives.includes(o.id),
+        }));
+
         // Grab regions if we are on the battle scene
         context.isBattleScene = canvas.scene?.id === battleSceneId;
 
@@ -122,14 +129,24 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
                 const legions = globalThis.MytrosRegionManager.getLegionsInSection(r);
                 const mappedLegions = legions.map((t) => {
                     const stats = t.actor.getFlag("battle-of-mytros", "stats") || {};
+                    const commanderId = t.actor.getFlag("battle-of-mytros", "commanderId");
+                    let commanderName = "None";
+                    let hasVanguard = false;
+                    if (commanderId) {
+                        const actorCmdr = game.actors.get(commanderId);
+                        if (actorCmdr) {
+                            commanderName = actorCmdr.name;
+                            hasVanguard = actorCmdr.items.some((i) => i.name.toLowerCase() === "vanguard");
+                        }
+                    }
+
                     return {
                         id: t.actor.id,
                         name: t.name,
                         faction: t.actor.getFlag("battle-of-mytros", "faction"),
-                        commanderId: t.actor.getFlag("battle-of-mytros", "commanderId"),
-                        commanderName: t.actor.getFlag("battle-of-mytros", "commanderId")
-                            ? game.actors.get(t.actor.getFlag("battle-of-mytros", "commanderId"))?.name
-                            : "None",
+                        commanderId: commanderId,
+                        commanderName: commanderName,
+                        hasVanguard: hasVanguard,
                         injuries: stats.injuries ?? 0,
                         morale: stats.morale ?? "?",
                         vitality: stats.vitality ?? "?",
@@ -163,8 +180,6 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
                     name: r.name.replace(globalThis.MytrosRegionManager.SECTION_PREFIX, "").trim(),
                     control: r.getFlag("battle-of-mytros", "control"),
                     fortified: r.getFlag("battle-of-mytros", "fortified"),
-                    hasObjective: r.getFlag("battle-of-mytros", "hasObjective"),
-                    objectiveDestroyed: r.getFlag("battle-of-mytros", "objectiveDestroyed"),
                     legions: mappedLegions,
                     supportUnits: supportUnits,
                     pendingBattle: pendingBattle,
@@ -228,10 +243,16 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
                     id: a.id,
                     name: a.name,
                     tags: tags,
+                    faction: assignedLegion
+                        ? assignedLegion.faction
+                        : a.getFlag("battle-of-mytros", "faction") || "allied",
                     assignedLegionName: assignedLegion?.name ?? "—",
                 };
             })
-            .sort((a, b) => a.name.localeCompare(b.name));
+            .sort((a, b) => {
+                if (a.faction !== b.faction) return a.faction === "allied" ? -1 : 1;
+                return a.name.localeCompare(b.name);
+            });
 
         context.knownTags = KNOWN_TAGS;
 

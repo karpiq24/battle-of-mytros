@@ -42,6 +42,24 @@
     align-items: center;
     gap: 4px;
     flex-wrap: wrap;
+    width: 100%;
+}
+.mytros-dashboard .section-subheader {
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--mytros-divider-subtle);
+}
+.mytros-dashboard .section-footer {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid var(--mytros-divider-subtle);
+    display: flex;
+    justify-content: center;
+}
+.mytros-dashboard .section-footer .resolve-btn {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
 }
 .mytros-dashboard .section-controls select {
     font-size: 0.8em;

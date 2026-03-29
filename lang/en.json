@@ -25,8 +25,6 @@
     "MYTROS.Routed": "Routed",
     "MYTROS.Destroyed": "Destroyed",
     "MYTROS.FortifiedLabel": "Fortified",
-    "MYTROS.ObjectiveLabel": "Strategic Objective (Toggle if target present)",
-    "MYTROS.ObjectiveDestroyedLabel": "Objective Destroyed",
     "MYTROS.VanguardLabel": "Vanguard: Moved 3 sections this round",
 
     "MYTROS.DeployNone": "-- Select Mode --",
@@ -45,6 +43,10 @@
     "MYTROS.SpendDivineAdvantage": "−2 Divine Advantage (2pt)",
     "MYTROS.SpendShortRest": "−2 PC Short Rest (2pt)",
     "MYTROS.SpendLongRest": "−4 PC Long Rest (4pt)",
+    "MYTROS.StrategicObjectivesTitle": "Strategic Objectives",
+    "MYTROS.ObjectiveHint": "Destroying this objective immediately grants Sydon Miracle points and permanently increases civilian deaths each round.",
+    "MYTROS.ObjectiveDestroyBtn": "Destroy",
+
     "MYTROS.MajorEventsTitle": "Major Events",
     "MYTROS.EventResolved": "✓ Resolved",
     "MYTROS.Miracles": "Miracles",

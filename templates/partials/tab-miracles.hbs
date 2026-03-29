@@ -44,5 +44,24 @@
         </div>
         {{/each}}
     </div>
+    <hr>
+    <h3><i class="fas fa-map-pin"></i> {{localize "MYTROS.StrategicObjectivesTitle"}}</h3>
+    <div class="major-events-list">
+        {{#each strategicObjectives}}
+        <div class="event-item {{#if this.destroyed}}event-completed{{/if}}">
+            <div class="event-info">
+                <strong>{{this.name}}</strong>
+                <span class="event-desc">{{localize "MYTROS.ObjectiveHint"}}</span>
+            </div>
+            {{#if this.destroyed}}
+            <span class="event-done"><i class="fas fa-fire"></i> {{localize "MYTROS.Destroyed"}} (+{{this.reward}} {{localize "MYTROS.Miracles"}})</span>
+            {{else}}
+            <button type="button" class="event-trigger-btn btn-danger-subtle" data-action="triggerObjectiveDestroyed" data-obj-id="{{this.id}}">
+                <i class="fas fa-fire"></i> {{localize "MYTROS.ObjectiveDestroyBtn"}} (+{{this.reward}} {{localize "MYTROS.SydonMiracles"}})
+            </button>
+            {{/if}}
+        </div>
+        {{/each}}
+    </div>
     {{/if}}
 </div>

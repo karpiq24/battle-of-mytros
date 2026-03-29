@@ -38,9 +38,8 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
 
     static DEFAULT_OPTIONS = {
         id: "mytros-battle-resolver",
-        title: "Battle Resolver",
         tag: "form",
-        window: { resizable: true },
+        window: { title: "Battle Resolver", resizable: true },
         position: { width: 600, height: 700 },
         actions: {
             // Battle Phases

@@ -7,7 +7,7 @@
     {{#if allCommanders.length}}
     <div class="commanders-list">
         {{#each allCommanders}}
-        <div class="commander-card">
+        <div class="commander-card faction-card-{{this.faction}}">
             <div class="commander-card-header">
                 <div class="commander-info">
                     <strong class="commander-name">{{this.name}}</strong>
@@ -15,7 +15,6 @@
                 </div>
                 <div class="commander-card-actions">
                     <button type="button" class="btn-add-tag" data-action="addCommanderTag" data-commander-id="{{this.id}}" title="{{localize "MYTROS.AddTag"}}"><i class="fas fa-plus"></i> {{localize "MYTROS.AddTag"}}</button>
-                    <button type="button" class="btn-auto-tags" data-action="autoCreateTags" data-commander-id="{{this.id}}" title="{{localize "MYTROS.AutoCreateTags"}}"><i class="fas fa-magic"></i></button>
                     <button type="button" class="btn-delete" data-action="deleteCommander" data-commander-id="{{this.id}}" title="{{localize "MYTROS.Delete"}}"><i class="fas fa-trash"></i></button>
                 </div>
             </div>

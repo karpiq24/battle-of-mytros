@@ -3,18 +3,18 @@
  */
 
 /** Miracle Point rewards for each objective location when destroyed by Sydon. */
-export const OBJECTIVE_MIRACLE_REWARDS = {
-    "Temple of the Five": 2,
-    "Royal Palace": 2,
-    "The Dockyard": 1,
-    "Soldier's Gate": 1,
-    "The Agora": 1,
-    "The Academy": 2,
-    "The Gymnasium": 1,
-    "The Harp Bridge": 1,
-    "The Vineyards of Mytros": 1,
-    "Fish Market & Commerce Gate": 1,
-};
+export const STRATEGIC_OBJECTIVES = [
+    { id: "temple", name: "Temple of the Five", reward: 2 },
+    { id: "palace", name: "Royal Palace", reward: 2 },
+    { id: "dockyard", name: "The Dockyard", reward: 1 },
+    { id: "soldier", name: "Soldier's Gate", reward: 1 },
+    { id: "agora", name: "The Agora", reward: 1 },
+    { id: "academy", name: "The Academy", reward: 2 },
+    { id: "gymnasium", name: "The Gymnasium", reward: 1 },
+    { id: "bridge", name: "The Harp Bridge", reward: 1 },
+    { id: "vineyards", name: "The Vineyards of Mytros", reward: 1 },
+    { id: "market", name: "Fish Market & Commerce Gate", reward: 1 },
+];
 
 /** Major story events that can be triggered during the battle. */
 export const MAJOR_EVENTS = [

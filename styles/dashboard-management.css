@@ -205,6 +205,12 @@
 .mytros-dashboard .commander-name {
     font-size: 0.95em;
 }
+.mytros-dashboard .faction-card-allied .commander-name {
+    color: var(--mytros-allied);
+}
+.mytros-dashboard .faction-card-sydon .commander-name {
+    color: var(--mytros-sydon);
+}
 .mytros-dashboard .commander-assignment {
     font-size: 0.78em;
     color: var(--mytros-text-muted);

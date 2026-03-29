@@ -38,6 +38,16 @@ export class MytrosActorData {
         });
         await actor.setFlag(this.MODULE_ID, "faction", normalizedFaction);
         await actor.setFlag(this.MODULE_ID, "commanderId", null);
+
+        const disposition =
+            normalizedFaction === "allied" ? CONST.TOKEN_DISPOSITIONS.FRIENDLY : CONST.TOKEN_DISPOSITIONS.HOSTILE;
+        await actor.update({
+            "prototypeToken.displayName": CONST.TOKEN_DISPLAY_MODES.HOVER,
+            "prototypeToken.displayBars": CONST.TOKEN_DISPLAY_MODES.HOVER,
+            "prototypeToken.disposition": disposition,
+            "prototypeToken.bar1.attribute": "flags.battle-of-mytros.stats.morale",
+            "prototypeToken.bar2.attribute": "flags.battle-of-mytros.stats.injuries",
+        });
     }
 
     static async initCommander(actor) {
@@ -69,6 +79,14 @@ export class MytrosActorData {
             name,
             type: "group",
             folder: legionFolder.id,
+            prototypeToken: {
+                displayName: CONST.TOKEN_DISPLAY_MODES.HOVER,
+                displayBars: CONST.TOKEN_DISPLAY_MODES.HOVER,
+                disposition:
+                    faction === "allied" ? CONST.TOKEN_DISPOSITIONS.FRIENDLY : CONST.TOKEN_DISPOSITIONS.HOSTILE,
+                bar1: { attribute: "flags.battle-of-mytros.stats.morale" },
+                bar2: { attribute: "flags.battle-of-mytros.stats.injuries" },
+            },
         });
         await this.initLegion(actor, faction);
         return actor;

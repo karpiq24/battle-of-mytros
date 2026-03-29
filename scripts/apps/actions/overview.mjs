@@ -97,6 +97,26 @@ export async function triggerMajorEvent(_event, target) {
     this.render();
 }
 
+export async function triggerObjectiveDestroyed(_event, target) {
+    if (!game.user.isGM) return;
+    const objId = target.dataset.objId;
+    const { STRATEGIC_OBJECTIVES } = await import("../constants.mjs");
+    const obj = STRATEGIC_OBJECTIVES.find((o) => o.id === objId);
+    if (!obj) return;
+
+    const destroyed = JSON.parse(game.settings.get("battle-of-mytros", "destroyedObjectives") || "[]");
+    if (destroyed.includes(objId)) return;
+
+    destroyed.push(objId);
+    await game.settings.set("battle-of-mytros", "destroyedObjectives", JSON.stringify(destroyed));
+
+    const currentSydon = game.settings.get("battle-of-mytros", "sydonMiracles");
+    await game.settings.set("battle-of-mytros", "sydonMiracles", currentSydon + obj.reward);
+
+    ui.notifications.warn(`Objective Destroyed: ${obj.name}! Sydon Miracles +${obj.reward}.`);
+    this.render();
+}
+
 export async function disbandRoutedLegions(_event, target) {
     if (!game.user.isGM) return;
     const regionId = target.dataset.regionId;
@@ -147,6 +167,15 @@ export async function advanceRound(_event, _target) {
     let sydonPillageLegions = 0;
     let objectiveDeaths = 0;
 
+    const activeSections = globalThis.MytrosRegionManager.getActiveSections();
+    const activeLegionIds = new Set();
+    for (const section of activeSections) {
+        const sectLegions = globalThis.MytrosRegionManager.getLegionsInSection(section);
+        for (const t of sectLegions) {
+            activeLegionIds.add(t.actor.id);
+        }
+    }
+
     // Passive recovery for unengaged legions; death toll for unengaged Sydon legions
     for (const legion of allLegions) {
         const fought = legion.getFlag("battle-of-mytros", "foughtThisRound");
@@ -172,7 +201,7 @@ export async function advanceRound(_event, _target) {
                 await legion.setFlag("battle-of-mytros", "isRouted", false);
             }
 
-            if (faction === "sydon" && !deathTollFrozen) {
+            if (faction === "sydon" && !deathTollFrozen && activeLegionIds.has(legion.id)) {
                 const r = await new Roll("1d6").evaluate();
                 const deaths = r.total * 50;
                 totalDeaths += deaths;
@@ -195,53 +224,19 @@ export async function advanceRound(_event, _target) {
     }
 
     // Objective destruction tracking and per-round death toll
-    const sections = globalThis.MytrosRegionManager.getActiveSections();
-    for (const section of sections) {
-        const hasObjective = section.getFlag("battle-of-mytros", "hasObjective");
-        const objectiveDestroyed = section.getFlag("battle-of-mytros", "objectiveDestroyed");
-        const control = section.getFlag("battle-of-mytros", "control");
-
-        if (hasObjective && !objectiveDestroyed) {
-            if (control === "sydon") {
-                if (section.getFlag("battle-of-mytros", "sydonHeldLastRound")) {
-                    await section.setFlag("battle-of-mytros", "objectiveDestroyed", true);
-                    ui.notifications.warn(`Objective in ${section.name} has been DESTROYED!`);
-                    const objName = section.name.replace(globalThis.MytrosRegionManager.SECTION_PREFIX, "").trim();
-                    const miracleReward = OBJECTIVE_MIRACLE_REWARDS[objName] ?? 0;
-                    if (miracleReward > 0) {
-                        const currentSydon = game.settings.get("battle-of-mytros", "sydonMiracles");
-                        await game.settings.set("battle-of-mytros", "sydonMiracles", currentSydon + miracleReward);
-                        ui.notifications.info(
-                            `Sydon gains ${miracleReward} Miracle Point(s) for destroying ${objName}!`
-                        );
-                    }
-                } else {
-                    await section.setFlag("battle-of-mytros", "sydonHeldLastRound", true);
-                }
-            } else {
-                await section.setFlag("battle-of-mytros", "sydonHeldLastRound", false);
-            }
-        }
-
-        if (
-            (!deathTollFrozen && objectiveDestroyed) ||
-            (hasObjective &&
-                !objectiveDestroyed &&
-                control === "sydon" &&
-                section.getFlag("battle-of-mytros", "sydonHeldLastRound"))
-        ) {
-            if (section.getFlag("battle-of-mytros", "objectiveDestroyed")) {
-                const r = await new Roll("1d4").evaluate();
-                let deaths = r.total * 10;
-                deaths = sydonObjectiveHalved ? Math.floor(deaths / 2) : deaths;
-                totalDeaths += deaths;
-                objectiveDeaths += deaths;
-            }
+    const destroyedObjectives = JSON.parse(game.settings.get("battle-of-mytros", "destroyedObjectives") || "[]");
+    for (const objId of destroyedObjectives) {
+        if (!deathTollFrozen) {
+            const r = await new Roll("1d4").evaluate();
+            let deaths = r.total * 10;
+            deaths = sydonObjectiveHalved ? Math.floor(deaths / 2) : deaths;
+            totalDeaths += deaths;
+            objectiveDeaths += deaths;
         }
     }
 
     // Reset PC deployment flags for the new round
-    for (const section of sections) {
+    for (const section of activeSections) {
         const supportTokens = globalThis.MytrosRegionManager.getSupportUnitsInSection(section);
         for (const token of supportTokens) {
             await token.setFlag("battle-of-mytros", "deploymentMode", "none");

@@ -22,30 +22,25 @@
             <div class="section-card control-{{this.control}}">
                 <div class="section-header">
                     <h3>{{this.name}}</h3>
-                    {{#if @root.isGM}}
+                    {{#unless @root.isGM}}
+                    <div class="section-badges">
+                        {{#if this.fortified}}<span class="badge fortified" title="{{localize "MYTROS.FortifiedLabel"}}"><i class="fas fa-shield-alt"></i></span>{{/if}}
+                    </div>
+                    {{/unless}}
+                </div>
+
+                {{#if @root.isGM}}
+                <div class="section-subheader">
                     <div class="section-controls">
-                        {{#if this.pendingBattle}}
-                        <button type="button" class="resolve-btn resolve-btn-battle" data-action="openResolver" data-region-id="{{this.id}}"><i class="fas fa-swords"></i> {{localize "MYTROS.ResolveBattle"}}</button>
-                        {{/if}}
-                        {{#if this.routedContested}}
-                        <button type="button" class="resolve-btn resolve-rout" data-action="disbandRoutedLegions" data-region-id="{{this.id}}"><i class="fas fa-flag"></i> {{localize "MYTROS.OverrunRouted"}}</button>
-                        {{/if}}
                         <select data-action="setSectionControl" data-region-id="{{this.id}}">
                             <option value="neutral" {{#if (eq this.control 'neutral')}}selected{{/if}}>{{localize "MYTROS.ControlNeutral"}}</option>
                             <option value="allied" {{#if (eq this.control 'allied')}}selected{{/if}}>{{localize "MYTROS.ControlAllied"}}</option>
                             <option value="sydon" {{#if (eq this.control 'sydon')}}selected{{/if}}>{{localize "MYTROS.ControlSydon"}}</option>
                         </select>
                         <button type="button" data-action="toggleSectionFlag" data-region-id="{{this.id}}" data-flag="fortified" class="{{#if this.fortified}}active{{/if}}" title="{{localize "MYTROS.FortifiedLabel"}}"><i class="fas fa-shield-alt"></i></button>
-                        <button type="button" data-action="toggleSectionFlag" data-region-id="{{this.id}}" data-flag="hasObjective" class="{{#if this.hasObjective}}active{{/if}}" title="{{localize "MYTROS.ObjectiveLabel"}}"><i class="fas fa-star"></i></button>
                     </div>
-                    {{else}}
-                    <div class="section-badges">
-                        {{#if this.fortified}}<span class="badge fortified" title="{{localize "MYTROS.FortifiedLabel"}}"><i class="fas fa-shield-alt"></i></span>{{/if}}
-                        {{#if this.hasObjective}}<span class="badge objective" title="{{localize "MYTROS.ObjectiveLabel"}}"><i class="fas fa-star"></i></span>{{/if}}
-                        {{#if this.objectiveDestroyed}}<span class="badge destroyed" title="{{localize "MYTROS.ObjectiveDestroyedLabel"}}"><i class="fas fa-fire"></i></span>{{/if}}
-                    </div>
-                    {{/if}}
                 </div>
+                {{/if}}
                 <div class="section-legions">
                     {{#if this.legions.length}}
                         <ul>
@@ -55,9 +50,11 @@
                                     <span class="legion-name">{{this.name}}</span>
                                     <span class="legion-stats">{{localize "MYTROS.InjShort"}} {{this.injuries}} · {{localize "MYTROS.MorShort"}} {{this.morale}}</span>
                                     {{#if @root.isGM}}
+                                    {{#if this.hasVanguard}}
                                     <button type="button" data-action="toggleLegionFlag" data-legion-id="{{this.id}}" data-flag="movedThree" class="legion-flag-btn {{#if this.movedThree}}active{{/if}}" title="{{localize "MYTROS.VanguardLabel"}}">
                                         <i class="fas fa-horse"></i>
                                     </button>
+                                    {{/if}}
                                     {{/if}}
                                     {{#if this.isRouted}}<span class="badge routed" title="{{localize "MYTROS.Routed"}}"><i class="fas fa-flag"></i> {{localize "MYTROS.Routed"}}</span>{{/if}}
                                     {{#if this.isDestroyed}}<span class="badge destroyed" title="{{localize "MYTROS.Destroyed"}}"><i class="fas fa-skull"></i> {{localize "MYTROS.Destroyed"}}</span>{{/if}}
@@ -109,6 +106,17 @@
                         {{/if}}
                     </div>
                     {{/each}}
+                </div>
+                {{/if}}
+
+                {{#if @root.isGM}}
+                <div class="section-footer">
+                    {{#if this.pendingBattle}}
+                    <button type="button" class="resolve-btn resolve-btn-battle" data-action="openResolver" data-region-id="{{this.id}}"><i class="fas fa-swords"></i> {{localize "MYTROS.ResolveBattle"}}</button>
+                    {{/if}}
+                    {{#if this.routedContested}}
+                    <button type="button" class="resolve-btn resolve-rout" data-action="disbandRoutedLegions" data-region-id="{{this.id}}"><i class="fas fa-flag"></i> {{localize "MYTROS.OverrunRouted"}}</button>
+                    {{/if}}
                 </div>
                 {{/if}}
             </div>
