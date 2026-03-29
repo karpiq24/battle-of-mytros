@@ -68,6 +68,7 @@ export async function _postChatCard(statsCopy, statusData, deathsThisBattle) {
         deathToll: deathsThisBattle,
     };
 
-    const html = await renderTemplate("modules/battle-of-mytros/templates/chat-card.hbs", cardData);
+    const renderFn = foundry.applications?.handlebars?.renderTemplate ?? renderTemplate;
+    const html = await renderFn("modules/battle-of-mytros/templates/chat-card.hbs", cardData);
     await ChatMessage.create({ content: html, speaker: { alias: "Battle of Mytros" } });
 }
