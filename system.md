@@ -1,14 +1,12 @@
-
-
 # **THE BATTLE OF MYTROS**
 
-## *A War of Bronze, Will, and Cunning*
+## _A War of Bronze, Will, and Cunning_
 
 A Mass Combat System for Odyssey of the Dragonlords
 
-*Revamped rules for cinematic legion warfare where every stat matters, every commander counts, and your players shape the tide of battle.*
+_Revamped rules for cinematic legion warfare where every stat matters, every commander counts, and your players shape the tide of battle._
 
-# 
+#
 
 # **Design Philosophy**
 
@@ -28,7 +26,7 @@ Divide Mytros into map sections. The recommended count is 2 times the number of 
 
 A section can be fortified after being held for a full round. Fortification grants \+1 to all rolls for the defending side and is lost when the opposing side claims the section.
 
-# 
+#
 
 # **Legions**
 
@@ -64,31 +62,31 @@ A newly assigned replacement commander arrives with their own tags, which take e
 
 ## **Tag Reference**
 
-| Tag | Passive Effect |
-| :---- | :---- |
-| **Tactician** | Advantage on Maneuver rolls. |
-| **Headhunter** | When this legion engages an enemy, the enemy suffers Disadvantage on their Clash roll. Furthermore, if the enemy commander must make a Commander Casualty Check, add 5% to their Base Death Chance. |
-| **Engineer** | Enemy legions engaging this legion in fortified sections suffer −2 to all battle rolls (Maneuver, Charge, Clash) |
-| **Rallier** | This legion gains \+2 to Hope checks. Allied legions in adjacent sections gain \+1 to Hope checks. |
-| **Terrorizer** | Enemy legions that fight this legion suffer Disadvantage on their Hope checks after the battle. |
-| **Fanatic** | This legion attacks with reckless fury, gaining Advantage on both Charge and Clash rolls. However, due to their disregard for their own survival, they suffer Disadvantage on their Recovery check after every battle. |
-| **Zealot** | While this legion’s current Morale is 6 or higher, it gains \+2 to all three battle rolls (Maneuver, Charge, Clash). |
-| **Veteran** | On all d20 rolls, treat any natural result of 4 or lower as a 5\. This floor applies before modifiers. |
-| **Warden** | All allied legions in sections adjacent to this one gain \+2 to their Recovery checks. This legion gains \+2 to Clash rolls. |
-| **Mage** | Enemy legions fighting this one suffer −1 to all three battle rolls (Maneuver, Charge, Clash). Furthermore, the devastating nature of magical attacks forces the enemy legion to make its Recovery check with Disadvantage. |
-| **Medic** | This legion makes its Recovery checks with Advantage. Additionally, if this legion wins a battle and succeeds on its Recovery check, it removes 1 existing injury. |
-| **Vanguard** | This legion may move 3 sections instead of 2 during the Planning phase. If it moves 3 sections this round, it gains Advantage to its Charge roll. |
-| **Divine Blood** | After each battle, this legion may re-roll one failed aftermath check (Recovery, Hope, or Salvage) and take the better result. Additionally, this commander’s base death chance is reduced by 5%. |
-| **Brutal** | When this legion wins a battle, the enemy makes its Recovery check with Disadvantage. If the enemy already has 4 or more injuries after the check, they take 1 additional injury. |
-| **Unbreakable Pact** | This commander rolls all Commander Casualty checks with advantage (roll 1d100 twice, take the lower result). This bond is instinctive and always active. |
-| **Ironclad** | \+2 to all Vitality-based rolls (Clash, Recovery checks). |
-| **Inspiring** | \+2 to all Morale-based rolls (Charge, Hope checks). |
-| **Cunning** | \+2 to all Wit-based rolls (Maneuver, Salvage). |
-| **Bulwark** | This legion is destroyed at 7 injuries instead of 6\. The extra resilience represents reserves, fortified positions, or supernatural endurance. |
-| **Relentless** | This legion Morale may never fall below 2\. |
-| **Siege Breaker** | Enemy fortification bonuses are nullified when fighting this legion. The legion treats every section as unfortified terrain. This disables opposing Engineer tags. |
+| Tag                  | Passive Effect                                                                                                                                                                                                              |
+| :------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Tactician**        | Advantage on Maneuver rolls.                                                                                                                                                                                                |
+| **Headhunter**       | When this legion engages an enemy, the enemy suffers Disadvantage on their Clash roll. Furthermore, if the enemy commander must make a Commander Casualty Check, add 5% to their Base Death Chance.                         |
+| **Engineer**         | Enemy legions engaging this legion in fortified sections suffer −2 to all battle rolls (Maneuver, Charge, Clash)                                                                                                            |
+| **Rallier**          | This legion gains \+2 to Hope checks. Allied legions in adjacent sections gain \+1 to Hope checks.                                                                                                                          |
+| **Terrorizer**       | Enemy legions that fight this legion suffer Disadvantage on their Hope checks after the battle.                                                                                                                             |
+| **Fanatic**          | This legion attacks with reckless fury, gaining Advantage on both Charge and Clash rolls. However, due to their disregard for their own survival, they suffer Disadvantage on their Recovery check after every battle.      |
+| **Zealot**           | While this legion’s current Morale is 6 or higher, it gains \+2 to all three battle rolls (Maneuver, Charge, Clash).                                                                                                        |
+| **Veteran**          | On all d20 rolls, treat any natural result of 4 or lower as a 5\. This floor applies before modifiers.                                                                                                                      |
+| **Warden**           | All allied legions in sections adjacent to this one gain \+2 to their Recovery checks. This legion gains \+2 to Clash rolls.                                                                                                |
+| **Mage**             | Enemy legions fighting this one suffer −1 to all three battle rolls (Maneuver, Charge, Clash). Furthermore, the devastating nature of magical attacks forces the enemy legion to make its Recovery check with Disadvantage. |
+| **Medic**            | This legion makes its Recovery checks with Advantage. Additionally, if this legion wins a battle and succeeds on its Recovery check, it removes 1 existing injury.                                                          |
+| **Vanguard**         | This legion may move 3 sections instead of 2 during the Planning phase. If it moves 3 sections this round, it gains Advantage to its Charge roll.                                                                           |
+| **Divine Blood**     | After each battle, this legion may re-roll one failed aftermath check (Recovery, Hope, or Salvage) and take the better result. Additionally, this commander’s base death chance is reduced by 5%.                           |
+| **Brutal**           | When this legion wins a battle, the enemy makes its Recovery check with Disadvantage. If the enemy already has 4 or more injuries after the check, they take 1 additional injury.                                           |
+| **Unbreakable Pact** | This commander rolls all Commander Casualty checks with advantage (roll 1d100 twice, take the lower result). This bond is instinctive and always active.                                                                    |
+| **Ironclad**         | \+2 to all Vitality-based rolls (Clash, Recovery checks).                                                                                                                                                                   |
+| **Inspiring**        | \+2 to all Morale-based rolls (Charge, Hope checks).                                                                                                                                                                        |
+| **Cunning**          | \+2 to all Wit-based rolls (Maneuver, Salvage).                                                                                                                                                                             |
+| **Bulwark**          | This legion is destroyed at 7 injuries instead of 6\. The extra resilience represents reserves, fortified positions, or supernatural endurance.                                                                             |
+| **Relentless**       | This legion Morale may never fall below 2\.                                                                                                                                                                                 |
+| **Siege Breaker**    | Enemy fortification bonuses are nullified when fighting this legion. The legion treats every section as unfortified terrain. This disables opposing Engineer tags.                                                          |
 
-*Commanders should have 2–3 tags each. This provides enough differentiation to make every commander feel unique without overwhelming the DM with bookkeeping.*
+_Commanders should have 2–3 tags each. This provides enough differentiation to make every commander feel unique without overwhelming the DM with bookkeeping._
 
 # **Round Structure**
 
@@ -100,13 +98,13 @@ One roll determines allied intelligence for the round.
 
 **Roll:** 1d20 \+ highest Wit among all allied legions.
 
-| Result | Intelligence Gained |
-| :---- | :---- |
-| 10 or lower | No enemy movements revealed. |
-| 11–14 | Learn the destination of 2 enemy legions. |
-| 15–18 | Learn the destinations of up to half the enemy legions (rounded up). |
-| 19–22 | Learn all enemy legion destinations. |
-| 23+ | Learn all enemy destinations and gain \+1 to all allied Maneuver rolls this round. |
+| Result      | Intelligence Gained                                                                |
+| :---------- | :--------------------------------------------------------------------------------- |
+| 10 or lower | No enemy movements revealed.                                                       |
+| 11–14       | Learn the destination of 2 enemy legions.                                          |
+| 15–18       | Learn the destinations of up to half the enemy legions (rounded up).               |
+| 19–22       | Learn all enemy legion destinations.                                               |
+| 23+         | Learn all enemy destinations and gain \+1 to all allied Maneuver rolls this round. |
 
 ## **Phase 2: Planning & Commitment**
 
@@ -132,9 +130,9 @@ Check if any strategic objectives have been held for the required duration. Appl
 
 **The battle ends when any of the following conditions are met:**
 
-* One side has no legions remaining (all destroyed, disbanded, or routed off the map).
+-   One side has no legions remaining (all destroyed, disbanded, or routed off the map).
 
-* All major story events have been resolved and the DM declares the battle concluded.
+-   All major story events have been resolved and the DM declares the battle concluded.
 
 # **Player Characters as Fast Response**
 
@@ -142,13 +140,13 @@ The player characters are the allied side’s only fast response capability. Eac
 
 ## **PC Deployment Options**
 
-| Option | Effect |
-| :---- | :---- |
-| Reinforce | \+1d4 to all battle and aftermath rolls for the allied legion. |
-| Shock Assault | \+1d6 to all three battle phase rolls only (no aftermath bonus). |
-| Targeted Strike | \+1d8 to one specific battle phase roll, plus advantage on that roll. |
-| Shield the Wounded | \+1d8 to the first three aftermath rolls (Recovery, Hope, Salvage). |
-| Protect | The PC stays at the commander’s side throughout the battle. No Commander Casualty check is made for this legion this round. |
+| Option             | Effect                                                                                                                      |
+| :----------------- | :-------------------------------------------------------------------------------------------------------------------------- |
+| Reinforce          | \+1d4 to all battle and aftermath rolls for the allied legion.                                                              |
+| Shock Assault      | \+1d6 to all three battle phase rolls only (no aftermath bonus).                                                            |
+| Targeted Strike    | \+1d8 to one specific battle phase roll, plus advantage on that roll.                                                       |
+| Shield the Wounded | \+1d8 to the first three aftermath rolls (Recovery, Hope, Salvage).                                                         |
+| Protect            | The PC stays at the commander’s side throughout the battle. No Commander Casualty check is made for this legion this round. |
 
 Multiple PCs can deploy to the same battle and their effects stack. Three PCs each choosing Reinforce gives \+3d4 to all rolls, but leaves every other battle unsupported. This is always a meaningful trade-off because the heroes cannot be everywhere at once.
 
@@ -170,12 +168,12 @@ When opposing legions meet in the same section, battle occurs. Each battle has t
 
 Both sides roll 1d20 \+ Wit. The winner chooses one benefit for the rest of this battle:
 
-| Maneuver Benefit | Effect |
-| :---- | :---- |
-| Flanking Position | \+1d4 to your Charge roll (Phase 2). |
-| Defensive Footing | \+1d2 to your Clash roll (Phase 3). |
-| Disrupted Formation | Enemy suffers −1 to both Charge and Clash rolls. |
-| Seized Initiative | If you win the overall battle, the enemy takes \+1d2 extra injury in the aftermath. |
+| Maneuver Benefit    | Effect                                                                              |
+| :------------------ | :---------------------------------------------------------------------------------- |
+| Flanking Position   | \+1d4 to your Charge roll (Phase 2).                                                |
+| Defensive Footing   | \+1d2 to your Clash roll (Phase 3).                                                 |
+| Disrupted Formation | Enemy suffers −1 to both Charge and Clash rolls.                                    |
+| Seized Initiative   | If you win the overall battle, the enemy takes \+1d2 extra injury in the aftermath. |
 
 **Tie-breaker:** If tied, both sides reroll (up to 3 rerolls). If still tied after 3 rerolls, no benefit is granted and neither side scores a counter point for this phase.
 
@@ -195,12 +193,12 @@ Both sides roll 1d20 \+ Vitality. The grinding melee that decides the battle. Th
 
 After all three phases, tally the battle counter:
 
-| Result | Counter |
-| :---- | :---- |
-| Win a phase | \+1 (+2 for The Clash) |
+| Result                | Counter                                                    |
+| :-------------------- | :--------------------------------------------------------- |
+| Win a phase           | \+1 (+2 for The Clash)                                     |
 | Win with a natural 20 | \+1 bonus counter point on top of the phase’s normal value |
-| Lose a phase | −1 |
-| Lose with a natural 1 | −1 extra penalty on top of the phase’s normal loss |
+| Lose a phase          | −1                                                         |
+| Lose with a natural 1 | −1 extra penalty on top of the phase’s normal loss         |
 
 **Final tie-breaker:** If the counter totals are tied after all phases, a sudden-death contested Vitality roll breaks the tie. If that also ties, reroll until one side wins.
 
@@ -212,10 +210,10 @@ After each battle, all legions that fought (both winner and loser) make the foll
 
 **Roll:** 1d20 \+ Vitality vs DC (12 \+ current injuries).
 
-| Outcome | Winner | Loser |
-| :---- | :---- | :---- |
-| Check succeeds | No injury | 1 injury |
-| Check fails | 1 injury | 2 injuries |
+| Outcome        | Winner    | Loser      |
+| :------------- | :-------- | :--------- |
+| Check succeeds | No injury | 1 injury   |
+| Check fails    | 1 injury  | 2 injuries |
 
 Natural 1 always fails. At 6 injuries, a legion is destroyed and removed from the battle (7 for legions with the Bulwark tag).
 
@@ -223,10 +221,10 @@ Natural 1 always fails. At 6 injuries, a legion is destroyed and removed from th
 
 **Roll:** 1d20 \+ current Morale vs DC 12\. A legion’s Morale cannot exceed 10\. Gains and losses from Hope checks are subject to this cap.
 
-| Outcome | Winner | Loser |
-| :---- | :---- | :---- |
+| Outcome        | Winner     | Loser     |
+| :------------- | :--------- | :-------- |
 | Check succeeds | \+2 Morale | −1 Morale |
-| Check fails | \+1 Morale | −2 Morale |
+| Check fails    | \+1 Morale | −2 Morale |
 
 **Rout:** If Morale drops to 0, the legion routs: it retreats up to 3 sections toward the nearest allied territory and cannot act next round (unless it has the Relentless tag). If its Morale rises above 0, it rallies and may act normally. If an enemy legion moves into a routed legion’s section while it has 0 Morale and no other allied legion is present, the routed legion is disbanded. A routed legion that survives the round uncontested benefits from Phase 5 recovery as normal (+1 Morale), which is enough to rally it.
 
@@ -234,24 +232,24 @@ Natural 1 always fails. At 6 injuries, a legion is destroyed and removed from th
 
 **Roll:** Both winner and loser roll 1d20 \+ Wit vs DC 12\. On success, choose one benefit. On a natural 20, choose two.
 
-| Salvage Benefit | Effect |
-| :---- | :---- |
-| Captured Supplies | Remove 1 injury from this legion. |
-| Tactical Insight | \+1d2 to this legion’s Wit rolls next round. |
-| Enemy Shaken | The opposing legion suffers −1 Morale. |
-| Quick Fortify | Immediately fortify the section you hold (normally takes a full round). |
+| Salvage Benefit   | Effect                                                                  |
+| :---------------- | :---------------------------------------------------------------------- |
+| Captured Supplies | Remove 1 injury from this legion.                                       |
+| Tactical Insight  | \+1d2 to this legion’s Wit rolls next round.                            |
+| Enemy Shaken      | The opposing legion suffers −1 Morale.                                  |
+| Quick Fortify     | Immediately fortify the section you hold (normally takes a full round). |
 
-## 
+##
 
 ## **Commander Casualty Check**
 
 After every battle, both commanders must make a survival check to endure the chaos. The battle’s outcome generates a Base Death Chance. The commander’s legion attempts to shield them, reducing this risk before a d100 is rolled.
 
-| Situation | Base Death Chance |
-| :---- | :---- |
-| Won the battle | 6% |
-| Lost the battle | 12% |
-| Lost by 3+ on the battle counter | 20% |
+| Situation                        | Base Death Chance |
+| :------------------------------- | :---------------- |
+| Won the battle                   | 6%                |
+| Lost the battle                  | 12%               |
+| Lost by 3+ on the battle counter | 20%               |
 
 **To resolve the check:**
 
@@ -263,11 +261,11 @@ After every battle, both commanders must make a survival check to endure the cha
 
 4. Roll 1d100. If the result is equal to or lower than the Final Death Target, the commander falls in battle.
 
-*Example: A legion with 5 Morale loses a battle. Base Death Chance is 12%. Subtract 5 Protection, resulting in a Final Death Target of 7%. On a 1–7, the commander dies. On an 8+, they survive.*
+_Example: A legion with 5 Morale loses a battle. Base Death Chance is 12%. Subtract 5 Protection, resulting in a Final Death Target of 7%. On a 1–7, the commander dies. On an 8+, they survive._
 
-*Example: A legion with 2 Morale loses by 3+ on the counter. Base Death Chance is 20%. Subtract 2 Protection, Final Death Target is 18%. This is extremely dangerous.*
+_Example: A legion with 2 Morale loses by 3+ on the counter. Base Death Chance is 20%. Subtract 2 Protection, Final Death Target is 18%. This is extremely dangerous._
 
-*Example: A legion with 8 Morale wins the battle. Base Death Chance is 6%. Subtract 8, capped to minimum 1%. Only a roll of 1 kills the commander.*
+_Example: A legion with 8 Morale wins the battle. Base Death Chance is 6%. Subtract 8, capped to minimum 1%. Only a roll of 1 kills the commander._
 
 **On commander death:** The legion immediately loses 1 Morale. A replacement commander from the faction’s reserve pool takes command at the start of the next round, bringing their own tags. If no reserves remain, the legion operates without a commander (no tags apply).
 
@@ -277,18 +275,18 @@ Commander death should be a dramatic moment. For allied commanders, give the pla
 
 Sydon’s forces target symbols of mortal civilization. These objectives are marked openly on the map from the start; both sides know what’s at stake. If Sydon’s forces claim a section containing an objective and hold it for one additional round, the objective is destroyed. Consequences are permanent and cumulative.
 
-| Objective | Sydon Benefit if Destroyed |
-| :---- | :---- |
-| Temple of the Five | Gains \+3 Miracle Points |
-| Royal Palace | Gains \+2 Miracle Points |
-| The Dockyard | Gains \+2 Miracle Points |
-| Soldier’s Gate | Gains \+2 Miracle Points |
-| The Agora | Gains \+2 Miracle Points |
-| The Academy | Gains \+2 Miracle Points |
-| The Gymnasium | Gains \+2 Miracle Points |
-| The Harp Bridge | Gains \+2 Miracle Points |
-| The Vineyards of Mytros | Gains \+2 Miracle Points |
-| Fish Market & Commerce Gate | Gains \+1 Miracle Points |
+| Objective                   | Sydon Benefit if Destroyed |
+| :-------------------------- | :------------------------- |
+| Temple of the Five          | Gains \+3 Miracle Points   |
+| Royal Palace                | Gains \+2 Miracle Points   |
+| The Dockyard                | Gains \+2 Miracle Points   |
+| Soldier’s Gate              | Gains \+2 Miracle Points   |
+| The Agora                   | Gains \+2 Miracle Points   |
+| The Academy                 | Gains \+2 Miracle Points   |
+| The Gymnasium               | Gains \+2 Miracle Points   |
+| The Harp Bridge             | Gains \+2 Miracle Points   |
+| The Vineyards of Mytros     | Gains \+2 Miracle Points   |
+| Fish Market & Commerce Gate | Gains \+1 Miracle Points   |
 
 # **Major Events**
 
@@ -308,7 +306,7 @@ At dramatic moments during the battle, the DM triggers a major event that pulls 
 
 **Kentimane Defeated** — The Hundred-Handed One falls, and the earth is still. **Reward:** \+2 to the allied Miracle pool. Death Toll accumulation stops entirely — the fighting is over. This is a battle-ending event.
 
-# 
+#
 
 # **Civilian Death Toll**
 
@@ -316,12 +314,12 @@ The battle for Mytros is not just a military contest — every round of fighting
 
 After each battle resolves, roll once per engagement and once per destroyed objective still burning:
 
-| Situation | Death Roll |
-| :---- | :---- |
-| Allied legion won the battle | 1d4 × 10 |
-| Allied legion lost the battle | 1d6 × 50 |
-| Sydon’s legion was not engaged this round | 1d6 × 50 |
-| Each destroyed Strategic Objective (per round) | 1d4 × 10 |
+| Situation                                      | Death Roll |
+| :--------------------------------------------- | :--------- |
+| Allied legion won the battle                   | 1d4 × 10   |
+| Allied legion lost the battle                  | 1d6 × 50   |
+| Sydon’s legion was not engaged this round      | 1d6 × 50   |
+| Each destroyed Strategic Objective (per round) | 1d4 × 10   |
 
 Add all results together to get the round’s death count, then add it to the running total.
 
@@ -333,12 +331,12 @@ Each side possesses a pool of Miracle Points per round. Typically, Sydon starts 
 
 These points are a flexible resource that can be spent to influence the tide of war:
 
-*     **Roll Bonuses**: Distribute points as flat bonuses to any rolls made during the round (Battle rolls, Aftermath rolls, or Reconnaissance).  
-*     **Divine Advantage (2 Points)**: Grant advantage on any roll before its made.  
-*     **Divine Restoration**: A PC can restore their strength.  
-  * **Short Rest (2 Points)**: One PC immediately gains the benefits of a Short Rest.  
-  * **Long Rest (4 Points)**: One PC immediately gains the benefits of a Long Rest.
+-   **Roll Bonuses**: Distribute points as flat bonuses to any rolls made during the round (Battle rolls, Aftermath rolls, or Reconnaissance).
+-   **Divine Advantage (2 Points)**: Grant advantage on any roll before its made.
+-   **Divine Restoration**: A PC can restore their strength.
+    -   **Short Rest (2 Points)**: One PC immediately gains the benefits of a Short Rest.
+    -   **Long Rest (4 Points)**: One PC immediately gains the benefits of a Long Rest.
 
 Miracle pools can shift during the battle. If heroes achieve spectacular victories, the allied pool might increase. If a temple is destroyed, Sydon’s pool grows. Let the story drive the numbers.
 
-*May the dice favor the bold.*
+_May the dice favor the bold._

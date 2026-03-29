@@ -1,12 +1,17 @@
 from .config import (
-    ZEALOT_MORALE_THRESHOLD, ZEALOT_BONUS, CUNNING_BONUS, INSPIRING_BONUS,
-    IRONCLAD_BONUS, WARDEN_CLASH_BONUS, MAGE_PENALTY, ENGINEER_PENALTY,
-    HEADHUNTER_DEATH_BONUS,
+    CUNNING_BONUS,
+    ENGINEER_PENALTY,
+    INSPIRING_BONUS,
+    IRONCLAD_BONUS,
+    MAGE_PENALTY,
+    WARDEN_CLASH_BONUS,
+    ZEALOT_BONUS,
+    ZEALOT_MORALE_THRESHOLD,
 )
 from .models import Legion
 
-
 # ─── Tag Helpers ────────────────────────────────────────────────────────
+
 
 def _has(legion: Legion, tag: str) -> bool:
     return legion.commander.alive and legion.commander.has_tag(tag)
@@ -15,7 +20,7 @@ def _has(legion: Legion, tag: str) -> bool:
 def legion_battle_bonuses(legion: Legion, phase: str):
     """Return (bonus, advantage, disadvantage) for this legion in the given phase."""
     bonus = 0
-    adv   = False
+    adv = False
     disadv = False
 
     # Zealot: +2 to all battle rolls while Morale >= threshold
@@ -23,18 +28,26 @@ def legion_battle_bonuses(legion: Legion, phase: str):
         bonus += ZEALOT_BONUS
 
     if phase == "maneuver":
-        if _has(legion, "Tactician"): adv = True
-        if _has(legion, "Cunning"):   bonus += CUNNING_BONUS
+        if _has(legion, "Tactician"):
+            adv = True
+        if _has(legion, "Cunning"):
+            bonus += CUNNING_BONUS
 
     elif phase == "charge":
-        if _has(legion, "Inspiring"): bonus += INSPIRING_BONUS
-        if _has(legion, "Fanatic"):   adv = True
-        if _has(legion, "Vanguard"):  adv = True
+        if _has(legion, "Inspiring"):
+            bonus += INSPIRING_BONUS
+        if _has(legion, "Fanatic"):
+            adv = True
+        if _has(legion, "Vanguard"):
+            adv = True
 
     elif phase == "clash":
-        if _has(legion, "Ironclad"):  bonus += IRONCLAD_BONUS
-        if _has(legion, "Warden"):    bonus += WARDEN_CLASH_BONUS
-        if _has(legion, "Fanatic"):   adv = True
+        if _has(legion, "Ironclad"):
+            bonus += IRONCLAD_BONUS
+        if _has(legion, "Warden"):
+            bonus += WARDEN_CLASH_BONUS
+        if _has(legion, "Fanatic"):
+            adv = True
 
     return bonus, adv, disadv
 
@@ -42,7 +55,7 @@ def legion_battle_bonuses(legion: Legion, phase: str):
 def enemy_penalties(attacker: Legion, defender: Legion, phase: str):
     """Return (penalty, disadvantage) that defender's tags impose on attacker."""
     penalty = 0
-    disadv  = False
+    disadv = False
 
     # Mage: -1 to all attacker battle rolls
     if _has(defender, "Mage"):

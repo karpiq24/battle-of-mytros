@@ -1,1768 +1,2262 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Battle of Mytros — Player's Guide</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
-<style>
-  :root {
-    --gold: #c9a84c;
-    --gold-light: #e8c96a;
-    --gold-dim: #8a6e2a;
-    --bronze: #8b5e3c;
-    --bronze-light: #b87d52;
-    --marble-dark: #0d0f14;
-    --marble-mid: #151820;
-    --marble-light: #1e2230;
-    --marble-surface: #242838;
-    --text-primary: #f5edd8;
-    --text-secondary: #d4b87a;
-    --text-dim: #b8a07e;
-    --red-blood: #8b1a1a;
-    --red-light: #c0392b;
-    --blue-steel: #2c3e6b;
-    --blue-light: #4a6fa5;
-    --vitality: #c0392b;
-    --vitality-light: #e74c3c;
-    --morale: #d4ac0d;
-    --morale-light: #f1c40f;
-    --wit: #1a6b8a;
-    --wit-light: #3498db;
-    --border: rgba(201, 168, 76, 0.25);
-    --border-strong: rgba(201, 168, 76, 0.5);
-    --glow: rgba(201, 168, 76, 0.08);
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background-color: var(--marble-dark);
-    color: var(--text-primary);
-    font-family: 'EB Garamond', Georgia, serif;
-    font-size: 18px;
-    line-height: 1.75;
-    overflow-x: hidden;
-  }
-
-  /* ─── BACKGROUND CANVAS ─────────────────────────────── */
-  #bg-canvas {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-  }
-
-  /* ─── LAYOUT ─────────────────────────────────────────── */
-  .page-wrapper {
-    position: relative;
-    z-index: 1;
-  }
-
-  /* ─── NAV ────────────────────────────────────────────── */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    background: linear-gradient(to bottom, rgba(13,15,20,0.97) 0%, rgba(13,15,20,0.85) 100%);
-    border-bottom: 1px solid var(--border);
-    backdrop-filter: blur(8px);
-    padding: 0 2rem;
-    display: flex;
-    align-items: center;
-    gap: 0;
-    height: 52px;
-    overflow-x: auto;
-  }
-
-  nav a {
-    color: var(--text-dim);
-    text-decoration: none;
-    font-family: 'Cinzel', serif;
-    font-size: 0.65rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 0 0.9rem;
-    height: 52px;
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
-    border-bottom: 2px solid transparent;
-    transition: color 0.2s, border-color 0.2s;
-  }
-  nav a:hover { color: var(--gold); border-bottom-color: var(--gold); }
-
-  /* ─── HERO ────────────────────────────────────────────── */
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 6rem 2rem 4rem;
-    position: relative;
-  }
-
-  .hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(201,168,76,0.06) 0%, transparent 70%);
-    pointer-events: none;
-  }
-
-  .hero-ornament {
-    font-size: 1.5rem;
-    color: var(--gold-dim);
-    letter-spacing: 1.5rem;
-    margin-bottom: 1.5rem;
-    animation: fadeInDown 1s ease both;
-  }
-
-  .hero h1 {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: clamp(2.2rem, 6vw, 4.5rem);
-    font-weight: 900;
-    color: var(--gold);
-    text-shadow: 0 0 60px rgba(201,168,76,0.4), 0 2px 4px rgba(0,0,0,0.8);
-    line-height: 1.15;
-    letter-spacing: 0.02em;
-    animation: fadeInUp 1s ease 0.2s both;
-  }
-
-  .hero-sub {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(0.75rem, 2vw, 1rem);
-    color: var(--text-dim);
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    margin-top: 1.2rem;
-    animation: fadeInUp 1s ease 0.4s both;
-  }
-
-  .hero-desc {
-    max-width: 680px;
-    margin-top: 2.5rem;
-    color: var(--text-secondary);
-    font-size: 1.05rem;
-    font-style: italic;
-    animation: fadeInUp 1s ease 0.6s both;
-  }
-
-  .hero-divider {
-    width: 200px;
-    height: 1px;
-    background: linear-gradient(to right, transparent, var(--gold), transparent);
-    margin: 2.5rem auto 0;
-    animation: fadeIn 1s ease 0.8s both;
-  }
-
-  /* ─── MAIN CONTENT ───────────────────────────────────── */
-  main {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 2rem 6rem;
-  }
-
-  /* ─── SECTIONS ───────────────────────────────────────── */
-  section {
-    margin-bottom: 5rem;
-    scroll-margin-top: 70px;
-  }
-
-  .section-header {
-    display: flex;
-    align-items: center;
-    gap: 1.2rem;
-    margin-bottom: 2rem;
-  }
-
-  .section-number {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 1.6rem;
-    color: var(--gold-dim);
-    min-width: 2.5rem;
-    line-height: 1;
-  }
-
-  h2 {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(1.3rem, 3vw, 1.8rem);
-    font-weight: 700;
-    color: var(--gold-light);
-    letter-spacing: 0.04em;
-    flex: 1;
-  }
-
-  h2 .title-line {
-    display: block;
-    height: 1px;
-    background: linear-gradient(to right, var(--border-strong), transparent);
-    margin-top: 0.4rem;
-  }
-
-  h3 {
-    font-family: 'Cinzel', serif;
-    font-size: 1.1rem;
-    color: var(--bronze-light);
-    letter-spacing: 0.06em;
-    margin: 2rem 0 0.8rem;
-    text-transform: uppercase;
-  }
-
-  p { margin-bottom: 0.9rem; }
-
-  strong {
-    color: var(--text-primary);
-    font-weight: 600;
-  }
-
-  /* ─── CARD / PANEL ───────────────────────────────────── */
-  .card {
-    background: linear-gradient(135deg, var(--marble-light) 0%, var(--marble-surface) 100%);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 1.6rem;
-    margin-bottom: 1.2rem;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--glow);
-    pointer-events: none;
-  }
-
-  .card-corner {
-    position: absolute;
-    top: 0; left: 0;
-    width: 40px; height: 40px;
-    border-top: 2px solid var(--gold-dim);
-    border-left: 2px solid var(--gold-dim);
-    border-radius: 4px 0 0 0;
-  }
-
-  .card-corner-br {
-    position: absolute;
-    bottom: 0; right: 0;
-    width: 40px; height: 40px;
-    border-bottom: 2px solid var(--gold-dim);
-    border-right: 2px solid var(--gold-dim);
-    border-radius: 0 0 4px 0;
-  }
-
-  /* ─── STAT CARDS ─────────────────────────────────────── */
-  .stat-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.2rem;
-  }
-
-  .stat-card {
-    border-radius: 4px;
-    padding: 1.6rem;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .stat-card::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 4px; height: 100%;
-  }
-
-  .stat-vitality {
-    background: linear-gradient(135deg, rgba(192,57,43,0.12), rgba(192,57,43,0.04));
-    border: 1px solid rgba(192,57,43,0.3);
-  }
-  .stat-vitality::after { background: var(--vitality); }
-
-  .stat-morale {
-    background: linear-gradient(135deg, rgba(212,172,13,0.12), rgba(212,172,13,0.04));
-    border: 1px solid rgba(212,172,13,0.3);
-  }
-  .stat-morale::after { background: var(--morale); }
-
-  .stat-wit {
-    background: linear-gradient(135deg, rgba(26,107,138,0.12), rgba(26,107,138,0.04));
-    border: 1px solid rgba(26,107,138,0.3);
-  }
-  .stat-wit::after { background: var(--wit); }
-
-  .stat-name {
-    font-family: 'Cinzel', serif;
-    font-size: 1.3rem;
-    font-weight: 700;
-    margin-bottom: 0.3rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .stat-vitality .stat-name { color: var(--vitality-light); }
-  .stat-morale .stat-name { color: var(--morale-light); }
-  .stat-wit .stat-name { color: var(--wit-light); }
-
-  .stat-keyword {
-    font-family: 'Cinzel', serif;
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    padding: 2px 8px;
-    border-radius: 2px;
-    margin-bottom: 1rem;
-    display: inline-block;
-  }
-
-  .stat-vitality .stat-keyword { background: rgba(192,57,43,0.2); color: var(--vitality-light); }
-  .stat-morale .stat-keyword { background: rgba(212,172,13,0.2); color: var(--morale-light); }
-  .stat-wit .stat-keyword { background: rgba(26,107,138,0.2); color: var(--wit-light); }
-
-  .stat-uses {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid rgba(255,255,255,0.06);
-  }
-
-  .stat-use-item {
-    position: relative;
-    padding-left: 1.1rem;
-    font-size: 0.95rem;
-    color: var(--text-secondary);
-    margin-bottom: 0.35rem;
-    line-height: 1.5;
-  }
-
-  .stat-use-item::before {
-    content: '◆';
-    font-size: 0.45rem;
-    position: absolute;
-    left: 0;
-    top: 0.42rem;
-  }
-
-  /* ─── TABLES ─────────────────────────────────────────── */
-  .table-wrap {
-    overflow-x: auto;
-    margin: 1rem 0;
-    border-radius: 4px;
-    border: 1px solid var(--border);
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.97rem;
-  }
-
-  thead tr {
-    background: linear-gradient(90deg, rgba(201,168,76,0.15), rgba(201,168,76,0.08));
-    border-bottom: 1px solid var(--border-strong);
-  }
-
-  thead th {
-    font-family: 'Cinzel', serif;
-    font-size: 0.72rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--gold);
-    padding: 0.8rem 1rem;
-    text-align: left;
-    white-space: nowrap;
-  }
-
-  tbody tr {
-    border-bottom: 1px solid var(--border);
-    transition: background 0.15s;
-  }
-
-  tbody tr:last-child { border-bottom: none; }
-
-  tbody tr:hover { background: rgba(201,168,76,0.04); }
-
-  tbody tr:nth-child(even) { background: rgba(255,255,255,0.015); }
-  tbody tr:nth-child(even):hover { background: rgba(201,168,76,0.04); }
-
-  td {
-    padding: 0.7rem 1rem;
-    color: var(--text-secondary);
-    vertical-align: top;
-  }
-
-  td:first-child { color: var(--text-primary); font-weight: 500; }
-
-  .badge {
-    display: inline-block;
-    font-family: 'Cinzel', serif;
-    font-size: 0.6rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 2px 7px;
-    border-radius: 2px;
-    border: 1px solid;
-    white-space: nowrap;
-  }
-
-  .badge-v { border-color: rgba(192,57,43,0.5); color: var(--vitality-light); background: rgba(192,57,43,0.1); }
-  .badge-m { border-color: rgba(212,172,13,0.5); color: var(--morale-light); background: rgba(212,172,13,0.1); }
-  .badge-w { border-color: rgba(26,107,138,0.5); color: var(--wit-light); background: rgba(26,107,138,0.1); }
-  .badge-gold { border-color: var(--border-strong); color: var(--gold); background: rgba(201,168,76,0.1); }
-  .badge-passive { border-color: rgba(128,128,128,0.4); color: #aaa; background: rgba(128,128,128,0.08); }
-
-  /* ─── FLOWCHART CONTAINER ─────────────────────────────── */
-  .mermaid-wrap {
-    background: rgba(13,15,20,0.6);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 2rem 1rem;
-    overflow-x: auto;
-    margin: 1.5rem 0;
-  }
-
-  .mermaid {
-    display: flex;
-    justify-content: center;
-  }
-
-  /* ─── PHASE BADGES ───────────────────────────────────── */
-  .phases-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .phase-item {
-    display: grid;
-    grid-template-columns: 2.5rem 1fr;
-    gap: 1rem;
-    align-items: start;
-    padding: 1rem 1.2rem;
-    background: var(--marble-light);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    transition: border-color 0.2s, background 0.2s;
-  }
-
-  .phase-item:hover {
-    border-color: var(--border-strong);
-    background: var(--marble-surface);
-  }
-
-  .phase-num {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 1.4rem;
-    color: var(--gold-dim);
-    line-height: 1;
-    padding-top: 0.1rem;
-  }
-
-  .phase-title {
-    font-family: 'Cinzel', serif;
-    font-size: 0.85rem;
-    color: var(--gold-light);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    margin-bottom: 0.3rem;
-  }
-
-  .phase-body {
-    font-size: 0.97rem;
-    color: #d4bc98;
-  }
-
-  /* ─── AFTERMATH GRID ─────────────────────────────────── */
-  .aftermath-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1.2rem;
-  }
-
-  .aftermath-card {
-    background: var(--marble-light);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 1.4rem;
-    position: relative;
-  }
-
-  .aftermath-card h4 {
-    font-family: 'Cinzel', serif;
-    font-size: 0.9rem;
-    color: var(--gold);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    margin-bottom: 0.8rem;
-  }
-
-  .aftermath-dc {
-    font-family: 'Cinzel', serif;
-    font-size: 0.75rem;
-    color: var(--text-dim);
-    margin-bottom: 0.8rem;
-  }
-
-  .outcome-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    font-size: 0.82rem;
-    gap: 0.3rem;
-    margin-bottom: 0.3rem;
-  }
-
-  .outcome-row .label {
-    color: var(--text-dim);
-    font-size: 0.75rem;
-    letter-spacing: 0.05em;
-    font-family: 'Cinzel', serif;
-    text-transform: uppercase;
-  }
-
-  .win { color: #4caf50; }
-  .lose { color: var(--vitality-light); }
-
-  /* ─── TAG CARDS ──────────────────────────────────────── */
-  .tag-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1rem;
-  }
-
-  .tag-card {
-    background: var(--marble-light);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 1.2rem 1.4rem;
-    transition: border-color 0.2s, transform 0.2s;
-  }
-
-  .tag-card:hover {
-    border-color: var(--border-strong);
-    transform: translateY(-2px);
-  }
-
-  .tag-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 0.6rem;
-    gap: 0.8rem;
-  }
-
-  .tag-name {
-    font-family: 'Cinzel', serif;
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--gold-light);
-  }
-
-  .tag-action {
-    font-family: 'Cinzel', serif;
-    font-size: 0.7rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    text-align: right;
-    flex-shrink: 0;
-  }
-
-  .tag-effect {
-    font-size: 0.95rem;
-    color: #d4bc98;
-    line-height: 1.65;
-  }
-
-  /* ─── INFO BOXES ─────────────────────────────────────── */
-  .callout {
-    border-left: 3px solid;
-    padding: 1rem 1.4rem;
-    background: rgba(0,0,0,0.2);
-    border-radius: 0 4px 4px 0;
-    margin: 1.2rem 0;
-    font-size: 0.97rem;
-  }
-
-  .callout-gold { border-color: var(--gold); background: rgba(201,168,76,0.05); }
-  .callout-red { border-color: var(--vitality); background: rgba(192,57,43,0.05); }
-  .callout-blue { border-color: var(--wit); background: rgba(26,107,138,0.05); }
-
-  .callout > strong:first-child { display: block; font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.4rem; }
-  .callout-gold strong { color: var(--gold); }
-  .callout-red strong { color: var(--vitality-light); }
-  .callout-blue strong { color: var(--wit-light); }
-
-  /* ─── MANEUVER BENEFITS ──────────────────────────────── */
-  .benefit-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 0.8rem;
-  }
-
-  .benefit-card {
-    background: rgba(201,168,76,0.05);
-    border: 1px solid rgba(201,168,76,0.15);
-    border-radius: 4px;
-    padding: 1rem;
-    text-align: center;
-  }
-
-  .benefit-card .name {
-    font-family: 'Cinzel', serif;
-    font-size: 0.8rem;
-    color: var(--gold);
-    letter-spacing: 0.05em;
-    margin-bottom: 0.4rem;
-    text-transform: uppercase;
-  }
-
-  .benefit-card .desc {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-  }
-
-  /* ─── COUNTER TABLE ──────────────────────────────────── */
-  .counter-visual {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.8rem;
-    margin: 1rem 0;
-  }
-
-  .counter-item {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    background: var(--marble-light);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 0.7rem 1rem;
-    flex: 1;
-    min-width: 200px;
-  }
-
-  .counter-val {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 1.8rem;
-    line-height: 1;
-    min-width: 2.5rem;
-    text-align: center;
-  }
-
-  .counter-val.pos { color: #4caf50; }
-  .counter-val.neg { color: var(--vitality-light); }
-
-  .counter-label {
-    font-size: 0.88rem;
-    color: var(--text-secondary);
-  }
-
-  /* ─── PC DEPLOY ──────────────────────────────────────── */
-  .deploy-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1rem;
-  }
-
-  .deploy-card {
-    background: var(--marble-light);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 1.2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    transition: border-color 0.2s;
-  }
-
-  .deploy-card:hover { border-color: var(--border-strong); }
-
-  .deploy-name {
-    font-family: 'Cinzel', serif;
-    font-size: 0.9rem;
-    color: var(--gold-light);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
-
-  .deploy-bonus {
-    font-family: 'Cinzel', serif;
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: var(--gold);
-  }
-
-  .deploy-note {
-    font-size: 0.83rem;
-    color: var(--text-secondary);
-  }
-
-  /* ─── MIRACLE SECTION ────────────────────────────────── */
-  .miracle-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1rem;
-  }
-
-  .miracle-item {
-    background: linear-gradient(135deg, rgba(26,107,138,0.1), rgba(26,107,138,0.04));
-    border: 1px solid rgba(26,107,138,0.25);
-    border-radius: 4px;
-    padding: 1.2rem;
-    text-align: center;
-  }
-
-  .miracle-item .number {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 2rem;
-    color: var(--wit-light);
-  }
-
-  .miracle-item .label {
-    font-family: 'Cinzel', serif;
-    font-size: 0.72rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-top: 0.2rem;
-  }
-
-  .miracle-item .cost {
-    font-family: 'Cinzel', serif;
-    font-size: 0.8rem;
-    color: var(--gold);
-    margin-top: 0.4rem;
-  }
-
-  /* ─── FOOTER ─────────────────────────────────────────── */
-  footer {
-    border-top: 1px solid var(--border);
-    text-align: center;
-    padding: 2.5rem;
-    color: var(--text-dim);
-    font-family: 'Cinzel', serif;
-    font-size: 0.7rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-  }
-
-  /* ─── ANIMATIONS ─────────────────────────────────────── */
-  @keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
-  /* ─── SCROLLBAR ───────────────────────────────────────── */
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: var(--marble-dark); }
-  ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 3px; }
-
-  /* ─── DEATH TOLL TABLE ───────────────────────────────── */
-  .death-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 0.8rem;
-    margin-top: 1rem;
-  }
-
-  .death-item {
-    background: rgba(139,26,26,0.08);
-    border: 1px solid rgba(139,26,26,0.2);
-    border-radius: 4px;
-    padding: 1rem;
-  }
-
-  .death-item .roll {
-    font-family: 'Cinzel', serif;
-    font-size: 1.3rem;
-    color: var(--vitality-light);
-    margin-bottom: 0.3rem;
-  }
-
-  .death-item .situation {
-    font-size: 0.83rem;
-    color: var(--text-secondary);
-  }
-
-  /* ─── RECON TABLE ────────────────────────────────────── */
-  .recon-steps {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .recon-step {
-    display: grid;
-    grid-template-columns: 5rem 1fr;
-    gap: 1rem;
-    align-items: center;
-    background: var(--marble-light);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 0.8rem 1.2rem;
-  }
-
-  .recon-roll {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 1rem;
-    color: var(--wit-light);
-    text-align: center;
-  }
-
-  .recon-desc {
-    font-size: 0.97rem;
-    color: var(--text-secondary);
-  }
-
-  /* ─── MAJOR EVENT CARDS ──────────────────────────────── */
-  .event-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-  }
-
-  .event-card {
-    background: var(--marble-light);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 1.2rem 1.4rem;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 1rem;
-    align-items: center;
-    transition: border-color 0.2s;
-  }
-
-  .event-card:hover { border-color: var(--border-strong); }
-
-  .event-name {
-    font-family: 'Cinzel', serif;
-    font-size: 0.9rem;
-    color: var(--gold-light);
-    letter-spacing: 0.04em;
-    margin-bottom: 0.3rem;
-  }
-
-  .event-desc {
-    font-size: 0.87rem;
-    color: var(--text-secondary);
-  }
-
-  .event-reward {
-    font-family: 'Cinzel', serif;
-    font-size: 0.8rem;
-    color: var(--wit-light);
-    text-align: right;
-    white-space: nowrap;
-  }
-
-  /* ─── EXAMPLE BOX ────────────────────────────────────── */
-  .example-box {
-    background: rgba(0,0,0,0.25);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 1rem 1.4rem;
-    margin: 0.6rem 0;
-    font-size: 0.88rem;
-    color: var(--text-secondary);
-    font-style: italic;
-  }
-  .example-box strong { font-style: normal; }
-</style>
-</head>
-<body>
-
-<canvas id="bg-canvas"></canvas>
-
-<div class="page-wrapper">
-
-<!-- ───── NAV ───── -->
-<nav>
-  <a href="#stats">Stats</a>
-  <a href="#tags">Tags</a>
-  <a href="#round">Round</a>
-  <a href="#battle">Battle</a>
-  <a href="#aftermath">Aftermath</a>
-  <a href="#pcs">PCs</a>
-  <a href="#miracles">Miracles</a>
-  <a href="#objectives">Objectives</a>
-  <a href="#death">Death Toll</a>
-  <a href="#events">Major Events</a>
-</nav>
-
-<!-- ───── HERO ───── -->
-<header class="hero">
-  <div class="hero-ornament">⚔ ✦ ⚔</div>
-  <h1>The Battle of Mytros</h1>
-  <p class="hero-sub">A War of Bronze, Will &amp; Cunning — Player's Field Guide</p>
-  <p class="hero-desc">A mass combat system for Odyssey of the Dragonlords — where every stat matters, every commander counts, and your choices shape the tide of battle.</p>
-  <div class="hero-divider"></div>
-</header>
-
-<!-- ───── MAIN ───── -->
-<main>
-
-  <!-- ══════════════ STATS ══════════════ -->
-  <section id="stats">
-    <div class="section-header">
-      <span class="section-number">I</span>
-      <h2>Legion Stats<span class="title-line"></span></h2>
-    </div>
-
-    <p>Every legion is defined by <strong>three stats</strong>: Vitality, Morale, and Wit. Each stat is a <em>single total value</em> assigned by the DM, reflecting the combined quality of the legion's troops, training, equipment, and the influence of their commander.</p>
-
-    <div class="callout callout-gold">
-      <strong>Stat Totals</strong>
-      Recommended total across all three stats: <strong>10–18 points</strong>. Stronger legions led by legendary commanders sit at the higher end; weaker or green legions at the lower end.
-    </div>
-
-    <div class="stat-grid">
-      <!-- Vitality -->
-      <div class="stat-card stat-vitality">
-        <div class="stat-name">⚔ Vitality</div>
-        <span class="stat-keyword">Stat of Survival</span>
-        <p style="font-size:0.97rem; color:#d4bc98;">Physical toughness, endurance, and discipline under fire. Invest in Vitality for legions you intend to grind the enemy with attrition — or that must hold a critical position.</p>
-        <div class="stat-uses">
-          <div class="stat-use-item">Drives <strong>The Clash</strong> (Phase 3 of battle)</div>
-          <div class="stat-use-item">Governs the <strong>Recovery Check</strong> (injury intake)</div>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>The Battle of Mytros — Player's Guide</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap"
+            rel="stylesheet"
+        />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+        <style>
+            :root {
+                --gold: #c9a84c;
+                --gold-light: #e8c96a;
+                --gold-dim: #8a6e2a;
+                --bronze: #8b5e3c;
+                --bronze-light: #b87d52;
+                --marble-dark: #0d0f14;
+                --marble-mid: #151820;
+                --marble-light: #1e2230;
+                --marble-surface: #242838;
+                --text-primary: #f5edd8;
+                --text-secondary: #d4b87a;
+                --text-dim: #b8a07e;
+                --red-blood: #8b1a1a;
+                --red-light: #c0392b;
+                --blue-steel: #2c3e6b;
+                --blue-light: #4a6fa5;
+                --vitality: #c0392b;
+                --vitality-light: #e74c3c;
+                --morale: #d4ac0d;
+                --morale-light: #f1c40f;
+                --wit: #1a6b8a;
+                --wit-light: #3498db;
+                --border: rgba(201, 168, 76, 0.25);
+                --border-strong: rgba(201, 168, 76, 0.5);
+                --glow: rgba(201, 168, 76, 0.08);
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            html {
+                scroll-behavior: smooth;
+            }
+
+            body {
+                background-color: var(--marble-dark);
+                color: var(--text-primary);
+                font-family: "EB Garamond", Georgia, serif;
+                font-size: 18px;
+                line-height: 1.75;
+                overflow-x: hidden;
+            }
+
+            /* ─── BACKGROUND CANVAS ─────────────────────────────── */
+            #bg-canvas {
+                position: fixed;
+                inset: 0;
+                z-index: 0;
+                pointer-events: none;
+            }
+
+            /* ─── LAYOUT ─────────────────────────────────────────── */
+            .page-wrapper {
+                position: relative;
+                z-index: 1;
+            }
+
+            /* ─── NAV ────────────────────────────────────────────── */
+            nav {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 100;
+                background: linear-gradient(to bottom, rgba(13, 15, 20, 0.97) 0%, rgba(13, 15, 20, 0.85) 100%);
+                border-bottom: 1px solid var(--border);
+                backdrop-filter: blur(8px);
+                padding: 0 2rem;
+                display: flex;
+                align-items: center;
+                gap: 0;
+                height: 52px;
+                overflow-x: auto;
+            }
+
+            nav a {
+                color: var(--text-dim);
+                text-decoration: none;
+                font-family: "Cinzel", serif;
+                font-size: 0.65rem;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                padding: 0 0.9rem;
+                height: 52px;
+                display: flex;
+                align-items: center;
+                white-space: nowrap;
+                border-bottom: 2px solid transparent;
+                transition:
+                    color 0.2s,
+                    border-color 0.2s;
+            }
+            nav a:hover {
+                color: var(--gold);
+                border-bottom-color: var(--gold);
+            }
+
+            /* ─── HERO ────────────────────────────────────────────── */
+            .hero {
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                padding: 6rem 2rem 4rem;
+                position: relative;
+            }
+
+            .hero::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(201, 168, 76, 0.06) 0%, transparent 70%);
+                pointer-events: none;
+            }
+
+            .hero-ornament {
+                font-size: 1.5rem;
+                color: var(--gold-dim);
+                letter-spacing: 1.5rem;
+                margin-bottom: 1.5rem;
+                animation: fadeInDown 1s ease both;
+            }
+
+            .hero h1 {
+                font-family: "Cinzel Decorative", serif;
+                font-size: clamp(2.2rem, 6vw, 4.5rem);
+                font-weight: 900;
+                color: var(--gold);
+                text-shadow:
+                    0 0 60px rgba(201, 168, 76, 0.4),
+                    0 2px 4px rgba(0, 0, 0, 0.8);
+                line-height: 1.15;
+                letter-spacing: 0.02em;
+                animation: fadeInUp 1s ease 0.2s both;
+            }
+
+            .hero-sub {
+                font-family: "Cinzel", serif;
+                font-size: clamp(0.75rem, 2vw, 1rem);
+                color: var(--text-dim);
+                letter-spacing: 0.3em;
+                text-transform: uppercase;
+                margin-top: 1.2rem;
+                animation: fadeInUp 1s ease 0.4s both;
+            }
+
+            .hero-desc {
+                max-width: 680px;
+                margin-top: 2.5rem;
+                color: var(--text-secondary);
+                font-size: 1.05rem;
+                font-style: italic;
+                animation: fadeInUp 1s ease 0.6s both;
+            }
+
+            .hero-divider {
+                width: 200px;
+                height: 1px;
+                background: linear-gradient(to right, transparent, var(--gold), transparent);
+                margin: 2.5rem auto 0;
+                animation: fadeIn 1s ease 0.8s both;
+            }
+
+            /* ─── MAIN CONTENT ───────────────────────────────────── */
+            main {
+                max-width: 1100px;
+                margin: 0 auto;
+                padding: 0 2rem 6rem;
+            }
+
+            /* ─── SECTIONS ───────────────────────────────────────── */
+            section {
+                margin-bottom: 5rem;
+                scroll-margin-top: 70px;
+            }
+
+            .section-header {
+                display: flex;
+                align-items: center;
+                gap: 1.2rem;
+                margin-bottom: 2rem;
+            }
+
+            .section-number {
+                font-family: "Cinzel Decorative", serif;
+                font-size: 1.6rem;
+                color: var(--gold-dim);
+                min-width: 2.5rem;
+                line-height: 1;
+            }
+
+            h2 {
+                font-family: "Cinzel", serif;
+                font-size: clamp(1.3rem, 3vw, 1.8rem);
+                font-weight: 700;
+                color: var(--gold-light);
+                letter-spacing: 0.04em;
+                flex: 1;
+            }
+
+            h2 .title-line {
+                display: block;
+                height: 1px;
+                background: linear-gradient(to right, var(--border-strong), transparent);
+                margin-top: 0.4rem;
+            }
+
+            h3 {
+                font-family: "Cinzel", serif;
+                font-size: 1.1rem;
+                color: var(--bronze-light);
+                letter-spacing: 0.06em;
+                margin: 2rem 0 0.8rem;
+                text-transform: uppercase;
+            }
+
+            p {
+                margin-bottom: 0.9rem;
+            }
+
+            strong {
+                color: var(--text-primary);
+                font-weight: 600;
+            }
+
+            /* ─── CARD / PANEL ───────────────────────────────────── */
+            .card {
+                background: linear-gradient(135deg, var(--marble-light) 0%, var(--marble-surface) 100%);
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                padding: 1.6rem;
+                margin-bottom: 1.2rem;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .card::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: var(--glow);
+                pointer-events: none;
+            }
+
+            .card-corner {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 40px;
+                height: 40px;
+                border-top: 2px solid var(--gold-dim);
+                border-left: 2px solid var(--gold-dim);
+                border-radius: 4px 0 0 0;
+            }
+
+            .card-corner-br {
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                width: 40px;
+                height: 40px;
+                border-bottom: 2px solid var(--gold-dim);
+                border-right: 2px solid var(--gold-dim);
+                border-radius: 0 0 4px 0;
+            }
+
+            /* ─── STAT CARDS ─────────────────────────────────────── */
+            .stat-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 1.2rem;
+            }
+
+            .stat-card {
+                border-radius: 4px;
+                padding: 1.6rem;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .stat-card::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 4px;
+                height: 100%;
+            }
+
+            .stat-vitality {
+                background: linear-gradient(135deg, rgba(192, 57, 43, 0.12), rgba(192, 57, 43, 0.04));
+                border: 1px solid rgba(192, 57, 43, 0.3);
+            }
+            .stat-vitality::after {
+                background: var(--vitality);
+            }
+
+            .stat-morale {
+                background: linear-gradient(135deg, rgba(212, 172, 13, 0.12), rgba(212, 172, 13, 0.04));
+                border: 1px solid rgba(212, 172, 13, 0.3);
+            }
+            .stat-morale::after {
+                background: var(--morale);
+            }
+
+            .stat-wit {
+                background: linear-gradient(135deg, rgba(26, 107, 138, 0.12), rgba(26, 107, 138, 0.04));
+                border: 1px solid rgba(26, 107, 138, 0.3);
+            }
+            .stat-wit::after {
+                background: var(--wit);
+            }
+
+            .stat-name {
+                font-family: "Cinzel", serif;
+                font-size: 1.3rem;
+                font-weight: 700;
+                margin-bottom: 0.3rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .stat-vitality .stat-name {
+                color: var(--vitality-light);
+            }
+            .stat-morale .stat-name {
+                color: var(--morale-light);
+            }
+            .stat-wit .stat-name {
+                color: var(--wit-light);
+            }
+
+            .stat-keyword {
+                font-family: "Cinzel", serif;
+                font-size: 0.65rem;
+                letter-spacing: 0.15em;
+                text-transform: uppercase;
+                padding: 2px 8px;
+                border-radius: 2px;
+                margin-bottom: 1rem;
+                display: inline-block;
+            }
+
+            .stat-vitality .stat-keyword {
+                background: rgba(192, 57, 43, 0.2);
+                color: var(--vitality-light);
+            }
+            .stat-morale .stat-keyword {
+                background: rgba(212, 172, 13, 0.2);
+                color: var(--morale-light);
+            }
+            .stat-wit .stat-keyword {
+                background: rgba(26, 107, 138, 0.2);
+                color: var(--wit-light);
+            }
+
+            .stat-uses {
+                margin-top: 1rem;
+                padding-top: 1rem;
+                border-top: 1px solid rgba(255, 255, 255, 0.06);
+            }
+
+            .stat-use-item {
+                position: relative;
+                padding-left: 1.1rem;
+                font-size: 0.95rem;
+                color: var(--text-secondary);
+                margin-bottom: 0.35rem;
+                line-height: 1.5;
+            }
+
+            .stat-use-item::before {
+                content: "◆";
+                font-size: 0.45rem;
+                position: absolute;
+                left: 0;
+                top: 0.42rem;
+            }
+
+            /* ─── TABLES ─────────────────────────────────────────── */
+            .table-wrap {
+                overflow-x: auto;
+                margin: 1rem 0;
+                border-radius: 4px;
+                border: 1px solid var(--border);
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 0.97rem;
+            }
+
+            thead tr {
+                background: linear-gradient(90deg, rgba(201, 168, 76, 0.15), rgba(201, 168, 76, 0.08));
+                border-bottom: 1px solid var(--border-strong);
+            }
+
+            thead th {
+                font-family: "Cinzel", serif;
+                font-size: 0.72rem;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--gold);
+                padding: 0.8rem 1rem;
+                text-align: left;
+                white-space: nowrap;
+            }
+
+            tbody tr {
+                border-bottom: 1px solid var(--border);
+                transition: background 0.15s;
+            }
+
+            tbody tr:last-child {
+                border-bottom: none;
+            }
+
+            tbody tr:hover {
+                background: rgba(201, 168, 76, 0.04);
+            }
+
+            tbody tr:nth-child(even) {
+                background: rgba(255, 255, 255, 0.015);
+            }
+            tbody tr:nth-child(even):hover {
+                background: rgba(201, 168, 76, 0.04);
+            }
+
+            td {
+                padding: 0.7rem 1rem;
+                color: var(--text-secondary);
+                vertical-align: top;
+            }
+
+            td:first-child {
+                color: var(--text-primary);
+                font-weight: 500;
+            }
+
+            .badge {
+                display: inline-block;
+                font-family: "Cinzel", serif;
+                font-size: 0.6rem;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                padding: 2px 7px;
+                border-radius: 2px;
+                border: 1px solid;
+                white-space: nowrap;
+            }
+
+            .badge-v {
+                border-color: rgba(192, 57, 43, 0.5);
+                color: var(--vitality-light);
+                background: rgba(192, 57, 43, 0.1);
+            }
+            .badge-m {
+                border-color: rgba(212, 172, 13, 0.5);
+                color: var(--morale-light);
+                background: rgba(212, 172, 13, 0.1);
+            }
+            .badge-w {
+                border-color: rgba(26, 107, 138, 0.5);
+                color: var(--wit-light);
+                background: rgba(26, 107, 138, 0.1);
+            }
+            .badge-gold {
+                border-color: var(--border-strong);
+                color: var(--gold);
+                background: rgba(201, 168, 76, 0.1);
+            }
+            .badge-passive {
+                border-color: rgba(128, 128, 128, 0.4);
+                color: #aaa;
+                background: rgba(128, 128, 128, 0.08);
+            }
+
+            /* ─── FLOWCHART CONTAINER ─────────────────────────────── */
+            .mermaid-wrap {
+                background: rgba(13, 15, 20, 0.6);
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                padding: 2rem 1rem;
+                overflow-x: auto;
+                margin: 1.5rem 0;
+            }
+
+            .mermaid {
+                display: flex;
+                justify-content: center;
+            }
+
+            /* ─── PHASE BADGES ───────────────────────────────────── */
+            .phases-list {
+                list-style: none;
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .phase-item {
+                display: grid;
+                grid-template-columns: 2.5rem 1fr;
+                gap: 1rem;
+                align-items: start;
+                padding: 1rem 1.2rem;
+                background: var(--marble-light);
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                transition:
+                    border-color 0.2s,
+                    background 0.2s;
+            }
+
+            .phase-item:hover {
+                border-color: var(--border-strong);
+                background: var(--marble-surface);
+            }
+
+            .phase-num {
+                font-family: "Cinzel Decorative", serif;
+                font-size: 1.4rem;
+                color: var(--gold-dim);
+                line-height: 1;
+                padding-top: 0.1rem;
+            }
+
+            .phase-title {
+                font-family: "Cinzel", serif;
+                font-size: 0.85rem;
+                color: var(--gold-light);
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
+                margin-bottom: 0.3rem;
+            }
+
+            .phase-body {
+                font-size: 0.97rem;
+                color: #d4bc98;
+            }
+
+            /* ─── AFTERMATH GRID ─────────────────────────────────── */
+            .aftermath-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                gap: 1.2rem;
+            }
+
+            .aftermath-card {
+                background: var(--marble-light);
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                padding: 1.4rem;
+                position: relative;
+            }
+
+            .aftermath-card h4 {
+                font-family: "Cinzel", serif;
+                font-size: 0.9rem;
+                color: var(--gold);
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
+                margin-bottom: 0.8rem;
+            }
+
+            .aftermath-dc {
+                font-family: "Cinzel", serif;
+                font-size: 0.75rem;
+                color: var(--text-dim);
+                margin-bottom: 0.8rem;
+            }
+
+            .outcome-row {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                font-size: 0.82rem;
+                gap: 0.3rem;
+                margin-bottom: 0.3rem;
+            }
+
+            .outcome-row .label {
+                color: var(--text-dim);
+                font-size: 0.75rem;
+                letter-spacing: 0.05em;
+                font-family: "Cinzel", serif;
+                text-transform: uppercase;
+            }
+
+            .win {
+                color: #4caf50;
+            }
+            .lose {
+                color: var(--vitality-light);
+            }
+
+            /* ─── TAG CARDS ──────────────────────────────────────── */
+            .tag-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+                gap: 1rem;
+            }
+
+            .tag-card {
+                background: var(--marble-light);
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                padding: 1.2rem 1.4rem;
+                transition:
+                    border-color 0.2s,
+                    transform 0.2s;
+            }
+
+            .tag-card:hover {
+                border-color: var(--border-strong);
+                transform: translateY(-2px);
+            }
+
+            .tag-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 0.6rem;
+                gap: 0.8rem;
+            }
+
+            .tag-name {
+                font-family: "Cinzel", serif;
+                font-size: 1rem;
+                font-weight: 700;
+                color: var(--gold-light);
+            }
+
+            .tag-action {
+                font-family: "Cinzel", serif;
+                font-size: 0.7rem;
+                letter-spacing: 0.05em;
+                text-transform: uppercase;
+                color: var(--text-dim);
+                text-align: right;
+                flex-shrink: 0;
+            }
+
+            .tag-effect {
+                font-size: 0.95rem;
+                color: #d4bc98;
+                line-height: 1.65;
+            }
+
+            /* ─── INFO BOXES ─────────────────────────────────────── */
+            .callout {
+                border-left: 3px solid;
+                padding: 1rem 1.4rem;
+                background: rgba(0, 0, 0, 0.2);
+                border-radius: 0 4px 4px 0;
+                margin: 1.2rem 0;
+                font-size: 0.97rem;
+            }
+
+            .callout-gold {
+                border-color: var(--gold);
+                background: rgba(201, 168, 76, 0.05);
+            }
+            .callout-red {
+                border-color: var(--vitality);
+                background: rgba(192, 57, 43, 0.05);
+            }
+            .callout-blue {
+                border-color: var(--wit);
+                background: rgba(26, 107, 138, 0.05);
+            }
+
+            .callout > strong:first-child {
+                display: block;
+                font-family: "Cinzel", serif;
+                font-size: 0.75rem;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                margin-bottom: 0.4rem;
+            }
+            .callout-gold strong {
+                color: var(--gold);
+            }
+            .callout-red strong {
+                color: var(--vitality-light);
+            }
+            .callout-blue strong {
+                color: var(--wit-light);
+            }
+
+            /* ─── MANEUVER BENEFITS ──────────────────────────────── */
+            .benefit-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 0.8rem;
+            }
+
+            .benefit-card {
+                background: rgba(201, 168, 76, 0.05);
+                border: 1px solid rgba(201, 168, 76, 0.15);
+                border-radius: 4px;
+                padding: 1rem;
+                text-align: center;
+            }
+
+            .benefit-card .name {
+                font-family: "Cinzel", serif;
+                font-size: 0.8rem;
+                color: var(--gold);
+                letter-spacing: 0.05em;
+                margin-bottom: 0.4rem;
+                text-transform: uppercase;
+            }
+
+            .benefit-card .desc {
+                font-size: 0.85rem;
+                color: var(--text-secondary);
+            }
+
+            /* ─── COUNTER TABLE ──────────────────────────────────── */
+            .counter-visual {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.8rem;
+                margin: 1rem 0;
+            }
+
+            .counter-item {
+                display: flex;
+                align-items: center;
+                gap: 0.8rem;
+                background: var(--marble-light);
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                padding: 0.7rem 1rem;
+                flex: 1;
+                min-width: 200px;
+            }
+
+            .counter-val {
+                font-family: "Cinzel Decorative", serif;
+                font-size: 1.8rem;
+                line-height: 1;
+                min-width: 2.5rem;
+                text-align: center;
+            }
+
+            .counter-val.pos {
+                color: #4caf50;
+            }
+            .counter-val.neg {
+                color: var(--vitality-light);
+            }
+
+            .counter-label {
+                font-size: 0.88rem;
+                color: var(--text-secondary);
+            }
+
+            /* ─── PC DEPLOY ──────────────────────────────────────── */
+            .deploy-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 1rem;
+            }
+
+            .deploy-card {
+                background: var(--marble-light);
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                padding: 1.2rem;
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+                transition: border-color 0.2s;
+            }
+
+            .deploy-card:hover {
+                border-color: var(--border-strong);
+            }
+
+            .deploy-name {
+                font-family: "Cinzel", serif;
+                font-size: 0.9rem;
+                color: var(--gold-light);
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+            }
+
+            .deploy-bonus {
+                font-family: "Cinzel", serif;
+                font-size: 1.4rem;
+                font-weight: 700;
+                color: var(--gold);
+            }
+
+            .deploy-note {
+                font-size: 0.83rem;
+                color: var(--text-secondary);
+            }
+
+            /* ─── MIRACLE SECTION ────────────────────────────────── */
+            .miracle-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 1rem;
+            }
+
+            .miracle-item {
+                background: linear-gradient(135deg, rgba(26, 107, 138, 0.1), rgba(26, 107, 138, 0.04));
+                border: 1px solid rgba(26, 107, 138, 0.25);
+                border-radius: 4px;
+                padding: 1.2rem;
+                text-align: center;
+            }
+
+            .miracle-item .number {
+                font-family: "Cinzel Decorative", serif;
+                font-size: 2rem;
+                color: var(--wit-light);
+            }
+
+            .miracle-item .label {
+                font-family: "Cinzel", serif;
+                font-size: 0.72rem;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--text-dim);
+                margin-top: 0.2rem;
+            }
+
+            .miracle-item .cost {
+                font-family: "Cinzel", serif;
+                font-size: 0.8rem;
+                color: var(--gold);
+                margin-top: 0.4rem;
+            }
+
+            /* ─── FOOTER ─────────────────────────────────────────── */
+            footer {
+                border-top: 1px solid var(--border);
+                text-align: center;
+                padding: 2.5rem;
+                color: var(--text-dim);
+                font-family: "Cinzel", serif;
+                font-size: 0.7rem;
+                letter-spacing: 0.15em;
+                text-transform: uppercase;
+            }
+
+            /* ─── ANIMATIONS ─────────────────────────────────────── */
+            @keyframes fadeInDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+
+            /* ─── SCROLLBAR ───────────────────────────────────────── */
+            ::-webkit-scrollbar {
+                width: 6px;
+                height: 6px;
+            }
+            ::-webkit-scrollbar-track {
+                background: var(--marble-dark);
+            }
+            ::-webkit-scrollbar-thumb {
+                background: var(--gold-dim);
+                border-radius: 3px;
+            }
+
+            /* ─── DEATH TOLL TABLE ───────────────────────────────── */
+            .death-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                gap: 0.8rem;
+                margin-top: 1rem;
+            }
+
+            .death-item {
+                background: rgba(139, 26, 26, 0.08);
+                border: 1px solid rgba(139, 26, 26, 0.2);
+                border-radius: 4px;
+                padding: 1rem;
+            }
+
+            .death-item .roll {
+                font-family: "Cinzel", serif;
+                font-size: 1.3rem;
+                color: var(--vitality-light);
+                margin-bottom: 0.3rem;
+            }
+
+            .death-item .situation {
+                font-size: 0.83rem;
+                color: var(--text-secondary);
+            }
+
+            /* ─── RECON TABLE ────────────────────────────────────── */
+            .recon-steps {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .recon-step {
+                display: grid;
+                grid-template-columns: 5rem 1fr;
+                gap: 1rem;
+                align-items: center;
+                background: var(--marble-light);
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                padding: 0.8rem 1.2rem;
+            }
+
+            .recon-roll {
+                font-family: "Cinzel Decorative", serif;
+                font-size: 1rem;
+                color: var(--wit-light);
+                text-align: center;
+            }
+
+            .recon-desc {
+                font-size: 0.97rem;
+                color: var(--text-secondary);
+            }
+
+            /* ─── MAJOR EVENT CARDS ──────────────────────────────── */
+            .event-grid {
+                display: flex;
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+
+            .event-card {
+                background: var(--marble-light);
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                padding: 1.2rem 1.4rem;
+                display: grid;
+                grid-template-columns: 1fr auto;
+                gap: 1rem;
+                align-items: center;
+                transition: border-color 0.2s;
+            }
+
+            .event-card:hover {
+                border-color: var(--border-strong);
+            }
+
+            .event-name {
+                font-family: "Cinzel", serif;
+                font-size: 0.9rem;
+                color: var(--gold-light);
+                letter-spacing: 0.04em;
+                margin-bottom: 0.3rem;
+            }
+
+            .event-desc {
+                font-size: 0.87rem;
+                color: var(--text-secondary);
+            }
+
+            .event-reward {
+                font-family: "Cinzel", serif;
+                font-size: 0.8rem;
+                color: var(--wit-light);
+                text-align: right;
+                white-space: nowrap;
+            }
+
+            /* ─── EXAMPLE BOX ────────────────────────────────────── */
+            .example-box {
+                background: rgba(0, 0, 0, 0.25);
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                padding: 1rem 1.4rem;
+                margin: 0.6rem 0;
+                font-size: 0.88rem;
+                color: var(--text-secondary);
+                font-style: italic;
+            }
+            .example-box strong {
+                font-style: normal;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="bg-canvas"></canvas>
+
+        <div class="page-wrapper">
+            <!-- ───── NAV ───── -->
+            <nav>
+                <a href="#stats">Stats</a>
+                <a href="#tags">Tags</a>
+                <a href="#round">Round</a>
+                <a href="#battle">Battle</a>
+                <a href="#aftermath">Aftermath</a>
+                <a href="#pcs">PCs</a>
+                <a href="#miracles">Miracles</a>
+                <a href="#objectives">Objectives</a>
+                <a href="#death">Death Toll</a>
+                <a href="#events">Major Events</a>
+            </nav>
+
+            <!-- ───── HERO ───── -->
+            <header class="hero">
+                <div class="hero-ornament">⚔ ✦ ⚔</div>
+                <h1>The Battle of Mytros</h1>
+                <p class="hero-sub">A War of Bronze, Will &amp; Cunning — Player's Field Guide</p>
+                <p class="hero-desc">
+                    A mass combat system for Odyssey of the Dragonlords — where every stat matters, every commander
+                    counts, and your choices shape the tide of battle.
+                </p>
+                <div class="hero-divider"></div>
+            </header>
+
+            <!-- ───── MAIN ───── -->
+            <main>
+                <!-- ══════════════ STATS ══════════════ -->
+                <section id="stats">
+                    <div class="section-header">
+                        <span class="section-number">I</span>
+                        <h2>Legion Stats<span class="title-line"></span></h2>
+                    </div>
+
+                    <p>
+                        Every legion is defined by <strong>three stats</strong>: Vitality, Morale, and Wit. Each stat is
+                        a <em>single total value</em> assigned by the DM, reflecting the combined quality of the
+                        legion's troops, training, equipment, and the influence of their commander.
+                    </p>
+
+                    <div class="callout callout-gold">
+                        <strong>Stat Totals</strong>
+                        Recommended total across all three stats: <strong>10–18 points</strong>. Stronger legions led by
+                        legendary commanders sit at the higher end; weaker or green legions at the lower end.
+                    </div>
+
+                    <div class="stat-grid">
+                        <!-- Vitality -->
+                        <div class="stat-card stat-vitality">
+                            <div class="stat-name">⚔ Vitality</div>
+                            <span class="stat-keyword">Stat of Survival</span>
+                            <p style="font-size: 0.97rem; color: #d4bc98">
+                                Physical toughness, endurance, and discipline under fire. Invest in Vitality for legions
+                                you intend to grind the enemy with attrition — or that must hold a critical position.
+                            </p>
+                            <div class="stat-uses">
+                                <div class="stat-use-item">Drives <strong>The Clash</strong> (Phase 3 of battle)</div>
+                                <div class="stat-use-item">
+                                    Governs the <strong>Recovery Check</strong> (injury intake)
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Morale -->
+                        <div class="stat-card stat-morale">
+                            <div class="stat-name">🔥 Morale</div>
+                            <span class="stat-keyword">Stat of Momentum</span>
+                            <p style="font-size: 0.97rem; color: #d4bc98">
+                                Fighting spirit, cohesion, and the willingness to press the attack. Invest in Morale for
+                                aggressive legions that need to win fast and inspire those around them.
+                            </p>
+                            <div class="stat-uses">
+                                <div class="stat-use-item">Drives <strong>The Charge</strong> (Phase 2 of battle)</div>
+                                <div class="stat-use-item">
+                                    Governs the <strong>Hope Check</strong> (morale gain/loss)
+                                </div>
+                                <div class="stat-use-item">
+                                    Acts as <strong>Protection</strong> in Commander Casualty checks
+                                </div>
+                                <div class="stat-use-item">
+                                    Caps at <strong>10</strong>; dropping to 0 causes a rout
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Wit -->
+                        <div class="stat-card stat-wit">
+                            <div class="stat-name">🧠 Wit</div>
+                            <span class="stat-keyword">Stat of Control</span>
+                            <p style="font-size: 0.97rem; color: #d4bc98">
+                                Tactical discipline, adaptability, and cunning. Invest in Wit for legions that need to
+                                punch above their weight through superior positioning.
+                            </p>
+                            <div class="stat-uses">
+                                <div class="stat-use-item">
+                                    Drives <strong>Reconnaissance</strong> (allied intelligence)
+                                </div>
+                                <div class="stat-use-item">
+                                    Drives <strong>The Maneuver</strong> (Phase 1 of battle)
+                                </div>
+                                <div class="stat-use-item">
+                                    Governs the <strong>Salvage Check</strong> (battlefield gains)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ══════════════ COMMANDER TAGS ══════════════ -->
+                <section id="tags">
+                    <div class="section-header">
+                        <span class="section-number">II</span>
+                        <h2>Commander Tags<span class="title-line"></span></h2>
+                    </div>
+
+                    <p>
+                        Each commander has <strong>2–3 tags</strong> that define their unique abilities. Every tag is a
+                        <strong>permanent, always-on passive bonus</strong> — there are no daily charges, no activation
+                        costs, and no refresh cycles. Tags are always on.
+                    </p>
+
+                    <div class="callout callout-blue">
+                        <strong>Conditional Tags</strong>
+                        If a tag's condition cannot be met (e.g., Zealot requires Morale 6+, but the legion is at 5),
+                        the tag simply has no effect until the condition is satisfied again. A newly assigned
+                        replacement commander arrives with their own tags, which take effect immediately.
+                    </div>
+
+                    <div class="tag-grid" style="margin-top: 1.5rem">
+                        <div class="tag-card">
+                            <div class="tag-header">
+                                <div class="tag-name">Tactician</div>
+                                <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
+                            </div>
+                            <div class="tag-effect">Advantage on <strong>Maneuver rolls</strong>.</div>
+                        </div>
+
+                        <div class="tag-card">
+                            <div class="tag-header">
+                                <div class="tag-name">Headhunter</div>
+                                <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
+                            </div>
+                            <div class="tag-effect">
+                                When this legion engages an enemy, the enemy suffers
+                                <strong>Disadvantage on their Clash roll</strong>. Furthermore, if the enemy commander
+                                must make a Commander Casualty Check, add <strong>+5%</strong> to their Base Death
+                                Chance.
+                            </div>
+                        </div>
+
+                        <div class="tag-card">
+                            <div class="tag-header">
+                                <div class="tag-name">Engineer</div>
+                                <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
+                            </div>
+                            <div class="tag-effect">
+                                Enemy legions engaging this legion in fortified sections suffer
+                                <strong>−2 to all battle rolls</strong> (Maneuver, Charge, Clash).
+                            </div>
+                        </div>
+
+                        <div class="tag-card">
+                            <div class="tag-header">
+                                <div class="tag-name">Rallier</div>
+                                <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
+                            </div>
+                            <div class="tag-effect">
+                                This legion gains <strong>+2 to Hope checks</strong>. Allied legions in adjacent
+                                sections gain <strong>+1 to Hope checks</strong>.
+                            </div>
+                        </div>
+
+                        <div class="tag-card">
+                            <div class="tag-header">
+                                <div class="tag-name">Terrorizer</div>
+                                <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
+                            </div>
+                            <div class="tag-effect">
+                                Enemy legions that fight this legion suffer
+                                <strong>Disadvantage on their Hope checks</strong> after the battle.
+                            </div>
+                        </div>
+
+                        <div class="tag-card">
+                            <div class="tag-header">
+                                <div class="tag-name">Fanatic</div>
+                                <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
+                            </div>
+                            <div class="tag-effect">
+                                This legion attacks with reckless fury, gaining
+                                <strong>Advantage on both Charge and Clash rolls</strong>. However, due to their
+                                disregard for survival, they suffer
+                                <strong>Disadvantage on their Recovery check</strong> after every battle.
+                            </div>
+                        </div>
+
+                        <div class="tag-card">
+                            <div class="tag-header">
+                                <div class="tag-name">Zealot</div>
+                                <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
+                            </div>
+                            <div class="tag-effect">
+                                While this legion's current Morale is <strong>6 or higher</strong>, it gains
+                                <strong>+2 to all three battle rolls</strong> (Maneuver, Charge, Clash).
+                            </div>
+                        </div>
+
+                        <div class="tag-card">
+                            <div class="tag-header">
+                                <div class="tag-name">Veteran</div>
+                                <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
+                            </div>
+                            <div class="tag-effect">
+                                On all d20 rolls, treat any natural result of <strong>4 or lower as a 5</strong>. This
+                                floor applies before modifiers.
+                            </div>
+                        </div>
+
+                        <div class="tag-card">
+                            <div class="tag-header">
+                                <div class="tag-name">Warden</div>
+                                <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
+                            </div>
+                            <div class="tag-effect">
+                                All allied legions in sections <strong>adjacent to this one</strong> gain
+                                <strong>+2 to their Recovery checks</strong>. This legion gains
+                                <strong>+2 to Clash rolls</strong>.
+                            </div>
+                        </div>
+
+                        <div class="tag-card">
+                            <div class="tag-header">
+                                <div class="tag-name">Mage</div>
+                                <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
+                            </div>
+                            <div class="tag-effect">
+                                Enemy legions fighting this one suffer
+                                <strong>−1 to all three battle rolls</strong> (Maneuver, Charge, Clash). The devastating
+                                nature of magical attacks also forces the enemy to make its
+                                <strong>Recovery check with Disadvantage</strong>.
+                            </div>
+                        </div>
+
+                        <div class="tag-card">
+                            <div class="tag-header">
+                                <div class="tag-name">Medic</div>
+                                <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
+                            </div>
+                            <div class="tag-effect">
+                                This legion makes its <strong>Recovery checks with Advantage</strong>. Additionally, if
+                                this legion wins a battle and succeeds on its Recovery check, it
+                                <strong>removes 1 existing injury</strong>.
+                            </div>
+                        </div>
+
+                        <div class="tag-card">
+                            <div class="tag-header">
+                                <div class="tag-name">Vanguard</div>
+                                <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
+                            </div>
+                            <div class="tag-effect">
+                                This legion may move <strong>3 sections instead of 2</strong> during the Planning phase.
+                                If it moves 3 sections this round, it gains
+                                <strong>Advantage to its Charge roll</strong>.
+                            </div>
+                        </div>
+
+                        <div class="tag-card">
+                            <div class="tag-header">
+                                <div class="tag-name">Divine Blood</div>
+                                <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
+                            </div>
+                            <div class="tag-effect">
+                                After each battle, this legion may
+                                <strong>re-roll one failed aftermath check</strong> (Recovery, Hope, or Salvage) and
+                                take the better result. Additionally, this commander's
+                                <strong>base death chance is reduced by 5%</strong>.
+                            </div>
+                        </div>
+
+                        <div class="tag-card">
+                            <div class="tag-header">
+                                <div class="tag-name">Brutal</div>
+                                <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
+                            </div>
+                            <div class="tag-effect">
+                                When this legion <strong>wins a battle</strong>, the enemy makes its Recovery check with
+                                <strong>Disadvantage</strong>. If the enemy already has 4 or more injuries after the
+                                check, they take <strong>1 additional injury</strong>.
+                            </div>
+                        </div>
+
+                        <div class="tag-card">
+                            <div class="tag-header">
+                                <div class="tag-name">Ironclad</div>
+                                <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
+                            </div>
+                            <div class="tag-effect">
+                                <strong>+2 to all Vitality-based rolls</strong> (Clash, Recovery checks).
+                            </div>
+                        </div>
+
+                        <div class="tag-card">
+                            <div class="tag-header">
+                                <div class="tag-name">Inspiring</div>
+                                <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
+                            </div>
+                            <div class="tag-effect">
+                                <strong>+2 to all Morale-based rolls</strong> (Charge, Hope checks).
+                            </div>
+                        </div>
+
+                        <div class="tag-card">
+                            <div class="tag-header">
+                                <div class="tag-name">Cunning</div>
+                                <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
+                            </div>
+                            <div class="tag-effect">
+                                <strong>+2 to all Wit-based rolls</strong> (Maneuver, Salvage).
+                            </div>
+                        </div>
+
+                        <div class="tag-card">
+                            <div class="tag-header">
+                                <div class="tag-name">Bulwark</div>
+                                <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
+                            </div>
+                            <div class="tag-effect">
+                                This legion is destroyed at <strong>7 injuries instead of 6</strong>. The extra
+                                resilience represents reserves, fortified positions, or supernatural endurance.
+                            </div>
+                        </div>
+
+                        <div class="tag-card">
+                            <div class="tag-header">
+                                <div class="tag-name">Relentless</div>
+                                <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
+                            </div>
+                            <div class="tag-effect">This legion's <strong>Morale may never fall below 2</strong>.</div>
+                        </div>
+
+                        <div class="tag-card">
+                            <div class="tag-header">
+                                <div class="tag-name">Siege Breaker</div>
+                                <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
+                            </div>
+                            <div class="tag-effect">
+                                Enemy <strong>fortification bonuses are nullified</strong> when fighting this legion.
+                                The legion treats every section as unfortified terrain. This also disables opposing
+                                Engineer tags.
+                            </div>
+                        </div>
+
+                        <div
+                            class="tag-card"
+                            style="
+                                border-color: rgba(201, 168, 76, 0.4);
+                                background: linear-gradient(135deg, rgba(201, 168, 76, 0.08), rgba(201, 168, 76, 0.02));
+                            "
+                        >
+                            <div class="tag-header">
+                                <div class="tag-name" style="color: var(--gold)">Unbreakable Pact</div>
+                                <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
+                            </div>
+                            <div class="tag-effect">
+                                This commander rolls all <strong>Commander Casualty checks with advantage</strong> (roll
+                                1d100 twice, take the lower result). This bond is instinctive and always active.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ══════════════ ROUND STRUCTURE ══════════════ -->
+                <section id="round">
+                    <div class="section-header">
+                        <span class="section-number">III</span>
+                        <h2>Round Structure<span class="title-line"></span></h2>
+                    </div>
+
+                    <p>
+                        Each round represents roughly <strong>one hour</strong> of battle. The round flows through
+                        <strong>five phases</strong> in order. The battle continues indefinitely until a termination
+                        condition is met.
+                    </p>
+
+                    <div class="mermaid-wrap">
+                        <div class="mermaid">
+                            flowchart TD R1["⬡ PHASE 1\nReconnaissance\n1d20 + highest allied Wit"] R2["⬡ PHASE
+                            2\nPlanning & Commitment\nDM records secretly · Players lock in movements"] R3["⬡ PHASE
+                            3\nReveal & Fast Response\nEnemy moves revealed · PCs choose battles"] R4["⬡ PHASE
+                            4\nBattle\nAll battles resolve simultaneously\n⚠ Major Event may pull PCs into D&D
+                            encounter"] R5["⬡ PHASE 5\nAftermath & Objectives\nRecovery · Hope · Salvage · Commander
+                            Casualty\nLosers pushed back 1 section\nIdle legions: –1 injury, +1 Morale\nCheck objectives
+                            · Calculate deaths · Check end conditions"] R1 --> R2 --> R3 --> R4 --> R5 R5 -->|"Next
+                            Round"| R1 style R1 fill:#1a3050,stroke:#4a7fb5,color:#b8d4f0 style R2
+                            fill:#2a2a18,stroke:#8a7a30,color:#d4c87a style R3 fill:#1a2a1a,stroke:#4a7a4a,color:#8aaa8a
+                            style R4 fill:#3a1a1a,stroke:#8a3030,color:#e07070 style R5
+                            fill:#2a1a30,stroke:#7a4a8a,color:#c09ad0
+                        </div>
+                    </div>
+
+                    <ul class="phases-list" style="margin-top: 1.5rem">
+                        <li class="phase-item">
+                            <span class="phase-num">1</span>
+                            <div>
+                                <div class="phase-title">Reconnaissance <span class="badge badge-w">Wit</span></div>
+                                <div class="phase-body">
+                                    Roll <strong>1d20 + highest Wit</strong> among all allied legions. Result determines
+                                    how much enemy movement intel you receive this round.
+                                </div>
+                            </div>
+                        </li>
+                        <li class="phase-item">
+                            <span class="phase-num">2</span>
+                            <div>
+                                <div class="phase-title">Planning &amp; Commitment</div>
+                                <div class="phase-body">
+                                    The DM secretly records enemy movements. Intel from Phase 1 is revealed. Players
+                                    plan and lock in all allied movements (up to <strong>2 sections per legion</strong>)
+                                    and decide where each PC deploys.
+                                </div>
+                            </div>
+                        </li>
+                        <li class="phase-item">
+                            <span class="phase-num">3</span>
+                            <div>
+                                <div class="phase-title">Reveal &amp; Fast Response</div>
+                                <div class="phase-body">
+                                    Enemy movements are revealed and battle pairings are determined. Enemy fast response
+                                    forces deploy first, then players deploy PCs.
+                                </div>
+                            </div>
+                        </li>
+                        <li class="phase-item">
+                            <span class="phase-num">4</span>
+                            <div>
+                                <div class="phase-title">Battle</div>
+                                <div class="phase-body">
+                                    All battles resolve simultaneously. If the DM triggers a
+                                    <strong>Major Event</strong>, relevant players are pulled into a full D&amp;D
+                                    encounter instead.
+                                </div>
+                            </div>
+                        </li>
+                        <li class="phase-item">
+                            <span class="phase-num">5</span>
+                            <div>
+                                <div class="phase-title">Aftermath &amp; Objectives</div>
+                                <div class="phase-body">
+                                    Recovery, Hope, Salvage, and Commander Casualty checks. Losers retreat 1 section.
+                                    Legions that <em>did not fight</em> remove 1 injury and gain +1 Morale. Check
+                                    strategic objectives. Calculate and add to civilian death toll. Check end-of-battle
+                                    conditions.
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <h3>Reconnaissance Table</h3>
+                    <div class="recon-steps">
+                        <div class="recon-step">
+                            <div class="recon-roll">≤ 10</div>
+                            <div class="recon-desc">No enemy movements revealed</div>
+                        </div>
+                        <div class="recon-step">
+                            <div class="recon-roll">11–14</div>
+                            <div class="recon-desc">Learn the destination of <strong>2 enemy legions</strong></div>
+                        </div>
+                        <div class="recon-step">
+                            <div class="recon-roll">15–18</div>
+                            <div class="recon-desc">
+                                Learn the destinations of up to <strong>half the enemy legions</strong> (rounded up)
+                            </div>
+                        </div>
+                        <div class="recon-step">
+                            <div class="recon-roll">19–22</div>
+                            <div class="recon-desc">Learn <strong>all enemy legion destinations</strong></div>
+                        </div>
+                        <div
+                            class="recon-step"
+                            style="
+                                background: linear-gradient(135deg, rgba(26, 107, 138, 0.1), transparent);
+                                border-color: rgba(26, 107, 138, 0.3);
+                            "
+                        >
+                            <div class="recon-roll" style="color: var(--gold)">23+</div>
+                            <div class="recon-desc">
+                                Learn all enemy destinations and gain
+                                <strong>+1 to all allied Maneuver rolls</strong> this round
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="callout callout-gold" style="margin-top: 1.5rem">
+                        <strong>End of Battle Conditions</strong>
+                        The battle ends when: (1) one side has no legions remaining, (2) all major story events have
+                        been resolved and the DM declares the battle concluded, or (3) a battle-ending major event
+                        occurs (e.g. Kentimane's defeat).
+                    </div>
+                </section>
+
+                <!-- ══════════════ BATTLE RESOLUTION ══════════════ -->
+                <section id="battle">
+                    <div class="section-header">
+                        <span class="section-number">IV</span>
+                        <h2>Battle Resolution<span class="title-line"></span></h2>
+                    </div>
+
+                    <p>
+                        When opposing legions meet in the same section, battle occurs in
+                        <strong>three sequential phases</strong>. Winning earlier phases feeds advantages into later
+                        ones — dominating from the start compounds your victory.
+                    </p>
+
+                    <div class="mermaid-wrap">
+                        <div class="mermaid">
+                            flowchart LR M["🧠 PHASE 1\nThe Maneuver\n1d20 + Wit\nWinner chooses 1 benefit"] C["🔥 PHASE
+                            2\nThe Charge\n1d20 + Morale\nWinner gains +1 to Clash\n+1 Counter Point"] CL["⚔ PHASE
+                            3\nThe Clash\n1d20 + Vitality\nWinner scores\n+2 Counter Points"] V["🏆 TALLY\nBattle
+                            Counter\nHighest wins\nTie → Vitality sudden death"] M -->|"+1d4 Charge bonus\nor other
+                            benefit"| C C -->|"+1 to Clash roll\nfor Charge winner"| CL CL --> V style M
+                            fill:#1a2a3a,stroke:#3a7ab5,color:#90c0e8 style C fill:#3a2a10,stroke:#b58030,color:#e8c070
+                            style CL fill:#3a1a1a,stroke:#b53030,color:#e87070 style V
+                            fill:#1a3a1a,stroke:#30a030,color:#70e870
+                        </div>
+                    </div>
+
+                    <h3>Phase 1: The Maneuver (Wit)</h3>
+                    <p>Both sides roll 1d20 + Wit. The winner chooses one benefit for the rest of this battle.</p>
+                    <div class="benefit-grid">
+                        <div class="benefit-card">
+                            <div class="name">Flanking Position</div>
+                            <div class="desc"><strong>+1d4</strong> to your Charge roll (Phase 2)</div>
+                        </div>
+                        <div class="benefit-card">
+                            <div class="name">Defensive Footing</div>
+                            <div class="desc"><strong>+1d2</strong> to your Clash roll (Phase 3)</div>
+                        </div>
+                        <div class="benefit-card">
+                            <div class="name">Disrupted Formation</div>
+                            <div class="desc">Enemy suffers <strong>−1</strong> to both Charge and Clash rolls</div>
+                        </div>
+                        <div class="benefit-card">
+                            <div class="name">Seized Initiative</div>
+                            <div class="desc">
+                                If you win the overall battle, enemy takes <strong>+1d2 extra injury</strong> in
+                                aftermath
+                            </div>
+                        </div>
+                    </div>
+                    <div class="callout callout-blue" style="margin-top: 0.8rem">
+                        <strong>Maneuver Tie-Breaker</strong>
+                        Both sides reroll (up to 3 times). If still tied after 3 rerolls, no benefit is granted and
+                        neither side scores a counter point for this phase.
+                    </div>
+
+                    <h3>Phase 2: The Charge (Morale)</h3>
+                    <p>
+                        Both sides roll 1d20 + Morale. The Charge winner gains +1 to their Clash roll and scores a
+                        counter point.
+                    </p>
+                    <div class="callout callout-blue">
+                        <strong>Charge Tie-Breaker</strong>
+                        Both sides reroll once. If still tied, neither side gains the Clash bonus.
+                    </div>
+
+                    <h3>Phase 3: The Clash (Vitality)</h3>
+                    <p>Both sides roll 1d20 + Vitality. The Clash winner scores <strong>two counter points</strong>.</p>
+                    <div class="callout callout-blue">
+                        <strong>Clash Tie-Breaker</strong>
+                        The melee was brutal and indecisive — no one gains counter points.
+                    </div>
+
+                    <h3>Battle Counter Scoring</h3>
+                    <div class="counter-visual">
+                        <div class="counter-item">
+                            <div class="counter-val pos">+1</div>
+                            <div class="counter-label">Win any phase<br /><small>(+2 for The Clash)</small></div>
+                        </div>
+                        <div class="counter-item">
+                            <div class="counter-val pos">+1</div>
+                            <div class="counter-label">
+                                <strong>Bonus</strong> counter point<br />on top when winning with
+                                <strong>natural 20</strong>
+                            </div>
+                        </div>
+                        <div class="counter-item">
+                            <div class="counter-val neg">−1</div>
+                            <div class="counter-label">Lose any phase</div>
+                        </div>
+                        <div class="counter-item">
+                            <div class="counter-val neg">−1</div>
+                            <div class="counter-label">
+                                <strong>Extra</strong> penalty<br />on top when losing with <strong>natural 1</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="callout callout-gold">
+                        <strong>Final Tie-Breaker</strong>
+                        If both sides have equal battle counters after all three phases, a
+                        <strong>sudden-death contested Vitality roll</strong> determines the victor. Reroll until one
+                        side wins.
+                    </div>
+
+                    <h3>Fortification</h3>
+                    <p>
+                        A section can be fortified after being <strong>held for a full round</strong>. Fortification
+                        grants <strong>+1 to all rolls</strong> for the defending side and is lost when the opposing
+                        side claims the section.
+                    </p>
+                </section>
+
+                <!-- ══════════════ AFTERMATH ══════════════ -->
+                <section id="aftermath">
+                    <div class="section-header">
+                        <span class="section-number">V</span>
+                        <h2>Aftermath Checks<span class="title-line"></span></h2>
+                    </div>
+
+                    <p>
+                        After each battle, <strong>all legions that fought</strong> (both winner and loser) make four
+                        checks. Outcomes differ based on whether the legion won or lost.
+                    </p>
+
+                    <div class="mermaid-wrap">
+                        <div class="mermaid">
+                            flowchart TD B["Battle Ends"] RC["Recovery Check\n1d20 + Vitality\nvs DC (12 + current
+                            injuries)"] HC["Hope Check\n1d20 + current Morale\nvs DC 12"] SC["Salvage Check\n1d20 +
+                            Wit\nvs DC 12"] CC["Commander Casualty\n1d100 vs Final Death Target"] B --> RC --> HC --> SC
+                            --> CC RC -->|"Fail"| RCF["Winner: 1 injury\nLoser: 2 injuries"] RC -->|"Pass"| RCP["Winner:
+                            0 injuries\nLoser: 1 injury"] HC -->|"Fail"| HCF["Winner: +1 Morale\nLoser: –2 Morale"] HC
+                            -->|"Pass"| HCP["Winner: +2 Morale\nLoser: –1 Morale"] SC -->|"Pass"| SCP["Choose 1
+                            benefit\n(Nat 20: choose 2)"] HC -->|"Morale = 0"| ROUT["ROUT!\nRetreat up to 3
+                            sections\nCannot act next round"] style B fill:#2a1a1a,stroke:#8a3030,color:#e07070 style RC
+                            fill:#1a2a3a,stroke:#4a6a8a,color:#80b0d0 style HC fill:#2a2a10,stroke:#8a7a20,color:#d0c060
+                            style SC fill:#1a2a1a,stroke:#4a7a4a,color:#80c080 style CC
+                            fill:#3a1a3a,stroke:#8a4a8a,color:#c080c0 style ROUT
+                            fill:#4a0000,stroke:#cc0000,color:#ff8080 style RCF
+                            fill:#2a1010,stroke:#603030,color:#c07070 style RCP
+                            fill:#102a10,stroke:#306030,color:#70c070 style HCF
+                            fill:#2a2010,stroke:#607020,color:#c0b060 style HCP
+                            fill:#102a10,stroke:#306030,color:#70c070 style SCP
+                            fill:#10202a,stroke:#305060,color:#60a0c0
+                        </div>
+                    </div>
+
+                    <div class="aftermath-grid" style="margin-top: 1.5rem">
+                        <div class="aftermath-card">
+                            <h4>⚔ Recovery <span class="badge badge-v">Vitality</span></h4>
+                            <div class="aftermath-dc">Roll 1d20 + Vitality vs DC (12 + current injuries)</div>
+                            <div class="outcome-row">
+                                <span class="label">Outcome</span><span class="label win">Winner</span
+                                ><span class="label lose">Loser</span>
+                            </div>
+                            <div class="outcome-row">
+                                <span>Pass</span><span class="win">0 injuries</span><span class="lose">1 injury</span>
+                            </div>
+                            <div class="outcome-row">
+                                <span>Fail</span><span class="win">1 injury</span><span class="lose">2 injuries</span>
+                            </div>
+                            <p style="font-size: 0.8rem; color: var(--text-dim); margin-top: 0.7rem">
+                                At <strong>6 injuries</strong> the legion is destroyed (7 with <em>Bulwark</em>).
+                                Natural 1 always fails.
+                            </p>
+                        </div>
+
+                        <div class="aftermath-card">
+                            <h4>🔥 Hope <span class="badge badge-m">Morale</span></h4>
+                            <div class="aftermath-dc">Roll 1d20 + current Morale vs DC 12</div>
+                            <div class="outcome-row">
+                                <span class="label">Outcome</span><span class="label win">Winner</span
+                                ><span class="label lose">Loser</span>
+                            </div>
+                            <div class="outcome-row">
+                                <span>Pass</span><span class="win">+2 Morale</span><span class="lose">−1 Morale</span>
+                            </div>
+                            <div class="outcome-row">
+                                <span>Fail</span><span class="win">+1 Morale</span><span class="lose">−2 Morale</span>
+                            </div>
+                            <p style="font-size: 0.8rem; color: var(--text-dim); margin-top: 0.7rem">
+                                Morale caps at <strong>10</strong>. Hitting 0 triggers a rout (see below).
+                            </p>
+                        </div>
+
+                        <div class="aftermath-card">
+                            <h4>🧠 Salvage <span class="badge badge-w">Wit</span></h4>
+                            <div class="aftermath-dc">Roll 1d20 + Wit vs DC 12 (both sides)</div>
+                            <p style="font-size: 0.88rem; color: var(--text-secondary)">
+                                On success, <strong>choose 1 benefit</strong>. On a natural 20,
+                                <strong>choose 2</strong>.
+                            </p>
+                            <div style="margin-top: 0.6rem; display: flex; flex-direction: column; gap: 0.3rem">
+                                <div style="font-size: 0.82rem; color: var(--text-secondary)">
+                                    🔹 <strong>Captured Supplies</strong> — Remove 1 injury
+                                </div>
+                                <div style="font-size: 0.82rem; color: var(--text-secondary)">
+                                    🔹 <strong>Tactical Insight</strong> — +1d2 to Wit rolls next round
+                                </div>
+                                <div style="font-size: 0.82rem; color: var(--text-secondary)">
+                                    🔹 <strong>Enemy Shaken</strong> — Opposing legion −1 Morale
+                                </div>
+                                <div style="font-size: 0.82rem; color: var(--text-secondary)">
+                                    🔹 <strong>Quick Fortify</strong> — Immediately fortify held section
+                                </div>
+                            </div>
+                        </div>
+
+                        <div
+                            class="aftermath-card"
+                            style="
+                                border-color: rgba(139, 26, 139, 0.4);
+                                background: linear-gradient(135deg, rgba(139, 26, 139, 0.08), transparent);
+                            "
+                        >
+                            <h4>💀 Commander Casualty</h4>
+                            <div class="aftermath-dc">1d100 vs Final Death Target (min 1%)</div>
+                            <div class="table-wrap">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Situation</th>
+                                            <th>Base %</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Won the battle</td>
+                                            <td><strong style="color: #4caf50">6%</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Lost the battle</td>
+                                            <td><strong style="color: #e67e22">12%</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Lost by 3+ counter</td>
+                                            <td><strong style="color: var(--vitality-light)">20%</strong></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.7rem">
+                                <strong>Protection</strong> = legion's current Morale. Subtract Protection from Base %
+                                to get Final Death Target (minimum 1%). Roll 1d100 — at or under the target, the
+                                commander falls.
+                            </p>
+                        </div>
+                    </div>
+
+                    <h3>Commander Casualty Examples</h3>
+                    <div class="example-box">
+                        <strong>Example 1:</strong> A legion with <em>5 Morale</em> loses a battle. Base Death Chance
+                        12% − 5 Protection = <strong>7% Final Death Target</strong>. On a 1–7, the commander dies.
+                    </div>
+                    <div class="example-box">
+                        <strong>Example 2:</strong> A legion with <em>2 Morale</em> loses by 3+ on the counter. Base
+                        Death Chance 20% − 2 Protection = <strong>18% Final Death Target</strong>. Extremely dangerous.
+                    </div>
+                    <div class="example-box">
+                        <strong>Example 3:</strong> A legion with <em>8 Morale</em> wins the battle. Base Death Chance
+                        6% − 8 Protection = capped to <strong>1% Final Death Target</strong>. Only a 1 kills the
+                        commander.
+                    </div>
+
+                    <div class="callout callout-gold" style="margin-top: 0.5rem">
+                        <strong>On Commander Death</strong>
+                        The legion immediately loses 1 Morale. A replacement commander takes command at the start of the
+                        next round with their own tags. If no reserves remain, the legion operates without a commander —
+                        no tags apply.
+                    </div>
+
+                    <div class="callout callout-red" style="margin-top: 1rem">
+                        <strong>Rout Rules</strong>
+                        When Morale hits 0: legion retreats up to 3 sections toward nearest allied territory and
+                        <strong>cannot act next round</strong> (unless it has the <em>Relentless</em> tag). If an enemy
+                        occupies a routed legion's section while it has 0 Morale and no allied legion is present, the
+                        routed legion is <strong>disbanded</strong>. Phase 5 passive recovery (+1 Morale) is enough to
+                        rally a routed legion.
+                    </div>
+                </section>
+
+                <!-- ══════════════ PLAYER CHARACTERS ══════════════ -->
+                <section id="pcs">
+                    <div class="section-header">
+                        <span class="section-number">VI</span>
+                        <h2>Player Characters as Fast Response<span class="title-line"></span></h2>
+                    </div>
+
+                    <p>
+                        The PCs are the allied side's <strong>only fast response capability</strong>. After battle
+                        pairings are revealed in Phase 3, each PC chooses a battle to influence. Multiple PCs can stack
+                        in the same battle — a powerful choice with a real cost.
+                    </p>
+
+                    <div class="deploy-grid">
+                        <div class="deploy-card">
+                            <div class="deploy-name">Reinforce</div>
+                            <div class="deploy-bonus">+1d4</div>
+                            <div class="deploy-note">
+                                To <strong>all battle and aftermath rolls</strong> for the allied legion. Balanced
+                                option — helps across the board.
+                            </div>
+                        </div>
+                        <div class="deploy-card">
+                            <div class="deploy-name">Shock Assault</div>
+                            <div class="deploy-bonus">+1d6</div>
+                            <div class="deploy-note">
+                                To <strong>all three battle phase rolls only</strong> (no aftermath bonus). High
+                                offensive impact.
+                            </div>
+                        </div>
+                        <div class="deploy-card">
+                            <div class="deploy-name">Targeted Strike</div>
+                            <div class="deploy-bonus">+1d8 + Adv</div>
+                            <div class="deploy-note">
+                                To <strong>one specific battle phase roll</strong>, plus advantage on that roll. Ideal
+                                for securing a single critical phase.
+                            </div>
+                        </div>
+                        <div class="deploy-card">
+                            <div class="deploy-name">Shield the Wounded</div>
+                            <div class="deploy-bonus">+1d8</div>
+                            <div class="deploy-note">
+                                To the <strong>first three aftermath rolls</strong> (Recovery, Hope, Salvage). Protects
+                                a battered legion from collapse.
+                            </div>
+                        </div>
+                        <div
+                            class="deploy-card"
+                            style="
+                                border-color: rgba(201, 168, 76, 0.4);
+                                background: linear-gradient(135deg, rgba(201, 168, 76, 0.08), transparent);
+                            "
+                        >
+                            <div class="deploy-name" style="color: var(--gold)">Protect</div>
+                            <div class="deploy-bonus" style="color: var(--gold)">Shield</div>
+                            <div class="deploy-note">
+                                The PC stays at the commander's side throughout the battle.
+                                <strong>No Commander Casualty check</strong> is made for this legion this round.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="callout callout-gold" style="margin-top: 1.5rem">
+                        <strong>Stacking &amp; Trade-offs</strong>
+                        Three PCs each choosing Reinforce gives +3d4 to all rolls — but leaves every other battle
+                        unsupported. You cannot be everywhere at once. This trade-off is always meaningful.
+                    </div>
+
+                    <h3>Resting</h3>
+                    <p>
+                        A PC may <strong>skip a round of deployment to take a short rest</strong>. This is important
+                        because Major Events (full D&amp;D encounters) can strike at any time, and arriving with spent
+                        resources is costly.
+                    </p>
+                </section>
+
+                <!-- ══════════════ MIRACLES ══════════════ -->
+                <section id="miracles">
+                    <div class="section-header">
+                        <span class="section-number">VII</span>
+                        <h2>Miracles<span class="title-line"></span></h2>
+                    </div>
+
+                    <p>
+                        Each side possesses a pool of <strong>Miracle Points</strong> per round. Typically, Sydon starts
+                        with <strong>10 points</strong>, while the allied forces start with <strong>8 points</strong>.
+                        These pools shift during battle as story events unfold.
+                    </p>
+
+                    <div class="miracle-grid">
+                        <div class="miracle-item">
+                            <div class="number">+N</div>
+                            <div class="label">Roll Bonus</div>
+                            <div class="cost" style="font-size: 0.75rem; color: var(--text-dim)">
+                                1 point per +1 to any roll
+                            </div>
+                        </div>
+                        <div class="miracle-item">
+                            <div class="number">Adv</div>
+                            <div class="label">Divine Advantage</div>
+                            <div class="cost">2 Points</div>
+                        </div>
+                        <div class="miracle-item">
+                            <div class="number" style="font-size: 1.4rem">Short<br />Rest</div>
+                            <div class="label">Divine Restoration</div>
+                            <div class="cost">2 Points · one PC</div>
+                        </div>
+                        <div class="miracle-item">
+                            <div class="number" style="font-size: 1.4rem">Long<br />Rest</div>
+                            <div class="label">Divine Restoration</div>
+                            <div class="cost">4 Points · one PC</div>
+                        </div>
+                    </div>
+
+                    <div class="callout callout-blue" style="margin-top: 1.5rem">
+                        <strong>How Points Work</strong>
+                        Distribute points as flat bonuses to any rolls (battle, aftermath, or reconnaissance), spend 2
+                        to grant advantage on any roll before it's made, or spend points to give a PC an immediate short
+                        or long rest.
+                    </div>
+
+                    <p style="margin-top: 1rem; color: var(--text-secondary)">
+                        Miracle pools shift during the battle based on story outcomes — temples destroyed, divine
+                        manifestations, major events resolved. <strong>Let the story drive the numbers.</strong>
+                    </p>
+                </section>
+
+                <!-- ══════════════ STRATEGIC OBJECTIVES ══════════════ -->
+                <section id="objectives">
+                    <div class="section-header">
+                        <span class="section-number">VIII</span>
+                        <h2>Strategic Objectives<span class="title-line"></span></h2>
+                    </div>
+
+                    <p>
+                        Sydon's forces target <strong>symbols of mortal civilization</strong>. These objectives are
+                        marked openly on the map from the start — both sides know what is at stake. Consequences are
+                        <strong>permanent and cumulative</strong>.
+                    </p>
+
+                    <div class="callout callout-red">
+                        <strong>Destruction Rule</strong>
+                        If Sydon's forces claim a section containing an objective and
+                        <strong>hold it for one additional round</strong>, the objective is destroyed. Its consequences
+                        take effect immediately and last for the rest of the battle.
+                    </div>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Objective</th>
+                                    <th>Sydon Gains if Destroyed</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Temple of the Five</td>
+                                    <td><strong style="color: var(--vitality-light)">+3 Miracle Points</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>Royal Palace</td>
+                                    <td>+2 Miracle Points</td>
+                                </tr>
+                                <tr>
+                                    <td>The Dockyard</td>
+                                    <td>+2 Miracle Points</td>
+                                </tr>
+                                <tr>
+                                    <td>Soldier's Gate</td>
+                                    <td>+2 Miracle Points</td>
+                                </tr>
+                                <tr>
+                                    <td>The Agora</td>
+                                    <td>+2 Miracle Points</td>
+                                </tr>
+                                <tr>
+                                    <td>The Academy</td>
+                                    <td>+2 Miracle Points</td>
+                                </tr>
+                                <tr>
+                                    <td>The Gymnasium</td>
+                                    <td>+2 Miracle Points</td>
+                                </tr>
+                                <tr>
+                                    <td>The Harp Bridge</td>
+                                    <td>+2 Miracle Points</td>
+                                </tr>
+                                <tr>
+                                    <td>The Vineyards of Mytros</td>
+                                    <td>+2 Miracle Points</td>
+                                </tr>
+                                <tr>
+                                    <td>Fish Market &amp; Commerce Gate</td>
+                                    <td>+1 Miracle Points</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- ══════════════ CIVILIAN DEATH TOLL ══════════════ -->
+                <section id="death">
+                    <div class="section-header">
+                        <span class="section-number">IX</span>
+                        <h2>Civilian Death Toll<span class="title-line"></span></h2>
+                    </div>
+
+                    <p>
+                        This is not just a military contest — every round of fighting costs the city its people. Track a
+                        <strong>running Death Toll</strong> alongside the battle map. At the end of each Phase 5, add
+                        that round's deaths to the cumulative total.
+                    </p>
+
+                    <p style="color: var(--text-secondary)">
+                        Roll once per engagement and once per destroyed objective still burning:
+                    </p>
+
+                    <div class="death-grid">
+                        <div class="death-item">
+                            <div class="roll">1d4 × 10</div>
+                            <div class="situation">Allied legion <strong>won</strong> the battle</div>
+                        </div>
+                        <div class="death-item">
+                            <div class="roll">1d6 × 50</div>
+                            <div class="situation">Allied legion <strong>lost</strong> the battle</div>
+                        </div>
+                        <div class="death-item">
+                            <div class="roll">1d6 × 50</div>
+                            <div class="situation">Sydon's legion was <strong>not engaged</strong> this round</div>
+                        </div>
+                        <div class="death-item">
+                            <div class="roll">1d4 × 10</div>
+                            <div class="situation">
+                                <strong>Per destroyed objective</strong> still burning (each round)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="callout callout-red" style="margin-top: 1.2rem">
+                        <strong>Consequence</strong>
+                        The cumulative Death Toll at battle's end determines how the city remembers the heroes when the
+                        dust settles. Every decision you make has a cost in lives.
+                    </div>
+                </section>
+
+                <!-- ══════════════ MAJOR EVENTS ══════════════ -->
+                <section id="events">
+                    <div class="section-header">
+                        <span class="section-number">X</span>
+                        <h2>Major Events<span class="title-line"></span></h2>
+                    </div>
+
+                    <p>
+                        At dramatic moments, the DM triggers a major event that pulls some or all PCs into a full
+                        D&amp;D encounter — a direct confrontation, a ritual to interrupt, a titan's challenge. The mass
+                        combat system handles everything between those moments.
+                    </p>
+
+                    <p>
+                        If the players resolve a major event in the allied side's favor, they earn a permanent bonus
+                        that shifts the balance of the wider battle. The DM will reveal what's at stake when the moment
+                        arrives.
+                    </p>
+
+                    <div class="callout callout-gold">
+                        <strong>While PCs are away</strong>
+                        Legions continue fighting without PC support during a major event. Consider where your legions
+                        are and which battles they can hold on their own before the encounter begins.
+                    </div>
+
+                    <p
+                        style="
+                            margin-top: 2rem;
+                            text-align: center;
+                            font-family: &quot;Cinzel&quot;, serif;
+                            font-size: 1rem;
+                            color: var(--gold-dim);
+                            letter-spacing: 0.1em;
+                            font-style: italic;
+                        "
+                    >
+                        May the dice favor the bold.
+                    </p>
+                </section>
+            </main>
+
+            <footer>
+                The Battle of Mytros · Player Field Guide · Odyssey of the Dragonlords · All rights to original content
+                remain with their respective owners
+            </footer>
         </div>
-      </div>
-
-      <!-- Morale -->
-      <div class="stat-card stat-morale">
-        <div class="stat-name">🔥 Morale</div>
-        <span class="stat-keyword">Stat of Momentum</span>
-        <p style="font-size:0.97rem; color:#d4bc98;">Fighting spirit, cohesion, and the willingness to press the attack. Invest in Morale for aggressive legions that need to win fast and inspire those around them.</p>
-        <div class="stat-uses">
-          <div class="stat-use-item">Drives <strong>The Charge</strong> (Phase 2 of battle)</div>
-          <div class="stat-use-item">Governs the <strong>Hope Check</strong> (morale gain/loss)</div>
-          <div class="stat-use-item">Acts as <strong>Protection</strong> in Commander Casualty checks</div>
-          <div class="stat-use-item">Caps at <strong>10</strong>; dropping to 0 causes a rout</div>
-        </div>
-      </div>
-
-      <!-- Wit -->
-      <div class="stat-card stat-wit">
-        <div class="stat-name">🧠 Wit</div>
-        <span class="stat-keyword">Stat of Control</span>
-        <p style="font-size:0.97rem; color:#d4bc98;">Tactical discipline, adaptability, and cunning. Invest in Wit for legions that need to punch above their weight through superior positioning.</p>
-        <div class="stat-uses">
-          <div class="stat-use-item">Drives <strong>Reconnaissance</strong> (allied intelligence)</div>
-          <div class="stat-use-item">Drives <strong>The Maneuver</strong> (Phase 1 of battle)</div>
-          <div class="stat-use-item">Governs the <strong>Salvage Check</strong> (battlefield gains)</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ══════════════ COMMANDER TAGS ══════════════ -->
-  <section id="tags">
-    <div class="section-header">
-      <span class="section-number">II</span>
-      <h2>Commander Tags<span class="title-line"></span></h2>
-    </div>
-
-    <p>Each commander has <strong>2–3 tags</strong> that define their unique abilities. Every tag is a <strong>permanent, always-on passive bonus</strong> — there are no daily charges, no activation costs, and no refresh cycles. Tags are always on.</p>
-
-    <div class="callout callout-blue">
-      <strong>Conditional Tags</strong>
-      If a tag's condition cannot be met (e.g., Zealot requires Morale 6+, but the legion is at 5), the tag simply has no effect until the condition is satisfied again. A newly assigned replacement commander arrives with their own tags, which take effect immediately.
-    </div>
-
-    <div class="tag-grid" style="margin-top:1.5rem;">
-
-      <div class="tag-card">
-        <div class="tag-header">
-          <div class="tag-name">Tactician</div>
-          <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
-        </div>
-        <div class="tag-effect">Advantage on <strong>Maneuver rolls</strong>.</div>
-      </div>
-
-      <div class="tag-card">
-        <div class="tag-header">
-          <div class="tag-name">Headhunter</div>
-          <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
-        </div>
-        <div class="tag-effect">When this legion engages an enemy, the enemy suffers <strong>Disadvantage on their Clash roll</strong>. Furthermore, if the enemy commander must make a Commander Casualty Check, add <strong>+5%</strong> to their Base Death Chance.</div>
-      </div>
-
-      <div class="tag-card">
-        <div class="tag-header">
-          <div class="tag-name">Engineer</div>
-          <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
-        </div>
-        <div class="tag-effect">Enemy legions engaging this legion in fortified sections suffer <strong>−2 to all battle rolls</strong> (Maneuver, Charge, Clash).</div>
-      </div>
-
-      <div class="tag-card">
-        <div class="tag-header">
-          <div class="tag-name">Rallier</div>
-          <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
-        </div>
-        <div class="tag-effect">This legion gains <strong>+2 to Hope checks</strong>. Allied legions in adjacent sections gain <strong>+1 to Hope checks</strong>.</div>
-      </div>
-
-      <div class="tag-card">
-        <div class="tag-header">
-          <div class="tag-name">Terrorizer</div>
-          <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
-        </div>
-        <div class="tag-effect">Enemy legions that fight this legion suffer <strong>Disadvantage on their Hope checks</strong> after the battle.</div>
-      </div>
-
-      <div class="tag-card">
-        <div class="tag-header">
-          <div class="tag-name">Fanatic</div>
-          <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
-        </div>
-        <div class="tag-effect">This legion attacks with reckless fury, gaining <strong>Advantage on both Charge and Clash rolls</strong>. However, due to their disregard for survival, they suffer <strong>Disadvantage on their Recovery check</strong> after every battle.</div>
-      </div>
-
-      <div class="tag-card">
-        <div class="tag-header">
-          <div class="tag-name">Zealot</div>
-          <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
-        </div>
-        <div class="tag-effect">While this legion's current Morale is <strong>6 or higher</strong>, it gains <strong>+2 to all three battle rolls</strong> (Maneuver, Charge, Clash).</div>
-      </div>
-
-      <div class="tag-card">
-        <div class="tag-header">
-          <div class="tag-name">Veteran</div>
-          <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
-        </div>
-        <div class="tag-effect">On all d20 rolls, treat any natural result of <strong>4 or lower as a 5</strong>. This floor applies before modifiers.</div>
-      </div>
-
-      <div class="tag-card">
-        <div class="tag-header">
-          <div class="tag-name">Warden</div>
-          <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
-        </div>
-        <div class="tag-effect">All allied legions in sections <strong>adjacent to this one</strong> gain <strong>+2 to their Recovery checks</strong>. This legion gains <strong>+2 to Clash rolls</strong>.</div>
-      </div>
-
-      <div class="tag-card">
-        <div class="tag-header">
-          <div class="tag-name">Mage</div>
-          <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
-        </div>
-        <div class="tag-effect">Enemy legions fighting this one suffer <strong>−1 to all three battle rolls</strong> (Maneuver, Charge, Clash). The devastating nature of magical attacks also forces the enemy to make its <strong>Recovery check with Disadvantage</strong>.</div>
-      </div>
-
-      <div class="tag-card">
-        <div class="tag-header">
-          <div class="tag-name">Medic</div>
-          <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
-        </div>
-        <div class="tag-effect">This legion makes its <strong>Recovery checks with Advantage</strong>. Additionally, if this legion wins a battle and succeeds on its Recovery check, it <strong>removes 1 existing injury</strong>.</div>
-      </div>
-
-      <div class="tag-card">
-        <div class="tag-header">
-          <div class="tag-name">Vanguard</div>
-          <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
-        </div>
-        <div class="tag-effect">This legion may move <strong>3 sections instead of 2</strong> during the Planning phase. If it moves 3 sections this round, it gains <strong>Advantage to its Charge roll</strong>.</div>
-      </div>
-
-      <div class="tag-card">
-        <div class="tag-header">
-          <div class="tag-name">Divine Blood</div>
-          <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
-        </div>
-        <div class="tag-effect">After each battle, this legion may <strong>re-roll one failed aftermath check</strong> (Recovery, Hope, or Salvage) and take the better result. Additionally, this commander's <strong>base death chance is reduced by 5%</strong>.</div>
-      </div>
-
-      <div class="tag-card">
-        <div class="tag-header">
-          <div class="tag-name">Brutal</div>
-          <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
-        </div>
-        <div class="tag-effect">When this legion <strong>wins a battle</strong>, the enemy makes its Recovery check with <strong>Disadvantage</strong>. If the enemy already has 4 or more injuries after the check, they take <strong>1 additional injury</strong>.</div>
-      </div>
-
-      <div class="tag-card">
-        <div class="tag-header">
-          <div class="tag-name">Ironclad</div>
-          <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
-        </div>
-        <div class="tag-effect"><strong>+2 to all Vitality-based rolls</strong> (Clash, Recovery checks).</div>
-      </div>
-
-      <div class="tag-card">
-        <div class="tag-header">
-          <div class="tag-name">Inspiring</div>
-          <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
-        </div>
-        <div class="tag-effect"><strong>+2 to all Morale-based rolls</strong> (Charge, Hope checks).</div>
-      </div>
-
-      <div class="tag-card">
-        <div class="tag-header">
-          <div class="tag-name">Cunning</div>
-          <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
-        </div>
-        <div class="tag-effect"><strong>+2 to all Wit-based rolls</strong> (Maneuver, Salvage).</div>
-      </div>
-
-      <div class="tag-card">
-        <div class="tag-header">
-          <div class="tag-name">Bulwark</div>
-          <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
-        </div>
-        <div class="tag-effect">This legion is destroyed at <strong>7 injuries instead of 6</strong>. The extra resilience represents reserves, fortified positions, or supernatural endurance.</div>
-      </div>
-
-      <div class="tag-card">
-        <div class="tag-header">
-          <div class="tag-name">Relentless</div>
-          <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
-        </div>
-        <div class="tag-effect">This legion's <strong>Morale may never fall below 2</strong>.</div>
-      </div>
-
-      <div class="tag-card">
-        <div class="tag-header">
-          <div class="tag-name">Siege Breaker</div>
-          <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
-        </div>
-        <div class="tag-effect">Enemy <strong>fortification bonuses are nullified</strong> when fighting this legion. The legion treats every section as unfortified terrain. This also disables opposing Engineer tags.</div>
-      </div>
-
-      <div class="tag-card" style="border-color: rgba(201,168,76,0.4); background: linear-gradient(135deg, rgba(201,168,76,0.08), rgba(201,168,76,0.02));">
-        <div class="tag-header">
-          <div class="tag-name" style="color:var(--gold);">Unbreakable Pact</div>
-          <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
-        </div>
-        <div class="tag-effect">This commander rolls all <strong>Commander Casualty checks with advantage</strong> (roll 1d100 twice, take the lower result). This bond is instinctive and always active.</div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ══════════════ ROUND STRUCTURE ══════════════ -->
-  <section id="round">
-    <div class="section-header">
-      <span class="section-number">III</span>
-      <h2>Round Structure<span class="title-line"></span></h2>
-    </div>
-
-    <p>Each round represents roughly <strong>one hour</strong> of battle. The round flows through <strong>five phases</strong> in order. The battle continues indefinitely until a termination condition is met.</p>
-
-    <div class="mermaid-wrap">
-      <div class="mermaid">
-flowchart TD
-    R1["⬡ PHASE 1\nReconnaissance\n1d20 + highest allied Wit"]
-    R2["⬡ PHASE 2\nPlanning & Commitment\nDM records secretly · Players lock in movements"]
-    R3["⬡ PHASE 3\nReveal & Fast Response\nEnemy moves revealed · PCs choose battles"]
-    R4["⬡ PHASE 4\nBattle\nAll battles resolve simultaneously\n⚠ Major Event may pull PCs into D&D encounter"]
-    R5["⬡ PHASE 5\nAftermath & Objectives\nRecovery · Hope · Salvage · Commander Casualty\nLosers pushed back 1 section\nIdle legions: –1 injury, +1 Morale\nCheck objectives · Calculate deaths · Check end conditions"]
-
-    R1 --> R2 --> R3 --> R4 --> R5
-    R5 -->|"Next Round"| R1
-
-    style R1 fill:#1a3050,stroke:#4a7fb5,color:#b8d4f0
-    style R2 fill:#2a2a18,stroke:#8a7a30,color:#d4c87a
-    style R3 fill:#1a2a1a,stroke:#4a7a4a,color:#8aaa8a
-    style R4 fill:#3a1a1a,stroke:#8a3030,color:#e07070
-    style R5 fill:#2a1a30,stroke:#7a4a8a,color:#c09ad0
-      </div>
-    </div>
-
-    <ul class="phases-list" style="margin-top:1.5rem;">
-      <li class="phase-item">
-        <span class="phase-num">1</span>
-        <div>
-          <div class="phase-title">Reconnaissance <span class="badge badge-w">Wit</span></div>
-          <div class="phase-body">Roll <strong>1d20 + highest Wit</strong> among all allied legions. Result determines how much enemy movement intel you receive this round.</div>
-        </div>
-      </li>
-      <li class="phase-item">
-        <span class="phase-num">2</span>
-        <div>
-          <div class="phase-title">Planning &amp; Commitment</div>
-          <div class="phase-body">The DM secretly records enemy movements. Intel from Phase 1 is revealed. Players plan and lock in all allied movements (up to <strong>2 sections per legion</strong>) and decide where each PC deploys.</div>
-        </div>
-      </li>
-      <li class="phase-item">
-        <span class="phase-num">3</span>
-        <div>
-          <div class="phase-title">Reveal &amp; Fast Response</div>
-          <div class="phase-body">Enemy movements are revealed and battle pairings are determined. Enemy fast response forces deploy first, then players deploy PCs.</div>
-        </div>
-      </li>
-      <li class="phase-item">
-        <span class="phase-num">4</span>
-        <div>
-          <div class="phase-title">Battle</div>
-          <div class="phase-body">All battles resolve simultaneously. If the DM triggers a <strong>Major Event</strong>, relevant players are pulled into a full D&amp;D encounter instead.</div>
-        </div>
-      </li>
-      <li class="phase-item">
-        <span class="phase-num">5</span>
-        <div>
-          <div class="phase-title">Aftermath &amp; Objectives</div>
-          <div class="phase-body">Recovery, Hope, Salvage, and Commander Casualty checks. Losers retreat 1 section. Legions that <em>did not fight</em> remove 1 injury and gain +1 Morale. Check strategic objectives. Calculate and add to civilian death toll. Check end-of-battle conditions.</div>
-        </div>
-      </li>
-    </ul>
-
-    <h3>Reconnaissance Table</h3>
-    <div class="recon-steps">
-      <div class="recon-step"><div class="recon-roll">≤ 10</div><div class="recon-desc">No enemy movements revealed</div></div>
-      <div class="recon-step"><div class="recon-roll">11–14</div><div class="recon-desc">Learn the destination of <strong>2 enemy legions</strong></div></div>
-      <div class="recon-step"><div class="recon-roll">15–18</div><div class="recon-desc">Learn the destinations of up to <strong>half the enemy legions</strong> (rounded up)</div></div>
-      <div class="recon-step"><div class="recon-roll">19–22</div><div class="recon-desc">Learn <strong>all enemy legion destinations</strong></div></div>
-      <div class="recon-step" style="background: linear-gradient(135deg, rgba(26,107,138,0.1), transparent); border-color: rgba(26,107,138,0.3);">
-        <div class="recon-roll" style="color: var(--gold);">23+</div>
-        <div class="recon-desc">Learn all enemy destinations and gain <strong>+1 to all allied Maneuver rolls</strong> this round</div>
-      </div>
-    </div>
-
-    <div class="callout callout-gold" style="margin-top:1.5rem;">
-      <strong>End of Battle Conditions</strong>
-      The battle ends when: (1) one side has no legions remaining, (2) all major story events have been resolved and the DM declares the battle concluded, or (3) a battle-ending major event occurs (e.g. Kentimane's defeat).
-    </div>
-  </section>
-
-  <!-- ══════════════ BATTLE RESOLUTION ══════════════ -->
-  <section id="battle">
-    <div class="section-header">
-      <span class="section-number">IV</span>
-      <h2>Battle Resolution<span class="title-line"></span></h2>
-    </div>
-
-    <p>When opposing legions meet in the same section, battle occurs in <strong>three sequential phases</strong>. Winning earlier phases feeds advantages into later ones — dominating from the start compounds your victory.</p>
-
-    <div class="mermaid-wrap">
-      <div class="mermaid">
-flowchart LR
-    M["🧠 PHASE 1\nThe Maneuver\n1d20 + Wit\nWinner chooses 1 benefit"]
-    C["🔥 PHASE 2\nThe Charge\n1d20 + Morale\nWinner gains +1 to Clash\n+1 Counter Point"]
-    CL["⚔ PHASE 3\nThe Clash\n1d20 + Vitality\nWinner scores\n+2 Counter Points"]
-    V["🏆 TALLY\nBattle Counter\nHighest wins\nTie → Vitality sudden death"]
-
-    M -->|"+1d4 Charge bonus\nor other benefit"| C
-    C -->|"+1 to Clash roll\nfor Charge winner"| CL
-    CL --> V
-
-    style M fill:#1a2a3a,stroke:#3a7ab5,color:#90c0e8
-    style C fill:#3a2a10,stroke:#b58030,color:#e8c070
-    style CL fill:#3a1a1a,stroke:#b53030,color:#e87070
-    style V fill:#1a3a1a,stroke:#30a030,color:#70e870
-      </div>
-    </div>
-
-    <h3>Phase 1: The Maneuver (Wit)</h3>
-    <p>Both sides roll 1d20 + Wit. The winner chooses one benefit for the rest of this battle.</p>
-    <div class="benefit-grid">
-      <div class="benefit-card">
-        <div class="name">Flanking Position</div>
-        <div class="desc"><strong>+1d4</strong> to your Charge roll (Phase 2)</div>
-      </div>
-      <div class="benefit-card">
-        <div class="name">Defensive Footing</div>
-        <div class="desc"><strong>+1d2</strong> to your Clash roll (Phase 3)</div>
-      </div>
-      <div class="benefit-card">
-        <div class="name">Disrupted Formation</div>
-        <div class="desc">Enemy suffers <strong>−1</strong> to both Charge and Clash rolls</div>
-      </div>
-      <div class="benefit-card">
-        <div class="name">Seized Initiative</div>
-        <div class="desc">If you win the overall battle, enemy takes <strong>+1d2 extra injury</strong> in aftermath</div>
-      </div>
-    </div>
-    <div class="callout callout-blue" style="margin-top:0.8rem;">
-      <strong>Maneuver Tie-Breaker</strong>
-      Both sides reroll (up to 3 times). If still tied after 3 rerolls, no benefit is granted and neither side scores a counter point for this phase.
-    </div>
-
-    <h3>Phase 2: The Charge (Morale)</h3>
-    <p>Both sides roll 1d20 + Morale. The Charge winner gains +1 to their Clash roll and scores a counter point.</p>
-    <div class="callout callout-blue">
-      <strong>Charge Tie-Breaker</strong>
-      Both sides reroll once. If still tied, neither side gains the Clash bonus.
-    </div>
-
-    <h3>Phase 3: The Clash (Vitality)</h3>
-    <p>Both sides roll 1d20 + Vitality. The Clash winner scores <strong>two counter points</strong>.</p>
-    <div class="callout callout-blue">
-      <strong>Clash Tie-Breaker</strong>
-      The melee was brutal and indecisive — no one gains counter points.
-    </div>
-
-    <h3>Battle Counter Scoring</h3>
-    <div class="counter-visual">
-      <div class="counter-item"><div class="counter-val pos">+1</div><div class="counter-label">Win any phase<br><small>(+2 for The Clash)</small></div></div>
-      <div class="counter-item"><div class="counter-val pos">+1</div><div class="counter-label"><strong>Bonus</strong> counter point<br>on top when winning with <strong>natural 20</strong></div></div>
-      <div class="counter-item"><div class="counter-val neg">−1</div><div class="counter-label">Lose any phase</div></div>
-      <div class="counter-item"><div class="counter-val neg">−1</div><div class="counter-label"><strong>Extra</strong> penalty<br>on top when losing with <strong>natural 1</strong></div></div>
-    </div>
-
-    <div class="callout callout-gold">
-      <strong>Final Tie-Breaker</strong>
-      If both sides have equal battle counters after all three phases, a <strong>sudden-death contested Vitality roll</strong> determines the victor. Reroll until one side wins.
-    </div>
-
-    <h3>Fortification</h3>
-    <p>A section can be fortified after being <strong>held for a full round</strong>. Fortification grants <strong>+1 to all rolls</strong> for the defending side and is lost when the opposing side claims the section.</p>
-  </section>
-
-  <!-- ══════════════ AFTERMATH ══════════════ -->
-  <section id="aftermath">
-    <div class="section-header">
-      <span class="section-number">V</span>
-      <h2>Aftermath Checks<span class="title-line"></span></h2>
-    </div>
-
-    <p>After each battle, <strong>all legions that fought</strong> (both winner and loser) make four checks. Outcomes differ based on whether the legion won or lost.</p>
-
-    <div class="mermaid-wrap">
-      <div class="mermaid">
-flowchart TD
-    B["Battle Ends"]
-    RC["Recovery Check\n1d20 + Vitality\nvs DC (12 + current injuries)"]
-    HC["Hope Check\n1d20 + current Morale\nvs DC 12"]
-    SC["Salvage Check\n1d20 + Wit\nvs DC 12"]
-    CC["Commander Casualty\n1d100 vs Final Death Target"]
-
-    B --> RC --> HC --> SC --> CC
-
-    RC -->|"Fail"| RCF["Winner: 1 injury\nLoser: 2 injuries"]
-    RC -->|"Pass"| RCP["Winner: 0 injuries\nLoser: 1 injury"]
-    HC -->|"Fail"| HCF["Winner: +1 Morale\nLoser: –2 Morale"]
-    HC -->|"Pass"| HCP["Winner: +2 Morale\nLoser: –1 Morale"]
-    SC -->|"Pass"| SCP["Choose 1 benefit\n(Nat 20: choose 2)"]
-    HC -->|"Morale = 0"| ROUT["ROUT!\nRetreat up to 3 sections\nCannot act next round"]
-
-    style B fill:#2a1a1a,stroke:#8a3030,color:#e07070
-    style RC fill:#1a2a3a,stroke:#4a6a8a,color:#80b0d0
-    style HC fill:#2a2a10,stroke:#8a7a20,color:#d0c060
-    style SC fill:#1a2a1a,stroke:#4a7a4a,color:#80c080
-    style CC fill:#3a1a3a,stroke:#8a4a8a,color:#c080c0
-    style ROUT fill:#4a0000,stroke:#cc0000,color:#ff8080
-    style RCF fill:#2a1010,stroke:#603030,color:#c07070
-    style RCP fill:#102a10,stroke:#306030,color:#70c070
-    style HCF fill:#2a2010,stroke:#607020,color:#c0b060
-    style HCP fill:#102a10,stroke:#306030,color:#70c070
-    style SCP fill:#10202a,stroke:#305060,color:#60a0c0
-      </div>
-    </div>
-
-    <div class="aftermath-grid" style="margin-top:1.5rem;">
-
-      <div class="aftermath-card">
-        <h4>⚔ Recovery <span class="badge badge-v">Vitality</span></h4>
-        <div class="aftermath-dc">Roll 1d20 + Vitality vs DC (12 + current injuries)</div>
-        <div class="outcome-row"><span class="label">Outcome</span><span class="label win">Winner</span><span class="label lose">Loser</span></div>
-        <div class="outcome-row"><span>Pass</span><span class="win">0 injuries</span><span class="lose">1 injury</span></div>
-        <div class="outcome-row"><span>Fail</span><span class="win">1 injury</span><span class="lose">2 injuries</span></div>
-        <p style="font-size:0.8rem; color:var(--text-dim); margin-top:0.7rem;">At <strong>6 injuries</strong> the legion is destroyed (7 with <em>Bulwark</em>). Natural 1 always fails.</p>
-      </div>
-
-      <div class="aftermath-card">
-        <h4>🔥 Hope <span class="badge badge-m">Morale</span></h4>
-        <div class="aftermath-dc">Roll 1d20 + current Morale vs DC 12</div>
-        <div class="outcome-row"><span class="label">Outcome</span><span class="label win">Winner</span><span class="label lose">Loser</span></div>
-        <div class="outcome-row"><span>Pass</span><span class="win">+2 Morale</span><span class="lose">−1 Morale</span></div>
-        <div class="outcome-row"><span>Fail</span><span class="win">+1 Morale</span><span class="lose">−2 Morale</span></div>
-        <p style="font-size:0.8rem; color:var(--text-dim); margin-top:0.7rem;">Morale caps at <strong>10</strong>. Hitting 0 triggers a rout (see below).</p>
-      </div>
-
-      <div class="aftermath-card">
-        <h4>🧠 Salvage <span class="badge badge-w">Wit</span></h4>
-        <div class="aftermath-dc">Roll 1d20 + Wit vs DC 12 (both sides)</div>
-        <p style="font-size:0.88rem; color:var(--text-secondary);">On success, <strong>choose 1 benefit</strong>. On a natural 20, <strong>choose 2</strong>.</p>
-        <div style="margin-top:0.6rem; display:flex; flex-direction:column; gap:0.3rem;">
-          <div style="font-size:0.82rem; color:var(--text-secondary);">🔹 <strong>Captured Supplies</strong> — Remove 1 injury</div>
-          <div style="font-size:0.82rem; color:var(--text-secondary);">🔹 <strong>Tactical Insight</strong> — +1d2 to Wit rolls next round</div>
-          <div style="font-size:0.82rem; color:var(--text-secondary);">🔹 <strong>Enemy Shaken</strong> — Opposing legion −1 Morale</div>
-          <div style="font-size:0.82rem; color:var(--text-secondary);">🔹 <strong>Quick Fortify</strong> — Immediately fortify held section</div>
-        </div>
-      </div>
-
-      <div class="aftermath-card" style="border-color:rgba(139,26,139,0.4); background: linear-gradient(135deg, rgba(139,26,139,0.08), transparent);">
-        <h4>💀 Commander Casualty</h4>
-        <div class="aftermath-dc">1d100 vs Final Death Target (min 1%)</div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Situation</th><th>Base %</th></tr></thead>
-            <tbody>
-              <tr><td>Won the battle</td><td><strong style="color:#4caf50;">6%</strong></td></tr>
-              <tr><td>Lost the battle</td><td><strong style="color:#e67e22;">12%</strong></td></tr>
-              <tr><td>Lost by 3+ counter</td><td><strong style="color:var(--vitality-light);">20%</strong></td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p style="font-size:0.8rem; color:var(--text-secondary); margin-top:0.7rem;"><strong>Protection</strong> = legion's current Morale. Subtract Protection from Base % to get Final Death Target (minimum 1%). Roll 1d100 — at or under the target, the commander falls.</p>
-      </div>
-
-    </div>
-
-    <h3>Commander Casualty Examples</h3>
-    <div class="example-box"><strong>Example 1:</strong> A legion with <em>5 Morale</em> loses a battle. Base Death Chance 12% − 5 Protection = <strong>7% Final Death Target</strong>. On a 1–7, the commander dies.</div>
-    <div class="example-box"><strong>Example 2:</strong> A legion with <em>2 Morale</em> loses by 3+ on the counter. Base Death Chance 20% − 2 Protection = <strong>18% Final Death Target</strong>. Extremely dangerous.</div>
-    <div class="example-box"><strong>Example 3:</strong> A legion with <em>8 Morale</em> wins the battle. Base Death Chance 6% − 8 Protection = capped to <strong>1% Final Death Target</strong>. Only a 1 kills the commander.</div>
-
-    <div class="callout callout-gold" style="margin-top:0.5rem;">
-      <strong>On Commander Death</strong>
-      The legion immediately loses 1 Morale. A replacement commander takes command at the start of the next round with their own tags. If no reserves remain, the legion operates without a commander — no tags apply.
-    </div>
-
-    <div class="callout callout-red" style="margin-top:1rem;">
-      <strong>Rout Rules</strong>
-      When Morale hits 0: legion retreats up to 3 sections toward nearest allied territory and <strong>cannot act next round</strong> (unless it has the <em>Relentless</em> tag). If an enemy occupies a routed legion's section while it has 0 Morale and no allied legion is present, the routed legion is <strong>disbanded</strong>. Phase 5 passive recovery (+1 Morale) is enough to rally a routed legion.
-    </div>
-  </section>
-
-  <!-- ══════════════ PLAYER CHARACTERS ══════════════ -->
-  <section id="pcs">
-    <div class="section-header">
-      <span class="section-number">VI</span>
-      <h2>Player Characters as Fast Response<span class="title-line"></span></h2>
-    </div>
-
-    <p>The PCs are the allied side's <strong>only fast response capability</strong>. After battle pairings are revealed in Phase 3, each PC chooses a battle to influence. Multiple PCs can stack in the same battle — a powerful choice with a real cost.</p>
-
-    <div class="deploy-grid">
-      <div class="deploy-card">
-        <div class="deploy-name">Reinforce</div>
-        <div class="deploy-bonus">+1d4</div>
-        <div class="deploy-note">To <strong>all battle and aftermath rolls</strong> for the allied legion. Balanced option — helps across the board.</div>
-      </div>
-      <div class="deploy-card">
-        <div class="deploy-name">Shock Assault</div>
-        <div class="deploy-bonus">+1d6</div>
-        <div class="deploy-note">To <strong>all three battle phase rolls only</strong> (no aftermath bonus). High offensive impact.</div>
-      </div>
-      <div class="deploy-card">
-        <div class="deploy-name">Targeted Strike</div>
-        <div class="deploy-bonus">+1d8 + Adv</div>
-        <div class="deploy-note">To <strong>one specific battle phase roll</strong>, plus advantage on that roll. Ideal for securing a single critical phase.</div>
-      </div>
-      <div class="deploy-card">
-        <div class="deploy-name">Shield the Wounded</div>
-        <div class="deploy-bonus">+1d8</div>
-        <div class="deploy-note">To the <strong>first three aftermath rolls</strong> (Recovery, Hope, Salvage). Protects a battered legion from collapse.</div>
-      </div>
-      <div class="deploy-card" style="border-color:rgba(201,168,76,0.4); background:linear-gradient(135deg,rgba(201,168,76,0.08),transparent);">
-        <div class="deploy-name" style="color:var(--gold);">Protect</div>
-        <div class="deploy-bonus" style="color:var(--gold);">Shield</div>
-        <div class="deploy-note">The PC stays at the commander's side throughout the battle. <strong>No Commander Casualty check</strong> is made for this legion this round.</div>
-      </div>
-    </div>
-
-    <div class="callout callout-gold" style="margin-top:1.5rem;">
-      <strong>Stacking &amp; Trade-offs</strong>
-      Three PCs each choosing Reinforce gives +3d4 to all rolls — but leaves every other battle unsupported. You cannot be everywhere at once. This trade-off is always meaningful.
-    </div>
-
-    <h3>Resting</h3>
-    <p>A PC may <strong>skip a round of deployment to take a short rest</strong>. This is important because Major Events (full D&amp;D encounters) can strike at any time, and arriving with spent resources is costly.</p>
-  </section>
-
-  <!-- ══════════════ MIRACLES ══════════════ -->
-  <section id="miracles">
-    <div class="section-header">
-      <span class="section-number">VII</span>
-      <h2>Miracles<span class="title-line"></span></h2>
-    </div>
-
-    <p>Each side possesses a pool of <strong>Miracle Points</strong> per round. Typically, Sydon starts with <strong>10 points</strong>, while the allied forces start with <strong>8 points</strong>. These pools shift during battle as story events unfold.</p>
-
-    <div class="miracle-grid">
-      <div class="miracle-item">
-        <div class="number">+N</div>
-        <div class="label">Roll Bonus</div>
-        <div class="cost" style="font-size:0.75rem; color:var(--text-dim);">1 point per +1 to any roll</div>
-      </div>
-      <div class="miracle-item">
-        <div class="number">Adv</div>
-        <div class="label">Divine Advantage</div>
-        <div class="cost">2 Points</div>
-      </div>
-      <div class="miracle-item">
-        <div class="number" style="font-size:1.4rem;">Short<br>Rest</div>
-        <div class="label">Divine Restoration</div>
-        <div class="cost">2 Points · one PC</div>
-      </div>
-      <div class="miracle-item">
-        <div class="number" style="font-size:1.4rem;">Long<br>Rest</div>
-        <div class="label">Divine Restoration</div>
-        <div class="cost">4 Points · one PC</div>
-      </div>
-    </div>
-
-    <div class="callout callout-blue" style="margin-top:1.5rem;">
-      <strong>How Points Work</strong>
-      Distribute points as flat bonuses to any rolls (battle, aftermath, or reconnaissance), spend 2 to grant advantage on any roll before it's made, or spend points to give a PC an immediate short or long rest.
-    </div>
-
-    <p style="margin-top:1rem; color:var(--text-secondary);">Miracle pools shift during the battle based on story outcomes — temples destroyed, divine manifestations, major events resolved. <strong>Let the story drive the numbers.</strong></p>
-  </section>
-
-  <!-- ══════════════ STRATEGIC OBJECTIVES ══════════════ -->
-  <section id="objectives">
-    <div class="section-header">
-      <span class="section-number">VIII</span>
-      <h2>Strategic Objectives<span class="title-line"></span></h2>
-    </div>
-
-    <p>Sydon's forces target <strong>symbols of mortal civilization</strong>. These objectives are marked openly on the map from the start — both sides know what is at stake. Consequences are <strong>permanent and cumulative</strong>.</p>
-
-    <div class="callout callout-red">
-      <strong>Destruction Rule</strong>
-      If Sydon's forces claim a section containing an objective and <strong>hold it for one additional round</strong>, the objective is destroyed. Its consequences take effect immediately and last for the rest of the battle.
-    </div>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Objective</th>
-            <th>Sydon Gains if Destroyed</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>Temple of the Five</td><td><strong style="color:var(--vitality-light);">+3 Miracle Points</strong></td></tr>
-          <tr><td>Royal Palace</td><td>+2 Miracle Points</td></tr>
-          <tr><td>The Dockyard</td><td>+2 Miracle Points</td></tr>
-          <tr><td>Soldier's Gate</td><td>+2 Miracle Points</td></tr>
-          <tr><td>The Agora</td><td>+2 Miracle Points</td></tr>
-          <tr><td>The Academy</td><td>+2 Miracle Points</td></tr>
-          <tr><td>The Gymnasium</td><td>+2 Miracle Points</td></tr>
-          <tr><td>The Harp Bridge</td><td>+2 Miracle Points</td></tr>
-          <tr><td>The Vineyards of Mytros</td><td>+2 Miracle Points</td></tr>
-          <tr><td>Fish Market &amp; Commerce Gate</td><td>+1 Miracle Points</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- ══════════════ CIVILIAN DEATH TOLL ══════════════ -->
-  <section id="death">
-    <div class="section-header">
-      <span class="section-number">IX</span>
-      <h2>Civilian Death Toll<span class="title-line"></span></h2>
-    </div>
-
-    <p>This is not just a military contest — every round of fighting costs the city its people. Track a <strong>running Death Toll</strong> alongside the battle map. At the end of each Phase 5, add that round's deaths to the cumulative total.</p>
-
-    <p style="color:var(--text-secondary);">Roll once per engagement and once per destroyed objective still burning:</p>
-
-    <div class="death-grid">
-      <div class="death-item">
-        <div class="roll">1d4 × 10</div>
-        <div class="situation">Allied legion <strong>won</strong> the battle</div>
-      </div>
-      <div class="death-item">
-        <div class="roll">1d6 × 50</div>
-        <div class="situation">Allied legion <strong>lost</strong> the battle</div>
-      </div>
-      <div class="death-item">
-        <div class="roll">1d6 × 50</div>
-        <div class="situation">Sydon's legion was <strong>not engaged</strong> this round</div>
-      </div>
-      <div class="death-item">
-        <div class="roll">1d4 × 10</div>
-        <div class="situation"><strong>Per destroyed objective</strong> still burning (each round)</div>
-      </div>
-    </div>
-
-    <div class="callout callout-red" style="margin-top:1.2rem;">
-      <strong>Consequence</strong>
-      The cumulative Death Toll at battle's end determines how the city remembers the heroes when the dust settles. Every decision you make has a cost in lives.
-    </div>
-  </section>
-
-  <!-- ══════════════ MAJOR EVENTS ══════════════ -->
-  <section id="events">
-    <div class="section-header">
-      <span class="section-number">X</span>
-      <h2>Major Events<span class="title-line"></span></h2>
-    </div>
-
-    <p>At dramatic moments, the DM triggers a major event that pulls some or all PCs into a full D&amp;D encounter — a direct confrontation, a ritual to interrupt, a titan's challenge. The mass combat system handles everything between those moments.</p>
-
-    <p>If the players resolve a major event in the allied side's favor, they earn a permanent bonus that shifts the balance of the wider battle. The DM will reveal what's at stake when the moment arrives.</p>
-
-    <div class="callout callout-gold">
-      <strong>While PCs are away</strong>
-      Legions continue fighting without PC support during a major event. Consider where your legions are and which battles they can hold on their own before the encounter begins.
-    </div>
-
-    <p style="margin-top:2rem; text-align:center; font-family:'Cinzel', serif; font-size:1rem; color:var(--gold-dim); letter-spacing:0.1em; font-style:italic;">May the dice favor the bold.</p>
-  </section>
-
-</main>
-
-<footer>
-  The Battle of Mytros · Player Field Guide · Odyssey of the Dragonlords · All rights to original content remain with their respective owners
-</footer>
-
-</div><!-- end page-wrapper -->
-
-<script>
-// ─── BACKGROUND CANVAS — REPULSION PARTICLES ──────────────────
-const canvas = document.getElementById('bg-canvas');
-const ctx = canvas.getContext('2d');
-
-let mouseX = -9999;
-let mouseY = -9999;
-
-const PARTICLE_COUNT = 900;
-const REPULSION_RADIUS = 200;
-const REPULSION_STRENGTH = 3.5;
-const FRICTION = 0.48;
-const RETURN_SPEED = 0.018;
-
-function resize() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-resize();
-window.addEventListener('resize', () => {
-  resize();
-  particles.forEach(p => {
-    p.homeX = Math.random() * canvas.width;
-    p.homeY = Math.random() * canvas.height;
-    p.x = p.homeX;
-    p.y = p.homeY;
-  });
-});
-
-window.addEventListener('mousemove', e => {
-  mouseX = e.clientX;
-  mouseY = e.clientY + window.scrollY;
-});
-
-window.addEventListener('mouseleave', () => {
-  mouseX = -9999;
-  mouseY = -9999;
-});
-
-const PALETTES = [
-  { r: 201, g: 168, b: 76,  weight: 6 },
-  { r: 228, g: 196, b: 106, weight: 3 },
-  { r: 74,  g: 111, b: 165, weight: 2 },
-  { r: 192, g: 57,  b: 43,  weight: 1 },
-];
-function pickColor() {
-  const total = PALETTES.reduce((s, p) => s + p.weight, 0);
-  let r = Math.random() * total;
-  for (const p of PALETTES) { r -= p.weight; if (r <= 0) return p; }
-  return PALETTES[0];
-}
-
-const particles = [];
-for (let i = 0; i < PARTICLE_COUNT; i++) {
-  const hx = Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1200);
-  const hy = Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 800);
-  const col = pickColor();
-  particles.push({
-    x: hx, y: hy,
-    homeX: hx, homeY: hy,
-    vx: 0, vy: 0,
-    size: Math.random() * 1.8 + 0.4,
-    baseOpacity: Math.random() * 0.45 + 0.15,
-    r: col.r, g: col.g, b: col.b,
-    driftX: (Math.random() - 0.5) * 0.12,
-    driftY: (Math.random() - 0.5) * 0.12,
-  });
-}
-
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  const scrollY = window.scrollY;
-
-  particles.forEach(p => {
-    const mx = mouseX;
-    const my = mouseY - scrollY;
-    const dx = p.x - mx;
-    const dy = p.y - my;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-
-    if (dist < REPULSION_RADIUS && dist > 0) {
-      const force = (1 - dist / REPULSION_RADIUS) * REPULSION_STRENGTH;
-      p.vx += (dx / dist) * force;
-      p.vy += (dy / dist) * force;
-    }
-
-    p.vx += (p.homeX - p.x) * RETURN_SPEED;
-    p.vy += (p.homeY - p.y) * RETURN_SPEED;
-
-    p.homeX += p.driftX;
-    p.homeY += p.driftY;
-    if (p.homeX < 0 || p.homeX > canvas.width)  p.driftX *= -1;
-    if (p.homeY < 0 || p.homeY > canvas.height) p.driftY *= -1;
-
-    p.vx *= FRICTION;
-    p.vy *= FRICTION;
-    p.x += p.vx;
-    p.y += p.vy;
-
-    const displacement = Math.sqrt((p.x - p.homeX) ** 2 + (p.y - p.homeY) ** 2);
-    const opacity = Math.min(1, p.baseOpacity + displacement * 0.004);
-
-    ctx.shadowBlur = p.size * 6 + 4;
-    ctx.shadowColor = `rgba(${p.r},${p.g},${p.b},${opacity * 0.8})`;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(${p.r},${p.g},${p.b},${opacity})`;
-    ctx.fill();
-    ctx.shadowBlur = 0;
-  });
-
-  requestAnimationFrame(draw);
-}
-draw();
-
-// ─── MERMAID INIT ──────────────────────────────────────────────
-mermaid.initialize({
-  startOnLoad: true,
-  theme: 'base',
-  themeVariables: {
-    primaryColor: '#1e2230',
-    primaryTextColor: '#e8dfc8',
-    primaryBorderColor: '#c9a84c',
-    lineColor: '#8a6e2a',
-    secondaryColor: '#151820',
-    tertiaryColor: '#0d0f14',
-    background: '#0d0f14',
-    mainBkg: '#1e2230',
-    nodeBorder: '#c9a84c',
-    clusterBkg: '#151820',
-    titleColor: '#c9a84c',
-    edgeLabelBackground: '#151820',
-    fontFamily: 'EB Garamond, Georgia, serif',
-    fontSize: '14px',
-  },
-  flowchart: {
-    htmlLabels: true,
-    curve: 'basis',
-  }
-});
-</script>
-
-</body>
+        <!-- end page-wrapper -->
+
+        <script>
+            // ─── BACKGROUND CANVAS — REPULSION PARTICLES ──────────────────
+            const canvas = document.getElementById("bg-canvas");
+            const ctx = canvas.getContext("2d");
+
+            let mouseX = -9999;
+            let mouseY = -9999;
+
+            const PARTICLE_COUNT = 900;
+            const REPULSION_RADIUS = 200;
+            const REPULSION_STRENGTH = 3.5;
+            const FRICTION = 0.48;
+            const RETURN_SPEED = 0.018;
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener("resize", () => {
+                resize();
+                particles.forEach((p) => {
+                    p.homeX = Math.random() * canvas.width;
+                    p.homeY = Math.random() * canvas.height;
+                    p.x = p.homeX;
+                    p.y = p.homeY;
+                });
+            });
+
+            window.addEventListener("mousemove", (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY + window.scrollY;
+            });
+
+            window.addEventListener("mouseleave", () => {
+                mouseX = -9999;
+                mouseY = -9999;
+            });
+
+            const PALETTES = [
+                { r: 201, g: 168, b: 76, weight: 6 },
+                { r: 228, g: 196, b: 106, weight: 3 },
+                { r: 74, g: 111, b: 165, weight: 2 },
+                { r: 192, g: 57, b: 43, weight: 1 },
+            ];
+            function pickColor() {
+                const total = PALETTES.reduce((s, p) => s + p.weight, 0);
+                let r = Math.random() * total;
+                for (const p of PALETTES) {
+                    r -= p.weight;
+                    if (r <= 0) return p;
+                }
+                return PALETTES[0];
+            }
+
+            const particles = [];
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                const hx = Math.random() * (typeof window !== "undefined" ? window.innerWidth : 1200);
+                const hy = Math.random() * (typeof window !== "undefined" ? window.innerHeight : 800);
+                const col = pickColor();
+                particles.push({
+                    x: hx,
+                    y: hy,
+                    homeX: hx,
+                    homeY: hy,
+                    vx: 0,
+                    vy: 0,
+                    size: Math.random() * 1.8 + 0.4,
+                    baseOpacity: Math.random() * 0.45 + 0.15,
+                    r: col.r,
+                    g: col.g,
+                    b: col.b,
+                    driftX: (Math.random() - 0.5) * 0.12,
+                    driftY: (Math.random() - 0.5) * 0.12,
+                });
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                const scrollY = window.scrollY;
+
+                particles.forEach((p) => {
+                    const mx = mouseX;
+                    const my = mouseY - scrollY;
+                    const dx = p.x - mx;
+                    const dy = p.y - my;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < REPULSION_RADIUS && dist > 0) {
+                        const force = (1 - dist / REPULSION_RADIUS) * REPULSION_STRENGTH;
+                        p.vx += (dx / dist) * force;
+                        p.vy += (dy / dist) * force;
+                    }
+
+                    p.vx += (p.homeX - p.x) * RETURN_SPEED;
+                    p.vy += (p.homeY - p.y) * RETURN_SPEED;
+
+                    p.homeX += p.driftX;
+                    p.homeY += p.driftY;
+                    if (p.homeX < 0 || p.homeX > canvas.width) p.driftX *= -1;
+                    if (p.homeY < 0 || p.homeY > canvas.height) p.driftY *= -1;
+
+                    p.vx *= FRICTION;
+                    p.vy *= FRICTION;
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    const displacement = Math.sqrt((p.x - p.homeX) ** 2 + (p.y - p.homeY) ** 2);
+                    const opacity = Math.min(1, p.baseOpacity + displacement * 0.004);
+
+                    ctx.shadowBlur = p.size * 6 + 4;
+                    ctx.shadowColor = `rgba(${p.r},${p.g},${p.b},${opacity * 0.8})`;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${p.r},${p.g},${p.b},${opacity})`;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                });
+
+                requestAnimationFrame(draw);
+            }
+            draw();
+
+            // ─── MERMAID INIT ──────────────────────────────────────────────
+            mermaid.initialize({
+                startOnLoad: true,
+                theme: "base",
+                themeVariables: {
+                    primaryColor: "#1e2230",
+                    primaryTextColor: "#e8dfc8",
+                    primaryBorderColor: "#c9a84c",
+                    lineColor: "#8a6e2a",
+                    secondaryColor: "#151820",
+                    tertiaryColor: "#0d0f14",
+                    background: "#0d0f14",
+                    mainBkg: "#1e2230",
+                    nodeBorder: "#c9a84c",
+                    clusterBkg: "#151820",
+                    titleColor: "#c9a84c",
+                    edgeLabelBackground: "#151820",
+                    fontFamily: "EB Garamond, Georgia, serif",
+                    fontSize: "14px",
+                },
+                flowchart: {
+                    htmlLabels: true,
+                    curve: "basis",
+                },
+            });
+        </script>
+    </body>
 </html>

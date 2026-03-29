@@ -1,15 +1,19 @@
 from dataclasses import dataclass, field
 
-
 # ─── Battle Phase Logs ──────────────────────────────────────────────────
+
 
 @dataclass
 class PhaseResult:
     phase_name: str
-    roll_a: int; roll_b: int
-    total_a: int; total_b: int
-    nat20_a: bool; nat20_b: bool
-    nat1_a: bool;  nat1_b: bool
+    roll_a: int
+    roll_b: int
+    total_a: int
+    total_b: int
+    nat20_a: bool
+    nat20_b: bool
+    nat1_a: bool
+    nat1_b: bool
     winner: str
     counter_a_delta: int = 0
     counter_b_delta: int = 0

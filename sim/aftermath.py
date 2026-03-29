@@ -1,48 +1,67 @@
 import random
 
 from .config import (
-    RECOVERY_BASE_DC, HOPE_DC, SALVAGE_DC,
-    RECOVERY_WINNER_PASS, RECOVERY_WINNER_FAIL,
-    RECOVERY_LOSER_PASS, RECOVERY_LOSER_FAIL,
-    HOPE_WINNER_PASS, HOPE_WINNER_FAIL,
-    HOPE_LOSER_PASS, HOPE_LOSER_FAIL,
-    ROUT_THRESHOLD, IRONCLAD_BONUS, RALLIER_OWN_HOPE_BONUS, INSPIRING_BONUS,
-    CUNNING_BONUS, CASUALTY_BASE_RISK, CASUALTY_CRUSHED_THRESHOLD,
-    DIVINE_BLOOD_DEATH_REDUC, COMMANDER_DEATH_MORALE_LOSS,
+    CASUALTY_BASE_RISK,
+    CASUALTY_CRUSHED_THRESHOLD,
+    COMMANDER_DEATH_MORALE_LOSS,
+    CUNNING_BONUS,
+    DIVINE_BLOOD_DEATH_REDUC,
+    HOPE_DC,
+    HOPE_LOSER_FAIL,
+    HOPE_LOSER_PASS,
+    HOPE_WINNER_FAIL,
+    HOPE_WINNER_PASS,
+    INSPIRING_BONUS,
+    IRONCLAD_BONUS,
+    RALLIER_OWN_HOPE_BONUS,
+    RECOVERY_BASE_DC,
+    RECOVERY_LOSER_FAIL,
+    RECOVERY_LOSER_PASS,
+    RECOVERY_WINNER_FAIL,
+    RECOVERY_WINNER_PASS,
+    ROUT_THRESHOLD,
     SALVAGE_BENEFITS,
+    SALVAGE_DC,
 )
-from .models import Legion, PCDeployment, MiraclePool
 from .dice import d20
+from .models import Legion, MiraclePool, PCDeployment
 from .tags import _has
-
 
 # ─── Aftermath ──────────────────────────────────────────────────────────
 
-def run_aftermath(legion: Legion, won: bool, battle_counter_diff: int,
-                  disadv_recovery: bool = False,
-                  disadv_hope: bool = False,
-                  seized_extra_injuries: int = 0,
-                  warden_recovery_bonus: int = 0,
-                  rallier_hope_bonus: int = 0,
-                  headhunter_death_penalty: int = 0,
-                  fort_bonus: int = 0,
-                  pc_deployments: list[PCDeployment] = None,
-                  pool: MiraclePool = None) -> dict:
+
+def run_aftermath(
+    legion: Legion,
+    won: bool,
+    battle_counter_diff: int,
+    disadv_recovery: bool = False,
+    disadv_hope: bool = False,
+    seized_extra_injuries: int = 0,
+    warden_recovery_bonus: int = 0,
+    rallier_hope_bonus: int = 0,
+    headhunter_death_penalty: int = 0,
+    fort_bonus: int = 0,
+    pc_deployments: list[PCDeployment] = None,
+    pool: MiraclePool = None,
+) -> dict:
     results = {}
     vet = _has(legion, "Veteran")
     divine_reroll_used = False
 
     def roll_pc_aft(aft_name):
         bonus = 0
-        if not pc_deployments: return 0
+        if not pc_deployments:
+            return 0
         for p in pc_deployments:
-            if p.type == "Reinforce": bonus += random.randint(1, 4)
+            if p.type == "Reinforce":
+                bonus += random.randint(1, 4)
             elif p.type == "Shield the Wounded" and aft_name in ("recovery", "hope", "salvage"):
                 bonus += random.randint(1, 8)
         return bonus
 
     def get_miracle(pool):
-        if not pool: return 0, False
+        if not pool:
+            return 0, False
         bonus = 0
         adv = False
         if pool.points >= 2:
@@ -52,7 +71,7 @@ def run_aftermath(legion: Legion, won: bool, battle_counter_diff: int,
         return bonus, adv
 
     # ── Recovery Check (Vitality) ─────────────────────────────────────────
-    adv_rec   = _has(legion, "Medic")    # Medic: advantage on Recovery
+    adv_rec = _has(legion, "Medic")  # Medic: advantage on Recovery
     disadv_rec = disadv_recovery or _has(legion, "Fanatic")  # Fanatic: disadvantage
     mir_bon_r, mir_adv_r = get_miracle(pool)
     rec_bonus = warden_recovery_bonus + fort_bonus + roll_pc_aft("recovery") + mir_bon_r
@@ -93,14 +112,21 @@ def run_aftermath(legion: Legion, won: bool, battle_counter_diff: int,
     if legion.injuries >= legion.max_injuries:
         legion.destroyed = True
 
-    results["recovery"] = {"roll": roll_r, "dc": dc, "passed": passed_r,
-                            "injuries_gained": inj, "healed": healed}
+    results["recovery"] = {
+        "roll": roll_r,
+        "dc": dc,
+        "passed": passed_r,
+        "injuries_gained": inj,
+        "healed": healed,
+    }
 
     # ── Hope Check (Morale) ───────────────────────────────────────────────
     mir_bon_h, mir_adv_h = get_miracle(pool)
     hope_bonus = rallier_hope_bonus + fort_bonus + roll_pc_aft("hope") + mir_bon_h
-    if _has(legion, "Rallier"):  hope_bonus += RALLIER_OWN_HOPE_BONUS
-    if _has(legion, "Inspiring"): hope_bonus += INSPIRING_BONUS
+    if _has(legion, "Rallier"):
+        hope_bonus += RALLIER_OWN_HOPE_BONUS
+    if _has(legion, "Inspiring"):
+        hope_bonus += INSPIRING_BONUS
 
     if disadv_hope and not mir_adv_h:
         roll_h = min(d20(vet), d20(vet))
@@ -131,7 +157,8 @@ def run_aftermath(legion: Legion, won: bool, battle_counter_diff: int,
     # ── Salvage Check (Wit) ───────────────────────────────────────────────
     mir_bon_s, mir_adv_s = get_miracle(pool)
     salvage_bonus = fort_bonus + roll_pc_aft("salvage") + mir_bon_s
-    if _has(legion, "Cunning"): salvage_bonus += CUNNING_BONUS
+    if _has(legion, "Cunning"):
+        salvage_bonus += CUNNING_BONUS
 
     if mir_adv_s:
         roll_s = max(d20(vet), d20(vet))
@@ -146,7 +173,7 @@ def run_aftermath(legion: Legion, won: bool, battle_counter_diff: int,
             passed_s = True
         divine_reroll_used = True
 
-    nat20_s  = (roll_s == 20)
+    nat20_s = roll_s == 20
     benefits = []
 
     if passed_s:
@@ -166,7 +193,8 @@ def run_aftermath(legion: Legion, won: bool, battle_counter_diff: int,
     is_protected = False
     if pc_deployments:
         for p in pc_deployments:
-            if p.type == "Protect": is_protected = True
+            if p.type == "Protect":
+                is_protected = True
 
     if legion.commander.alive and not is_protected:
         if won:
@@ -180,12 +208,14 @@ def run_aftermath(legion: Legion, won: bool, battle_counter_diff: int,
             base_risk = max(1, base_risk - DIVINE_BLOOD_DEATH_REDUC)
 
         base_risk += headhunter_death_penalty
-        protection  = legion.mor_total       # Morale is the only protection
+        protection = legion.mor_total  # Morale is the only protection
         death_chance = max(1, base_risk - protection)
 
-        d100 = lambda: random.randint(1, 100)
+        def d100():
+            return random.randint(1, 100)
+
         if _has(legion, "Unbreakable Pact"):
-            roll_c = max(d100(), d100())   # advantage = take higher (harder to die)
+            roll_c = max(d100(), d100())  # advantage = take higher (harder to die)
         else:
             roll_c = d100()
 
@@ -195,12 +225,21 @@ def run_aftermath(legion: Legion, won: bool, battle_counter_diff: int,
             legion.morale_mod -= COMMANDER_DEATH_MORALE_LOSS
 
         results["casualty"] = {
-            "roll": roll_c, "dc": death_chance, "died": died,
-            "protection": protection, "base_risk": base_risk,
+            "roll": roll_c,
+            "dc": death_chance,
+            "died": died,
+            "protection": protection,
+            "base_risk": base_risk,
         }
     else:
-        results["casualty"] = {"roll": 0, "dc": 0, "died": False,
-                                "protection": 0, "base_risk": 0, "protected": is_protected}
+        results["casualty"] = {
+            "roll": 0,
+            "dc": 0,
+            "died": False,
+            "protection": 0,
+            "base_risk": 0,
+            "protected": is_protected,
+        }
 
     legion.wit_temp_bonus = 0
     return results

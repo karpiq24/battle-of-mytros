@@ -4,11 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Project Is
 
-**Battle of Mytros** is a Foundry VTT module implementing a GM-facing mass combat system for *Odyssey of the Dragonlords*. It resolves legion warfare phase-by-phase through an interactive dashboard and battle resolver.
+**Battle of Mytros** is a Foundry VTT module implementing a GM-facing mass combat system for _Odyssey of the Dragonlords_. It resolves legion warfare phase-by-phase through an interactive dashboard and battle resolver.
 
 ## Commands
 
 ### Python Simulator (balance testing / outcome analysis)
+
 ```bash
 python3 battle_sim.py                          # Run with defaults (32 rounds, 1000 Monte Carlo sims)
 python3 battle_sim.py --rounds 20 --seed 42    # Custom rounds + reproducible seed
@@ -17,6 +18,7 @@ python3 battle_sim.py --no-display             # Save PNG figures to sim/ instea
 ```
 
 ### Foundry Module
+
 No build step. The module runs directly in Foundry VTT — copy the folder to `Data/modules/battle-of-mytros/` or install via manifest URL in `module.json`. Changes to `.mjs` files take effect on module reload in the browser.
 
 There is no automated test suite. Testing is done manually in Foundry VTT.
@@ -34,11 +36,11 @@ There is no automated test suite. Testing is done manually in Foundry VTT.
 2. **BattleResolverApp** (`scripts/apps/resolver.mjs`) — Per-engagement battle state machine. Executes Maneuver → Charge → Clash → Aftermath workflow. Maintains in-memory state until "Commit Changes to Actors" is clicked, then applies all results atomically.
 
 3. **Support utilities:**
-   - `scripts/utils/tag-engine.mjs` — Maps 20 commander tags to roll modifiers (all passive/automatic)
-   - `scripts/utils/battle-roller.mjs` — Executes d20 rolls with advantage/disadvantage/Veteran floor (natural 1–4 → 5)
-   - `scripts/regions/region-manager.mjs` — Section discovery, token queries, adjacency lookup
-   - `scripts/models/actor-data.mjs` — Type checks and initialization helpers for Legion/Commander actors
-   - `scripts/utils/csv-parser.mjs` — Bulk import/export for legions and commanders
+    - `scripts/utils/tag-engine.mjs` — Maps 20 commander tags to roll modifiers (all passive/automatic)
+    - `scripts/utils/battle-roller.mjs` — Executes d20 rolls with advantage/disadvantage/Veteran floor (natural 1–4 → 5)
+    - `scripts/regions/region-manager.mjs` — Section discovery, token queries, adjacency lookup
+    - `scripts/models/actor-data.mjs` — Type checks and initialization helpers for Legion/Commander actors
+    - `scripts/utils/csv-parser.mjs` — Bulk import/export for legions and commanders
 
 ### Data Persistence
 
@@ -50,7 +52,7 @@ There is no automated test suite. Testing is done manually in Foundry VTT.
 
 **Region flags:** `control` ("neutral"|"allied"|"sydon"), `fortified`, `hasObjective`, `objectiveDestroyed`, `sydonHeldLastRound`.
 
-**Token flags:** `deploymentMode` (reinforce, shock_assault, targeted_strike_*, shield_the_wounded, protect, rest).
+**Token flags:** `deploymentMode` (reinforce, shock*assault, targeted_strike*\*, shield_the_wounded, protect, rest).
 
 ### Battle Resolution Flow
 
@@ -61,12 +63,13 @@ Round Advancement (passive recovery, death toll, objective checks)
 ```
 
 ### Global Exports (available to Foundry macros)
+
 ```javascript
-globalThis.MytrosActorData
-globalThis.MytrosRegionManager
-globalThis.MytrosCSVParser
-globalThis.BattleRoller
-globalThis.TagEngine
+globalThis.MytrosActorData;
+globalThis.MytrosRegionManager;
+globalThis.MytrosCSVParser;
+globalThis.BattleRoller;
+globalThis.TagEngine;
 ```
 
 ### Python Simulator (`sim/`)
@@ -79,8 +82,8 @@ Standalone Monte Carlo engine mirroring the JS mechanics for balance analysis. K
 
 ## Key Conventions
 
-- **Localization:** All UI strings use `game.i18n.localize("MYTROS.KeyName")`. English in `lang/en.json`, Polish in `lang/pl.json`.
-- **CSS:** Uses custom properties (`--mytros-*`) with dark mode via `@media (prefers-color-scheme: dark)` and `body.theme-dark` (Foundry v13).
-- **Foundry version compatibility:** v12 minimum, v13 verified. The `getSceneControlButtons` hook handles both API shapes.
-- **Commander tags:** 20 tags total, all passive. Applied automatically when conditions are met. See `scripts/utils/tag-engine.mjs` for the full list and logic.
-- **Simulator constants:** All tunable values (DCs, bonus values, thresholds) live in `sim/config.py`.
+-   **Localization:** All UI strings use `game.i18n.localize("MYTROS.KeyName")`. English in `lang/en.json`, Polish in `lang/pl.json`.
+-   **CSS:** Uses custom properties (`--mytros-*`) with dark mode via `@media (prefers-color-scheme: dark)` and `body.theme-dark` (Foundry v13).
+-   **Foundry version compatibility:** v12 minimum, v13 verified. The `getSceneControlButtons` hook handles both API shapes.
+-   **Commander tags:** 20 tags total, all passive. Applied automatically when conditions are met. See `scripts/utils/tag-engine.mjs` for the full list and logic.
+-   **Simulator constants:** All tunable values (DCs, bonus values, thresholds) live in `sim/config.py`.

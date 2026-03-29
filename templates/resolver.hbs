@@ -4,6 +4,17 @@
         <div class="matchup">
             <span class="allied">{{alliedName}}</span> {{localize "MYTROS.ResolverVS"}} <span class="sydon">{{sydonName}}</span>
         </div>
+        <div class="resolver-breadcrumb">
+            <span class="breadcrumb-step {{#if (eq state.phase 'setup')}}bc-active{{/if}} {{#if state.maneuverWinner}}bc-done{{/if}}">{{localize "MYTROS.BCManeuver"}}</span>
+            <i class="fas fa-chevron-right bc-arrow"></i>
+            <span class="breadcrumb-step {{#if (eq state.phase 'charge')}}bc-active{{/if}} {{#if state.chargeWinner}}bc-done{{/if}}">{{localize "MYTROS.BCCharge"}}</span>
+            <i class="fas fa-chevron-right bc-arrow"></i>
+            <span class="breadcrumb-step {{#if (eq state.phase 'clash')}}bc-active{{/if}} {{#if state.overallWinner}}bc-done{{/if}}">{{localize "MYTROS.BCClash"}}</span>
+            <i class="fas fa-chevron-right bc-arrow"></i>
+            <span class="breadcrumb-step {{#if (eq state.phase 'aftermath_recovery')}}bc-active{{else}}{{#if (eq state.phase 'aftermath_hope')}}bc-active{{else}}{{#if (eq state.phase 'aftermath_salvage')}}bc-active{{else}}{{#if (eq state.phase 'aftermath_salvage_allied_choice')}}bc-active{{else}}{{#if (eq state.phase 'aftermath_salvage_sydon_choice')}}bc-active{{else}}{{#if (eq state.phase 'aftermath_divine_blood')}}bc-active{{else}}{{#if (eq state.phase 'aftermath_commander')}}bc-active{{/if}}{{/if}}{{/if}}{{/if}}{{/if}}{{/if}}{{/if}} {{#if (eq state.phase 'done')}}bc-done{{else}}{{#if (eq state.phase 'complete')}}bc-done{{/if}}{{/if}}">{{localize "MYTROS.BCAftermath"}}</span>
+            <i class="fas fa-chevron-right bc-arrow"></i>
+            <span class="breadcrumb-step {{#if (eq state.phase 'done')}}bc-active{{/if}} {{#if (eq state.phase 'complete')}}bc-done{{/if}}">{{localize "MYTROS.BCCommit"}}</span>
+        </div>
     </header>
 
     <main>

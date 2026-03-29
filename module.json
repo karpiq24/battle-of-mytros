@@ -1,36 +1,32 @@
 {
-  "id": "battle-of-mytros",
-  "title": "Battle of Mytros",
-  "description": "A DM workflow assistant for running mass combat in Odyssey of the Dragonlords.",
-  "version": "0.5.0",
-  "compatibility": {
-    "minimum": "12",
-    "verified": "13"
-  },
-  "authors": [
-    {
-      "name": "karpiq"
-    }
-  ],
-  "esmodules": [
-    "scripts/module.mjs"
-  ],
-  "styles": [
-    "styles/battle-dashboard.css"
-  ],
-  "languages": [
-    {
-      "lang": "en",
-      "name": "English",
-      "path": "lang/en.json"
+    "id": "battle-of-mytros",
+    "title": "Battle of Mytros",
+    "description": "A DM workflow assistant for running mass combat in Odyssey of the Dragonlords.",
+    "version": "0.5.1",
+    "compatibility": {
+        "minimum": "12",
+        "verified": "13"
     },
-    {
-      "lang": "pl",
-      "name": "Polish",
-      "path": "lang/pl.json"
-    }
-  ],
-  "url": "https://github.com/karpiq24/battle-of-mytros",
-  "manifest": "https://raw.githubusercontent.com/karpiq24/battle-of-mytros/main/module.json",
-  "download": "https://github.com/karpiq24/battle-of-mytros/archive/refs/heads/main.zip"
+    "authors": [
+        {
+            "name": "karpiq"
+        }
+    ],
+    "esmodules": ["scripts/module.mjs"],
+    "styles": ["styles/battle-dashboard.css"],
+    "languages": [
+        {
+            "lang": "en",
+            "name": "English",
+            "path": "lang/en.json"
+        },
+        {
+            "lang": "pl",
+            "name": "Polish",
+            "path": "lang/pl.json"
+        }
+    ],
+    "url": "https://github.com/karpiq24/battle-of-mytros",
+    "manifest": "https://raw.githubusercontent.com/karpiq24/battle-of-mytros/main/module.json",
+    "download": "https://github.com/karpiq24/battle-of-mytros/archive/refs/heads/main.zip"
 }

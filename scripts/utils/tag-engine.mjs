@@ -22,11 +22,11 @@ export class TagEngine {
         // Fetch Commander Items
         const commanderId = legion.getFlag("battle-of-mytros", "commanderId");
         const commander = commanderId ? game.actors.get(commanderId) : null;
-        const tags = commander ? commander.items.map(i => i.name.toLowerCase()) : [];
+        const tags = commander ? commander.items.map((i) => i.name.toLowerCase()) : [];
 
         const enemyCommanderId = enemyLegion.getFlag("battle-of-mytros", "commanderId");
         const enemyCommander = enemyCommanderId ? game.actors.get(enemyCommanderId) : null;
-        const enemyTags = enemyCommander ? enemyCommander.items.map(i => i.name.toLowerCase()) : [];
+        const enemyTags = enemyCommander ? enemyCommander.items.map((i) => i.name.toLowerCase()) : [];
 
         const stats = legion.getFlag("battle-of-mytros", "stats");
 
@@ -73,7 +73,7 @@ export class TagEngine {
             mods.flatBonus -= 1;
             mods.descriptions.push("Mage (enemy): −1");
         }
-        
+
         // Engineer logic: Enemy suffers -2 if fighting this legion in a fortified section
         const siegeBreaker = tags.includes("siege breaker");
         if (enemyTags.includes("engineer") && context.enemyIsFortified && !siegeBreaker) {
@@ -113,11 +113,11 @@ export class TagEngine {
 
         const commanderId = legion.getFlag("battle-of-mytros", "commanderId");
         const commander = commanderId ? game.actors.get(commanderId) : null;
-        const tags = commander ? commander.items.map(i => i.name.toLowerCase()) : [];
+        const tags = commander ? commander.items.map((i) => i.name.toLowerCase()) : [];
 
         const enemyCommanderId = enemyLegion.getFlag("battle-of-mytros", "commanderId");
         const enemyCommander = enemyCommanderId ? game.actors.get(enemyCommanderId) : null;
-        const enemyTags = enemyCommander ? enemyCommander.items.map(i => i.name.toLowerCase()) : [];
+        const enemyTags = enemyCommander ? enemyCommander.items.map((i) => i.name.toLowerCase()) : [];
 
         if (phase === "recovery") {
             if (tags.includes("medic")) {

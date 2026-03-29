@@ -1,6 +1,8 @@
 <div class="mytros-battle-card">
     <div class="card-header">
-        <i class="fas fa-swords"></i> {{localize "MYTROS.CardBattleIn"}} <strong>{{sectionName}}</strong>
+        <i class="fas fa-swords"></i>
+        {{localize "MYTROS.CardBattleIn"}}
+        <strong>{{sectionName}}</strong>
     </div>
 
     <div class="card-matchup">
@@ -10,7 +12,8 @@
     </div>
 
     <div class="card-result">
-        <strong>{{winnerLabel}}</strong> {{localize "MYTROS.CardWins"}}
+        <strong>{{winnerLabel}}</strong>
+        {{localize "MYTROS.CardWins"}}
         <span class="card-score">{{scoreAllied}}–{{scoreSydon}}</span>
     </div>
 
@@ -28,19 +31,23 @@
                 <td>
                     <span class="{{alliedRecoveryClass}}">{{alliedRecoveryText}}</span>
                     {{#if alliedRecoveryRoll}}
-                    <div class="roll-detail">{{alliedRecoveryRoll}}</div>
+                        <div class="roll-detail">{{alliedRecoveryRoll}}</div>
                     {{/if}}
                     {{#if alliedRecoveryMods.length}}
-                    <div class="card-mod-chips">{{#each alliedRecoveryMods}}<span class="card-mod-chip">{{this}}</span>{{/each}}</div>
+                        <div class="card-mod-chips">{{#each alliedRecoveryMods}}<span
+                                    class="card-mod-chip"
+                                >{{this}}</span>{{/each}}</div>
                     {{/if}}
                 </td>
                 <td>
                     <span class="{{sydonRecoveryClass}}">{{sydonRecoveryText}}</span>
                     {{#if sydonRecoveryRoll}}
-                    <div class="roll-detail">{{sydonRecoveryRoll}}</div>
+                        <div class="roll-detail">{{sydonRecoveryRoll}}</div>
                     {{/if}}
                     {{#if sydonRecoveryMods.length}}
-                    <div class="card-mod-chips">{{#each sydonRecoveryMods}}<span class="card-mod-chip">{{this}}</span>{{/each}}</div>
+                        <div class="card-mod-chips">{{#each sydonRecoveryMods}}<span
+                                    class="card-mod-chip"
+                                >{{this}}</span>{{/each}}</div>
                     {{/if}}
                 </td>
             </tr>
@@ -49,45 +56,62 @@
                 <td>
                     <span class="{{alliedHopeClass}}">{{alliedHopeText}}</span>
                     {{#if alliedHopeRoll}}
-                    <div class="roll-detail">{{alliedHopeRoll}}</div>
+                        <div class="roll-detail">{{alliedHopeRoll}}</div>
                     {{/if}}
                     {{#if alliedHopeMods.length}}
-                    <div class="card-mod-chips">{{#each alliedHopeMods}}<span class="card-mod-chip">{{this}}</span>{{/each}}</div>
+                        <div class="card-mod-chips">{{#each alliedHopeMods}}<span
+                                    class="card-mod-chip"
+                                >{{this}}</span>{{/each}}</div>
                     {{/if}}
                 </td>
                 <td>
                     <span class="{{sydonHopeClass}}">{{sydonHopeText}}</span>
                     {{#if sydonHopeRoll}}
-                    <div class="roll-detail">{{sydonHopeRoll}}</div>
+                        <div class="roll-detail">{{sydonHopeRoll}}</div>
                     {{/if}}
                     {{#if sydonHopeMods.length}}
-                    <div class="card-mod-chips">{{#each sydonHopeMods}}<span class="card-mod-chip">{{this}}</span>{{/each}}</div>
+                        <div class="card-mod-chips">{{#each sydonHopeMods}}<span
+                                    class="card-mod-chip"
+                                >{{this}}</span>{{/each}}</div>
                     {{/if}}
                 </td>
             </tr>
             <tr class="card-final">
                 <td>{{localize "MYTROS.CardFinalState"}}</td>
-                <td>{{localize "MYTROS.InjShort"}} <strong>{{alliedInjuries}}</strong> · {{localize "MYTROS.MorShort"}} <strong>{{alliedMorale}}</strong></td>
-                <td>{{localize "MYTROS.InjShort"}} <strong>{{sydonInjuries}}</strong> · {{localize "MYTROS.MorShort"}} <strong>{{sydonMorale}}</strong></td>
+                <td>{{localize "MYTROS.InjShort"}}
+                    <strong>{{alliedInjuries}}</strong>
+                    ·
+                    {{localize "MYTROS.MorShort"}}
+                    <strong>{{alliedMorale}}</strong></td>
+                <td>{{localize "MYTROS.InjShort"}}
+                    <strong>{{sydonInjuries}}</strong>
+                    ·
+                    {{localize "MYTROS.MorShort"}}
+                    <strong>{{sydonMorale}}</strong></td>
             </tr>
         </tbody>
     </table>
 
     {{#if alliedCommanderDied}}
-    <p class="card-death"><i class="fas fa-skull"></i> {{alliedCommanderName}} {{localize "MYTROS.CardFallen"}}</p>
+        <p class="card-death"><i class="fas fa-skull"></i> {{alliedCommanderName}} {{localize "MYTROS.CardFallen"}}</p>
     {{/if}}
     {{#if sydonCommanderDied}}
-    <p class="card-death"><i class="fas fa-skull"></i> {{sydonCommanderName}} {{localize "MYTROS.CardFallen"}}</p>
+        <p class="card-death"><i class="fas fa-skull"></i> {{sydonCommanderName}} {{localize "MYTROS.CardFallen"}}</p>
     {{/if}}
 
     {{#if alliedStatus}}
-    <p class="card-status card-status-{{alliedStatusType}}"><i class="fas fa-exclamation-triangle"></i> {{localize "MYTROS.CardAllied"}}: {{alliedStatus}}</p>
+        <p class="card-status card-status-{{alliedStatusType}}"><i class="fas fa-exclamation-triangle"></i>
+            {{localize "MYTROS.CardAllied"}}:
+            {{alliedStatus}}</p>
     {{/if}}
     {{#if sydonStatus}}
-    <p class="card-status card-status-{{sydonStatusType}}"><i class="fas fa-exclamation-triangle"></i> {{localize "MYTROS.CardSydon"}}: {{sydonStatus}}</p>
+        <p class="card-status card-status-{{sydonStatusType}}"><i class="fas fa-exclamation-triangle"></i>
+            {{localize "MYTROS.CardSydon"}}:
+            {{sydonStatus}}</p>
     {{/if}}
 
     <div class="card-toll">
-        <i class="fas fa-skull-crossbones"></i> {{localize "MYTROS.CardDeaths"}}{{deathToll}}
+        <i class="fas fa-skull-crossbones"></i>
+        {{localize "MYTROS.CardDeaths"}}{{deathToll}}
     </div>
 </div>

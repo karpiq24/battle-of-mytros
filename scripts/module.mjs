@@ -11,18 +11,18 @@ globalThis.MytrosCSVParser = MytrosCSVParser;
 globalThis.BattleRoller = BattleRoller;
 globalThis.TagEngine = TagEngine;
 
-Hooks.once('init', async function() {
+Hooks.once("init", async function () {
     console.log("Battle of Mytros | Initializing module");
 
-    Handlebars.registerHelper('eq', function (a, b) {
+    Handlebars.registerHelper("eq", function (a, b) {
         return a === b;
     });
 
-    Handlebars.registerHelper('ne', function (a, b) {
+    Handlebars.registerHelper("ne", function (a, b) {
         return a !== b;
     });
 
-    Handlebars.registerHelper('add', function (a, b) {
+    Handlebars.registerHelper("add", function (a, b) {
         return a + b;
     });
 
@@ -32,7 +32,7 @@ Hooks.once('init', async function() {
         scope: "world",
         config: true,
         type: String,
-        default: ""
+        default: "",
     });
 
     game.settings.register("battle-of-mytros", "currentRound", {
@@ -41,7 +41,7 @@ Hooks.once('init', async function() {
         scope: "world",
         config: false,
         type: Number,
-        default: 1
+        default: 1,
     });
 
     game.settings.register("battle-of-mytros", "currentPhase", {
@@ -50,7 +50,7 @@ Hooks.once('init', async function() {
         scope: "world",
         config: false,
         type: Number,
-        default: 1
+        default: 1,
     });
 
     game.settings.register("battle-of-mytros", "deathToll", {
@@ -59,7 +59,7 @@ Hooks.once('init', async function() {
         scope: "world",
         config: false,
         type: Number,
-        default: 0
+        default: 0,
     });
 
     game.settings.register("battle-of-mytros", "alliedMiracles", {
@@ -67,7 +67,7 @@ Hooks.once('init', async function() {
         scope: "world",
         config: false,
         type: Number,
-        default: 8
+        default: 8,
     });
 
     game.settings.register("battle-of-mytros", "sydonMiracles", {
@@ -75,7 +75,7 @@ Hooks.once('init', async function() {
         scope: "world",
         config: false,
         type: Number,
-        default: 10
+        default: 10,
     });
 
     game.settings.register("battle-of-mytros", "reconResult", {
@@ -83,7 +83,7 @@ Hooks.once('init', async function() {
         scope: "world",
         config: false,
         type: String,
-        default: ""
+        default: "",
     });
 
     game.settings.register("battle-of-mytros", "reconBonus", {
@@ -91,7 +91,7 @@ Hooks.once('init', async function() {
         scope: "world",
         config: false,
         type: Number,
-        default: 0
+        default: 0,
     });
 
     game.settings.register("battle-of-mytros", "completedEvents", {
@@ -99,7 +99,7 @@ Hooks.once('init', async function() {
         scope: "world",
         config: false,
         type: String,
-        default: "[]"
+        default: "[]",
     });
 
     game.settings.register("battle-of-mytros", "deathTollFrozen", {
@@ -107,7 +107,7 @@ Hooks.once('init', async function() {
         scope: "world",
         config: false,
         type: Boolean,
-        default: false
+        default: false,
     });
 
     game.settings.register("battle-of-mytros", "sydonObjectiveHalved", {
@@ -115,7 +115,7 @@ Hooks.once('init', async function() {
         scope: "world",
         config: false,
         type: Boolean,
-        default: false
+        default: false,
     });
 
     game.settings.register("battle-of-mytros", "adjacencyPairs", {
@@ -124,7 +124,7 @@ Hooks.once('init', async function() {
         scope: "world",
         config: false,
         type: String,
-        default: "[]"
+        default: "[]",
     });
 
     game.settings.register("battle-of-mytros", "sectionPrefix", {
@@ -133,7 +133,7 @@ Hooks.once('init', async function() {
         scope: "world",
         config: false,
         type: String,
-        default: "Section:"
+        default: "Section:",
     });
 
     game.settings.register("battle-of-mytros", "maxMorale", {
@@ -142,7 +142,7 @@ Hooks.once('init', async function() {
         scope: "world",
         config: false,
         type: Number,
-        default: 10
+        default: 10,
     });
 
     game.settings.register("battle-of-mytros", "destroyThreshold", {
@@ -151,7 +151,7 @@ Hooks.once('init', async function() {
         scope: "world",
         config: false,
         type: Number,
-        default: 6
+        default: 6,
     });
 
     game.settings.register("battle-of-mytros", "hopeDC", {
@@ -160,7 +160,7 @@ Hooks.once('init', async function() {
         scope: "world",
         config: false,
         type: Number,
-        default: 12
+        default: 12,
     });
 
     game.settings.register("battle-of-mytros", "salvageDC", {
@@ -169,13 +169,13 @@ Hooks.once('init', async function() {
         scope: "world",
         config: false,
         type: Number,
-        default: 12
+        default: 12,
     });
 });
 
 Hooks.on("canvasReady", async () => {
     if (!game.user.isGM) return;
-    
+
     const battleSceneId = game.settings.get("battle-of-mytros", "battleSceneId");
     if (canvas.scene.id !== battleSceneId) return;
 
@@ -189,7 +189,7 @@ Hooks.on("getSceneControlButtons", (controls) => {
     // v12: controls is an Array — find by name
     // v13: controls is a Record<string, SceneControl> — access by key
     if (Array.isArray(controls)) {
-        const tokenControls = controls.find(c => c.name === "token");
+        const tokenControls = controls.find((c) => c.name === "token");
         if (tokenControls) {
             tokenControls.tools.push({
                 name: "battleDashboard",
@@ -197,7 +197,7 @@ Hooks.on("getSceneControlButtons", (controls) => {
                 icon: "fas fa-swords",
                 visible: true,
                 onClick: () => new BattleDashboard().render({ force: true }),
-                button: true
+                button: true,
             });
         }
     } else if (controls.tokens) {
@@ -209,7 +209,7 @@ Hooks.on("getSceneControlButtons", (controls) => {
             order: Object.keys(controls.tokens.tools).length,
             button: true,
             visible: true,
-            onChange: () => new BattleDashboard().render({ force: true })
+            onChange: () => new BattleDashboard().render({ force: true }),
         };
     }
 });
@@ -243,8 +243,9 @@ Hooks.on("updateActor", (actor, changes, options, userId) => {
 Hooks.on("deleteActor", async (actor, options, userId) => {
     if (game.user.id !== userId) return;
     if (globalThis.MytrosActorData.isCommander(actor)) {
-        const legions = game.actors.filter(a => globalThis.MytrosActorData.isLegion(a) && 
-            a.getFlag("battle-of-mytros", "commanderId") === actor.id);
+        const legions = game.actors.filter(
+            (a) => globalThis.MytrosActorData.isLegion(a) && a.getFlag("battle-of-mytros", "commanderId") === actor.id
+        );
         for (const legion of legions) {
             await legion.setFlag("battle-of-mytros", "commanderId", null);
         }

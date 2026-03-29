@@ -3,12 +3,21 @@
         <a class="item {{#if (eq tab 'overview')}}active{{/if}}" data-action="changeTab" data-tab="overview"><i class="fas fa-map-marked-alt"></i> {{localize "MYTROS.TabOverview"}}</a>
         <a class="item {{#if (eq tab 'miracles')}}active{{/if}}" data-action="changeTab" data-tab="miracles"><i class="fas fa-sun"></i> {{localize "MYTROS.TabMiracles"}}</a>
         {{#if isGM}}
+        <a class="item {{#if (eq tab 'legions')}}active{{/if}}" data-action="changeTab" data-tab="legions"><i class="fas fa-shield-alt"></i> {{localize "MYTROS.TabLegions"}}</a>
+        <a class="item {{#if (eq tab 'commanders')}}active{{/if}}" data-action="changeTab" data-tab="commanders"><i class="fas fa-user-crown"></i> {{localize "MYTROS.TabCommanders"}}</a>
         <a class="item {{#if (eq tab 'setup')}}active{{/if}}" data-action="changeTab" data-tab="setup"><i class="fas fa-cog"></i> {{localize "MYTROS.TabSetup"}}</a>
         {{/if}}
     </nav>
 
     <header class="dashboard-header">
-        <div class="round-label">{{localize "MYTROS.Round"}} {{round}}</div>
+        <div class="header-top-row">
+            <div class="round-label">{{localize "MYTROS.Round"}} {{round}}</div>
+            <div class="death-toll-display" title="{{localize "MYTROS.SetupDeathTollLabel"}}">
+                <i class="fas fa-skull-crossbones"></i>
+                <span class="death-toll-count">{{deathToll}}</span>
+                {{#if deathTollFrozen}}<i class="fas fa-lock death-toll-frozen-icon" title="{{localize "MYTROS.ReconFrozen"}}"></i>{{/if}}
+            </div>
+        </div>
         <div class="phase-track">
             {{#each phaseNames}}
             <div class="phase-pip {{#if (eq (add @index 1) @root.phase)}}active{{/if}}" title="{{localize "MYTROS.Phase"}} {{add @index 1}}: {{this}}">
@@ -61,7 +70,7 @@
                                 {{#if @root.isGM}}
                                 <div class="section-controls">
                                     {{#if this.pendingBattle}}
-                                    <button type="button" class="resolve-btn" data-action="openResolver" data-region-id="{{this.id}}"><i class="fas fa-swords"></i> {{localize "MYTROS.ResolveBattle"}}</button>
+                                    <button type="button" class="resolve-btn resolve-btn-battle" data-action="openResolver" data-region-id="{{this.id}}"><i class="fas fa-swords"></i> {{localize "MYTROS.ResolveBattle"}}</button>
                                     {{/if}}
                                     {{#if this.routedContested}}
                                     <button type="button" class="resolve-btn resolve-rout" data-action="disbandRoutedLegions" data-region-id="{{this.id}}"><i class="fas fa-flag"></i> {{localize "MYTROS.OverrunRouted"}}</button>
@@ -202,6 +211,119 @@
                     </div>
                     {{/each}}
                 </div>
+                {{/if}}
+            </div>
+        {{/if}}
+
+        {{!-- ══════════════════════════════════════════════════════════════ --}}
+        {{!-- LEGIONS TAB                                                   --}}
+        {{!-- ══════════════════════════════════════════════════════════════ --}}
+        {{#if (eq tab 'legions')}}
+            <div class="management-panel">
+                <div class="management-header">
+                    <h3><i class="fas fa-shield-alt"></i> {{localize "MYTROS.LegionsManageTitle"}}</h3>
+                    <button type="button" class="btn-create" data-action="createLegion"><i class="fas fa-plus"></i> {{localize "MYTROS.CreateLegion"}}</button>
+                </div>
+
+                {{#if allLegions.length}}
+                <div class="management-table-wrapper">
+                    <table class="management-table">
+                        <thead>
+                            <tr>
+                                <th class="col-name">{{localize "MYTROS.ColName"}}</th>
+                                <th class="col-faction">{{localize "MYTROS.ColFaction"}}</th>
+                                <th class="col-stat">{{localize "MYTROS.ColVit"}}</th>
+                                <th class="col-stat">{{localize "MYTROS.ColMor"}}</th>
+                                <th class="col-stat">{{localize "MYTROS.ColWit"}}</th>
+                                <th class="col-stat">{{localize "MYTROS.ColInj"}}</th>
+                                <th class="col-commander">{{localize "MYTROS.ColCommander"}}</th>
+                                <th class="col-status">{{localize "MYTROS.ColStatus"}}</th>
+                                <th class="col-actions"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each allLegions}}
+                            <tr class="legion-row faction-row-{{this.faction}}{{#if this.isDestroyed}} row-destroyed{{/if}}{{#if this.isRouted}} row-routed{{/if}}">
+                                <td class="col-name">{{this.name}}</td>
+                                <td class="col-faction">
+                                    <select data-action="updateLegionFaction" data-legion-id="{{this.id}}">
+                                        <option value="allied" {{#if (eq this.faction 'allied')}}selected{{/if}}>{{localize "MYTROS.ControlAllied"}}</option>
+                                        <option value="sydon" {{#if (eq this.faction 'sydon')}}selected{{/if}}>{{localize "MYTROS.ControlSydon"}}</option>
+                                    </select>
+                                </td>
+                                <td class="col-stat"><input type="number" value="{{this.vitality}}" data-action="updateLegionStat" data-legion-id="{{this.id}}" data-stat="vitality" min="0"></td>
+                                <td class="col-stat"><input type="number" value="{{this.morale}}" data-action="updateLegionStat" data-legion-id="{{this.id}}" data-stat="morale" min="0"></td>
+                                <td class="col-stat"><input type="number" value="{{this.wit}}" data-action="updateLegionStat" data-legion-id="{{this.id}}" data-stat="wit" min="0"></td>
+                                <td class="col-stat"><input type="number" value="{{this.injuries}}" data-action="updateLegionStat" data-legion-id="{{this.id}}" data-stat="injuries" min="0"></td>
+                                <td class="col-commander">
+                                    <select data-action="assignCommander" data-legion-id="{{this.id}}">
+                                        <option value="">—</option>
+                                        {{#each @root.commanders}}
+                                            <option value="{{this.id}}" {{#if (eq this.id ../commanderId)}}selected{{/if}}>{{this.name}}</option>
+                                        {{/each}}
+                                    </select>
+                                </td>
+                                <td class="col-status">
+                                    <div class="status-toggles">
+                                        <button type="button" class="status-toggle {{#if this.isRouted}}active-routed{{/if}}" data-action="toggleLegionRouted" data-legion-id="{{this.id}}" title="{{localize "MYTROS.Routed"}}"><i class="fas fa-flag"></i></button>
+                                        <button type="button" class="status-toggle {{#if this.isDestroyed}}active-destroyed{{/if}}" data-action="toggleLegionDestroyed" data-legion-id="{{this.id}}" title="{{localize "MYTROS.Destroyed"}}"><i class="fas fa-skull"></i></button>
+                                    </div>
+                                </td>
+                                <td class="col-actions">
+                                    <button type="button" class="btn-delete" data-action="deleteLegion" data-legion-id="{{this.id}}" title="{{localize "MYTROS.Delete"}}"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+                {{else}}
+                <p class="empty-state">{{localize "MYTROS.NoLegionsManage"}}</p>
+                {{/if}}
+            </div>
+        {{/if}}
+
+        {{!-- ══════════════════════════════════════════════════════════════ --}}
+        {{!-- COMMANDERS TAB                                                --}}
+        {{!-- ══════════════════════════════════════════════════════════════ --}}
+        {{#if (eq tab 'commanders')}}
+            <div class="management-panel">
+                <div class="management-header">
+                    <h3><i class="fas fa-user-crown"></i> {{localize "MYTROS.CommandersManageTitle"}}</h3>
+                    <button type="button" class="btn-create" data-action="createCommander"><i class="fas fa-plus"></i> {{localize "MYTROS.CreateCommander"}}</button>
+                </div>
+
+                {{#if allCommanders.length}}
+                <div class="commanders-list">
+                    {{#each allCommanders}}
+                    <div class="commander-card">
+                        <div class="commander-card-header">
+                            <div class="commander-info">
+                                <strong class="commander-name">{{this.name}}</strong>
+                                <span class="commander-assignment"><i class="fas fa-shield-alt"></i> {{this.assignedLegionName}}</span>
+                            </div>
+                            <div class="commander-card-actions">
+                                <button type="button" class="btn-add-tag" data-action="addCommanderTag" data-commander-id="{{this.id}}" title="{{localize "MYTROS.AddTag"}}"><i class="fas fa-plus"></i> {{localize "MYTROS.AddTag"}}</button>
+                                <button type="button" class="btn-auto-tags" data-action="autoCreateTags" data-commander-id="{{this.id}}" title="{{localize "MYTROS.AutoCreateTags"}}"><i class="fas fa-magic"></i></button>
+                                <button type="button" class="btn-delete" data-action="deleteCommander" data-commander-id="{{this.id}}" title="{{localize "MYTROS.Delete"}}"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                        <div class="commander-tags">
+                            {{#each this.tags}}
+                            <span class="tag-chip">
+                                {{this.name}}
+                                <button type="button" class="tag-remove" data-action="removeCommanderTag" data-commander-id="{{../id}}" data-item-id="{{this.id}}" title="{{localize "MYTROS.RemoveTag"}}"><i class="fas fa-times"></i></button>
+                            </span>
+                            {{/each}}
+                            {{#unless this.tags.length}}
+                            <span class="no-tags">{{localize "MYTROS.NoTags"}}</span>
+                            {{/unless}}
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+                {{else}}
+                <p class="empty-state">{{localize "MYTROS.NoCommandersManage"}}</p>
                 {{/if}}
             </div>
         {{/if}}

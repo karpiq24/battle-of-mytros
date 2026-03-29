@@ -1,31 +1,35 @@
 import random
 from dataclasses import dataclass, field
-from typing import Optional
 from enum import Enum
+from typing import Optional
 
 from .config import (
-    RELENTLESS_MIN_MORALE, MORALE_CAP, BULWARK_MAX_INJURIES, MAX_INJURIES,
+    BULWARK_MAX_INJURIES,
+    MAX_INJURIES,
+    MORALE_CAP,
+    RELENTLESS_MIN_MORALE,
 )
-
 
 # ─── Enums & Data Classes ──────────────────────────────────────────────
 
+
 class Faction(Enum):
     ALLIED = "Allied"
-    ENEMY  = "Enemy"
+    ENEMY = "Enemy"
 
 
 class BattleResult(Enum):
-    WIN       = "Win"
-    LOSS      = "Loss"
+    WIN = "Win"
+    LOSS = "Loss"
     NO_BATTLE = "No Battle"
 
 
 @dataclass
 class PCDeployment:
     name: str = "PC"
-    type: str = "Reinforce" # "Reinforce", "Shock Assault", "Targeted Strike", "Shield the Wounded", "Protect"
-    phase: Optional[str] = None # For Targeted Strike: "maneuver", "charge", "clash"
+    # "Reinforce", "Shock Assault", "Targeted Strike", "Shield the Wounded", "Protect"
+    type: str = "Reinforce"
+    phase: Optional[str] = None  # For Targeted Strike: "maneuver", "charge", "clash"
 
 
 class MiraclePool:
@@ -63,15 +67,15 @@ class Commander:
 class Legion:
     name: str
     faction: Faction
-    vit: int        # flat total Vitality
-    mor: int        # flat base Morale (shifts via morale_mod)
-    wit: int        # flat total Wit
+    vit: int  # flat total Vitality
+    mor: int  # flat base Morale (shifts via morale_mod)
+    wit: int  # flat total Wit
     commander: Commander
-    injuries: int  = 0
-    morale_mod: int = 0      # cumulative Hope check shifts
-    routed: bool    = False
+    injuries: int = 0
+    morale_mod: int = 0  # cumulative Hope check shifts
+    routed: bool = False
     destroyed: bool = False
-    section: int    = 0
+    section: int = 0
     fortified_section: int = -1
     wit_temp_bonus: int = 0  # from Tactical Insight salvage
 
@@ -79,11 +83,11 @@ class Legion:
 
     # Per-round history
     history_injuries: list = field(default_factory=list)
-    history_morale:   list = field(default_factory=list)
-    history_results:  list = field(default_factory=list)
-    history_vit:      list = field(default_factory=list)
-    history_mor:      list = field(default_factory=list)
-    history_wit:      list = field(default_factory=list)
+    history_morale: list = field(default_factory=list)
+    history_results: list = field(default_factory=list)
+    history_vit: list = field(default_factory=list)
+    history_mor: list = field(default_factory=list)
+    history_wit: list = field(default_factory=list)
 
     @property
     def vit_total(self) -> int:
@@ -122,7 +126,7 @@ class Legion:
 @dataclass
 class CommanderPool:
     allied_reserves: list = field(default_factory=list)
-    enemy_reserves:  list = field(default_factory=list)
+    enemy_reserves: list = field(default_factory=list)
 
     def get_replacement(self, faction: Faction) -> Optional[Commander]:
         pool = self.allied_reserves if faction == Faction.ALLIED else self.enemy_reserves

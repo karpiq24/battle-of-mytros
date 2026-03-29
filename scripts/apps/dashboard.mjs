@@ -3,26 +3,93 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
     static OBJECTIVE_MIRACLE_REWARDS = {
-        "Temple of the Five": 3,
+        "Temple of the Five": 2,
         "Royal Palace": 2,
-        "The Dockyard": 2,
-        "Soldier's Gate": 2,
-        "The Agora": 2,
+        "The Dockyard": 1,
+        "Soldier's Gate": 1,
+        "The Agora": 1,
         "The Academy": 2,
-        "The Gymnasium": 2,
-        "The Harp Bridge": 2,
-        "The Vineyards of Mytros": 2,
+        "The Gymnasium": 1,
+        "The Harp Bridge": 1,
+        "The Vineyards of Mytros": 1,
         "Fish Market & Commerce Gate": 1,
     };
 
     static MAJOR_EVENTS = [
-        { id: "icarus",    name: "Icarus Subdued or Calmed",          reward: 2, description: "A dragon fights to protect the city rather than destroy it.", specialEffect: null },
-        { id: "acastus",   name: "Acastus Redeemed",                  reward: 2, description: "Acastus hands over the Rod of Rulership. His captains stand down.", specialEffect: "acastus_redeemed" },
-        { id: "colossus",  name: "The Colossus Awakened",             reward: 2, description: "The great guardian rises. Manually fortify the section it occupies.", specialEffect: null },
-        { id: "hergeron",  name: "Hergeron Driven from the Temple",   reward: 2, description: "Son of Sydon repelled from the Temple of the Five.", specialEffect: null },
-        { id: "sydon",     name: "Sydon Defeated",                    reward: 2, description: "The Lord of Storms falls. Objective deaths halved for remaining rounds.", specialEffect: "sydon_defeated" },
-        { id: "lutheria",  name: "Lutheria Defeated",                 reward: 2, description: "Titan of Death gone. Subtracts 800 from the running Death Toll.", specialEffect: "lutheria_defeated" },
-        { id: "kentimane", name: "Kentimane Defeated",                reward: 2, description: "The Hundred-Handed One falls. Death Toll stops. The battle is over.", specialEffect: "kentimane_defeated" }
+        {
+            id: "icarus",
+            name: "Icarus Subdued or Calmed",
+            reward: 2,
+            description: "A dragon fights to protect the city rather than destroy it.",
+            specialEffect: null,
+        },
+        {
+            id: "acastus",
+            name: "Acastus Redeemed",
+            reward: 2,
+            description: "Acastus hands over the Rod of Rulership. His captains stand down.",
+            specialEffect: "acastus_redeemed",
+        },
+        {
+            id: "colossus",
+            name: "The Colossus Awakened",
+            reward: 2,
+            description: "The great guardian rises. Manually fortify the section it occupies.",
+            specialEffect: null,
+        },
+        {
+            id: "hergeron",
+            name: "Hergeron Driven from the Temple",
+            reward: 2,
+            description: "Son of Sydon repelled from the Temple of the Five.",
+            specialEffect: null,
+        },
+        {
+            id: "sydon",
+            name: "Sydon Defeated",
+            reward: 2,
+            description: "The Lord of Storms falls. Objective deaths halved for remaining rounds.",
+            specialEffect: "sydon_defeated",
+        },
+        {
+            id: "lutheria",
+            name: "Lutheria Defeated",
+            reward: 2,
+            description: "Titan of Death gone. Subtracts 800 from the running Death Toll.",
+            specialEffect: "lutheria_defeated",
+        },
+        {
+            id: "kentimane",
+            name: "Kentimane Defeated",
+            reward: 2,
+            description: "The Hundred-Handed One falls. Death Toll stops. The battle is over.",
+            specialEffect: "kentimane_defeated",
+        },
+    ];
+
+    /** All known commander tags used in the TagEngine */
+    static KNOWN_TAGS = [
+        "Tactician",
+        "Fanatic",
+        "Zealot",
+        "Ironclad",
+        "Inspiring",
+        "Cunning",
+        "Warden",
+        "Vanguard",
+        "Headhunter",
+        "Mage",
+        "Engineer",
+        "Siege Breaker",
+        "Medic",
+        "Rallier",
+        "Terrorizer",
+        "Brutal",
+        "Veteran",
+        "Bulwark",
+        "Divine Blood",
+        "Unbreakable Pact",
+        "Relentless",
     ];
 
     static DEFAULT_OPTIONS = {
@@ -31,9 +98,9 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
         tag: "form",
         window: {
             icon: "fas fa-swords",
-            resizable: true
+            resizable: true,
         },
-        position: { width: 800, height: 600 },
+        position: { width: 860, height: 650 },
         actions: {
             changeTab: BattleDashboard.changeTab,
             updateSetting: BattleDashboard.updateSetting,
@@ -54,8 +121,21 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
             removeAdjacencyPair: BattleDashboard.removeAdjacencyPair,
             resetCompletedEvents: BattleDashboard.resetCompletedEvents,
             nextPhase: BattleDashboard.nextPhase,
-            prevPhase: BattleDashboard.prevPhase
-        }
+            prevPhase: BattleDashboard.prevPhase,
+            // ── Legions Tab ──
+            createLegion: BattleDashboard.createLegion,
+            updateLegionStat: BattleDashboard.updateLegionStat,
+            updateLegionFaction: BattleDashboard.updateLegionFaction,
+            deleteLegion: BattleDashboard.deleteLegion,
+            toggleLegionDestroyed: BattleDashboard.toggleLegionDestroyed,
+            toggleLegionRouted: BattleDashboard.toggleLegionRouted,
+            // ── Commanders Tab ──
+            createCommander: BattleDashboard.createCommander,
+            deleteCommander: BattleDashboard.deleteCommander,
+            addCommanderTag: BattleDashboard.addCommanderTag,
+            removeCommanderTag: BattleDashboard.removeCommanderTag,
+            autoCreateTags: BattleDashboard.autoCreateTags,
+        },
     };
 
     static async toggleLegionFlag(event, target) {
@@ -74,10 +154,11 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
     static async rollRecon(_event, _target) {
         if (!game.user.isGM) return;
 
-        const alliedLegions = game.actors.filter(a =>
-            globalThis.MytrosActorData.isLegion(a) &&
-            a.getFlag("battle-of-mytros", "faction") === "allied" &&
-            !a.getFlag("battle-of-mytros", "isDestroyed")
+        const alliedLegions = game.actors.filter(
+            (a) =>
+                globalThis.MytrosActorData.isLegion(a) &&
+                a.getFlag("battle-of-mytros", "faction") === "allied" &&
+                !a.getFlag("battle-of-mytros", "isDestroyed")
         );
 
         const highestWit = alliedLegions.reduce((max, l) => {
@@ -130,7 +211,7 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
     static async triggerMajorEvent(_event, target) {
         if (!game.user.isGM) return;
         const eventId = target.dataset.eventId;
-        const event = BattleDashboard.MAJOR_EVENTS.find(e => e.id === eventId);
+        const event = BattleDashboard.MAJOR_EVENTS.find((e) => e.id === eventId);
         if (!event) return;
 
         const completed = JSON.parse(game.settings.get("battle-of-mytros", "completedEvents") || "[]");
@@ -142,12 +223,14 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
         await game.settings.set("battle-of-mytros", "alliedMiracles", current + event.reward);
 
         if (event.specialEffect === "acastus_redeemed") {
-            const acastus = game.actors.find(a => a.name.toLowerCase().includes("acastus"));
+            const acastus = game.actors.find((a) => a.name.toLowerCase().includes("acastus"));
             if (acastus) {
                 await acastus.setFlag("battle-of-mytros", "isCommander", true);
                 ui.notifications.info(`Acastus has joined the battle as a Commander!`);
             } else {
-                ui.notifications.warn(`Acastus Redeemed: No actor named "Acastus" found. Add him manually as a Commander.`);
+                ui.notifications.warn(
+                    `Acastus Redeemed: No actor named "Acastus" found. Add him manually as a Commander.`
+                );
             }
         } else if (event.specialEffect === "sydon_defeated") {
             await game.settings.set("battle-of-mytros", "sydonObjectiveHalved", true);
@@ -198,9 +281,9 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
         if (!region) return;
 
         const legions = globalThis.MytrosRegionManager.getLegionsInSection(region);
-        const routedLegions = legions.filter(t =>
-            t.actor.getFlag("battle-of-mytros", "isRouted") &&
-            !t.actor.getFlag("battle-of-mytros", "isDestroyed")
+        const routedLegions = legions.filter(
+            (t) =>
+                t.actor.getFlag("battle-of-mytros", "isRouted") && !t.actor.getFlag("battle-of-mytros", "isDestroyed")
         );
 
         for (const t of routedLegions) {
@@ -209,7 +292,7 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
             await t.actor.setFlag("battle-of-mytros", "foughtThisRound", true);
         }
 
-        const names = routedLegions.map(t => t.actor.name).join(", ");
+        const names = routedLegions.map((t) => t.actor.name).join(", ");
         const sectionName = region.name.replace(globalThis.MytrosRegionManager.SECTION_PREFIX, "").trim();
 
         const deathRoll = await new Roll(`${routedLegions.length}d6`).evaluate();
@@ -221,7 +304,7 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
 
         await ChatMessage.create({
             content: `<div class="battle-chat-card"><h3>⚠ Routed Legion Overrun</h3><p><strong>${sectionName}</strong></p><p>${names} ${routedLegions.length === 1 ? "was" : "were"} disbanded — overrun while routed.</p><p>Civilian deaths: ${deaths}</p></div>`,
-            speaker: { alias: "Battle of Mytros" }
+            speaker: { alias: "Battle of Mytros" },
         });
 
         ui.notifications.warn(`${names} disbanded in ${sectionName}.`);
@@ -236,7 +319,7 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
         const deathTollFrozen = game.settings.get("battle-of-mytros", "deathTollFrozen");
         const sydonObjectiveHalved = game.settings.get("battle-of-mytros", "sydonObjectiveHalved");
 
-        const allLegions = game.actors.filter(a => globalThis.MytrosActorData.isLegion(a));
+        const allLegions = game.actors.filter((a) => globalThis.MytrosActorData.isLegion(a));
         let totalDeaths = 0;
 
         // Passive recovery for unengaged legions; death toll for unengaged Sydon legions
@@ -300,7 +383,9 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
                         if (miracleReward > 0) {
                             const currentSydon = game.settings.get("battle-of-mytros", "sydonMiracles");
                             await game.settings.set("battle-of-mytros", "sydonMiracles", currentSydon + miracleReward);
-                            ui.notifications.info(`Sydon gains ${miracleReward} Miracle Point(s) for destroying ${objName}!`);
+                            ui.notifications.info(
+                                `Sydon gains ${miracleReward} Miracle Point(s) for destroying ${objName}!`
+                            );
                         }
                     } else {
                         await section.setFlag("battle-of-mytros", "sydonHeldLastRound", true);
@@ -310,7 +395,13 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
                 }
             }
 
-            if (!deathTollFrozen && objectiveDestroyed || (hasObjective && !objectiveDestroyed && control === "sydon" && section.getFlag("battle-of-mytros", "sydonHeldLastRound"))) {
+            if (
+                (!deathTollFrozen && objectiveDestroyed) ||
+                (hasObjective &&
+                    !objectiveDestroyed &&
+                    control === "sydon" &&
+                    section.getFlag("battle-of-mytros", "sydonHeldLastRound"))
+            ) {
                 if (section.getFlag("battle-of-mytros", "objectiveDestroyed")) {
                     const r = await new Roll("1d4").evaluate();
                     const deaths = r.total * 10;
@@ -399,15 +490,16 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
 
     static async importCSV(event, target) {
         const type = target.dataset.type; // 'legion' or 'commander'
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.csv';
-        input.onchange = e => {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = ".csv";
+        input.onchange = (e) => {
             const file = e.target.files[0];
             if (!file) return;
             const reader = new FileReader();
             reader.onload = async (ev) => {
                 await globalThis.MytrosCSVParser.processCSV(ev.target.result, type);
+                this.render();
             };
             reader.readAsText(file);
         };
@@ -450,10 +542,199 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
         await region.setFlag("battle-of-mytros", "control", control);
     }
 
+    // ── Legions Tab Actions ──────────────────────────────────────────────────
+
+    static async createLegion(_event, _target) {
+        if (!game.user.isGM) return;
+        const name = await BattleDashboard._promptInput(
+            game.i18n.localize("MYTROS.CreateLegionTitle"),
+            game.i18n.localize("MYTROS.CreateLegionHint")
+        );
+        if (!name) return;
+        await globalThis.MytrosActorData.createLegionActor(name, "allied");
+        ui.notifications.info(`Legion "${name}" created.`);
+        this.render();
+    }
+
+    static async updateLegionStat(_event, target) {
+        if (!game.user.isGM) return;
+        const legionId = target.dataset.legionId;
+        const stat = target.dataset.stat;
+        const value = Number(target.value);
+        const actor = game.actors.get(legionId);
+        if (!actor) return;
+        const stats = { ...actor.getFlag("battle-of-mytros", "stats") };
+        stats[stat] = value;
+        await actor.setFlag("battle-of-mytros", "stats", stats);
+    }
+
+    static async updateLegionFaction(_event, target) {
+        if (!game.user.isGM) return;
+        const legionId = target.dataset.legionId;
+        const faction = target.value;
+        const actor = game.actors.get(legionId);
+        if (!actor) return;
+        await actor.setFlag("battle-of-mytros", "faction", faction);
+        this.render();
+    }
+
+    static async deleteLegion(_event, target) {
+        if (!game.user.isGM) return;
+        const legionId = target.dataset.legionId;
+        const actor = game.actors.get(legionId);
+        if (!actor) return;
+        const confirmed = await Dialog.confirm({
+            title: game.i18n.localize("MYTROS.DeleteLegionTitle"),
+            content: `<p>${game.i18n.localize("MYTROS.DeleteLegionConfirm")} <strong>${actor.name}</strong>?</p>`,
+        });
+        if (!confirmed) return;
+        await actor.delete();
+        ui.notifications.info(`Legion "${actor.name}" deleted.`);
+        this.render();
+    }
+
+    static async toggleLegionDestroyed(_event, target) {
+        if (!game.user.isGM) return;
+        const legionId = target.dataset.legionId;
+        const actor = game.actors.get(legionId);
+        if (!actor) return;
+        const current = actor.getFlag("battle-of-mytros", "isDestroyed");
+        await actor.setFlag("battle-of-mytros", "isDestroyed", !current);
+        this.render();
+    }
+
+    static async toggleLegionRouted(_event, target) {
+        if (!game.user.isGM) return;
+        const legionId = target.dataset.legionId;
+        const actor = game.actors.get(legionId);
+        if (!actor) return;
+        const current = actor.getFlag("battle-of-mytros", "isRouted");
+        await actor.setFlag("battle-of-mytros", "isRouted", !current);
+        this.render();
+    }
+
+    // ── Commanders Tab Actions ───────────────────────────────────────────────
+
+    static async createCommander(_event, _target) {
+        if (!game.user.isGM) return;
+        const name = await BattleDashboard._promptInput(
+            game.i18n.localize("MYTROS.CreateCommanderTitle"),
+            game.i18n.localize("MYTROS.CreateCommanderHint")
+        );
+        if (!name) return;
+        await globalThis.MytrosActorData.createCommanderActor(name);
+        ui.notifications.info(`Commander "${name}" created.`);
+        this.render();
+    }
+
+    static async deleteCommander(_event, target) {
+        if (!game.user.isGM) return;
+        const commanderId = target.dataset.commanderId;
+        const actor = game.actors.get(commanderId);
+        if (!actor) return;
+        const confirmed = await Dialog.confirm({
+            title: game.i18n.localize("MYTROS.DeleteCommanderTitle"),
+            content: `<p>${game.i18n.localize("MYTROS.DeleteCommanderConfirm")} <strong>${actor.name}</strong>?</p>`,
+        });
+        if (!confirmed) return;
+        await actor.delete();
+        ui.notifications.info(`Commander "${actor.name}" deleted.`);
+        this.render();
+    }
+
+    static async addCommanderTag(_event, target) {
+        if (!game.user.isGM) return;
+        const commanderId = target.dataset.commanderId;
+        const actor = game.actors.get(commanderId);
+        if (!actor) return;
+
+        // Show a dialog with known tags to pick from
+        const existingTags = actor.items.map((i) => i.name.toLowerCase());
+        const available = BattleDashboard.KNOWN_TAGS.filter((t) => !existingTags.includes(t.toLowerCase()));
+        if (available.length === 0) {
+            ui.notifications.info("All known tags are already on this commander.");
+            return;
+        }
+
+        const options = available.map((t) => `<option value="${t}">${t}</option>`).join("");
+        const content = `
+            <form>
+                <div class="form-group">
+                    <label>${game.i18n.localize("MYTROS.SelectTag")}</label>
+                    <select name="tag">${options}</select>
+                </div>
+            </form>
+        `;
+        const result = await Dialog.prompt({
+            title: game.i18n.localize("MYTROS.AddTagTitle"),
+            content,
+            callback: (html) => html.find('[name="tag"]').val(),
+            rejectClose: false,
+        });
+        if (!result) return;
+
+        await globalThis.MytrosActorData.ensureTagItems(actor, [result]);
+        ui.notifications.info(`Tag "${result}" added to ${actor.name}.`);
+        this.render();
+    }
+
+    static async removeCommanderTag(_event, target) {
+        if (!game.user.isGM) return;
+        const commanderId = target.dataset.commanderId;
+        const itemId = target.dataset.itemId;
+        const actor = game.actors.get(commanderId);
+        if (!actor) return;
+        const item = actor.items.get(itemId);
+        if (!item) return;
+        await item.delete();
+        this.render();
+    }
+
+    static async autoCreateTags(_event, target) {
+        if (!game.user.isGM) return;
+        const commanderId = target.dataset.commanderId;
+        const actor = game.actors.get(commanderId);
+        if (!actor) return;
+
+        // Auto-create all known tags that are missing
+        const count = await globalThis.MytrosActorData.ensureTagItems(actor, BattleDashboard.KNOWN_TAGS);
+        if (count > 0) {
+            ui.notifications.info(`Created ${count} missing tag items on ${actor.name}.`);
+        } else {
+            ui.notifications.info(`All known tags already exist on ${actor.name}.`);
+        }
+        this.render();
+    }
+
+    /**
+     * Simple text input prompt via Foundry Dialog.
+     */
+    static async _promptInput(title, label) {
+        return new Promise((resolve) => {
+            new Dialog({
+                title,
+                content: `<form><div class="form-group"><label>${label}</label><input type="text" name="value" autofocus></div></form>`,
+                buttons: {
+                    ok: {
+                        label: "OK",
+                        icon: '<i class="fas fa-check"></i>',
+                        callback: (html) => resolve(html.find('[name="value"]').val()?.trim() || null),
+                    },
+                    cancel: {
+                        label: "Cancel",
+                        icon: '<i class="fas fa-times"></i>',
+                        callback: () => resolve(null),
+                    },
+                },
+                default: "ok",
+            }).render(true);
+        });
+    }
+
     static PARTS = {
         form: {
-            template: "modules/battle-of-mytros/templates/dashboard.hbs"
-        }
+            template: "modules/battle-of-mytros/templates/dashboard.hbs",
+        },
     };
 
     async _prepareContext(options) {
@@ -461,7 +742,7 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
         context.isGM = game.user.isGM;
         context.round = game.settings.get("battle-of-mytros", "currentRound");
         context.phase = game.settings.get("battle-of-mytros", "currentPhase");
-        
+
         context.tab = this.tab;
         context.phaseNames = [
             game.i18n.localize("MYTROS.Phase1Name"),
@@ -475,13 +756,15 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
         context.alliedMiracles = game.settings.get("battle-of-mytros", "alliedMiracles");
         context.sydonMiracles = game.settings.get("battle-of-mytros", "sydonMiracles");
 
-        context.commanders = game.actors.filter(a => globalThis.MytrosActorData.isCommander(a)).map(a => ({
-            id: a.id,
-            name: a.name
-        }));
+        context.commanders = game.actors
+            .filter((a) => globalThis.MytrosActorData.isCommander(a))
+            .map((a) => ({
+                id: a.id,
+                name: a.name,
+            }));
 
         const battleSceneId = game.settings.get("battle-of-mytros", "battleSceneId");
-        context.scenes = game.scenes.map(s => ({ id: s.id, name: s.name, selected: s.id === battleSceneId }));
+        context.scenes = game.scenes.map((s) => ({ id: s.id, name: s.name, selected: s.id === battleSceneId }));
 
         context.reconResult = game.settings.get("battle-of-mytros", "reconResult");
         context.reconBonus = game.settings.get("battle-of-mytros", "reconBonus");
@@ -494,9 +777,9 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
         context.salvageDC = game.settings.get("battle-of-mytros", "salvageDC") ?? 12;
 
         const completedEventIds = JSON.parse(game.settings.get("battle-of-mytros", "completedEvents") || "[]");
-        context.majorEvents = BattleDashboard.MAJOR_EVENTS.map(e => ({
+        context.majorEvents = BattleDashboard.MAJOR_EVENTS.map((e) => ({
             ...e,
-            completed: completedEventIds.includes(e.id)
+            completed: completedEventIds.includes(e.id),
         }));
 
         // Grab regions if we are on the battle scene
@@ -504,39 +787,44 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
 
         if (context.isBattleScene) {
             const sections = globalThis.MytrosRegionManager.getActiveSections();
-            context.sections = sections.map(r => {
+            context.sections = sections.map((r) => {
                 const legions = globalThis.MytrosRegionManager.getLegionsInSection(r);
-                const mappedLegions = legions.map(t => {
+                const mappedLegions = legions.map((t) => {
                     const stats = t.actor.getFlag("battle-of-mytros", "stats") || {};
                     return {
                         id: t.actor.id,
                         name: t.name,
                         faction: t.actor.getFlag("battle-of-mytros", "faction"),
                         commanderId: t.actor.getFlag("battle-of-mytros", "commanderId"),
-                        commanderName: t.actor.getFlag("battle-of-mytros", "commanderId") ?
-                            game.actors.get(t.actor.getFlag("battle-of-mytros", "commanderId"))?.name : "None",
+                        commanderName: t.actor.getFlag("battle-of-mytros", "commanderId")
+                            ? game.actors.get(t.actor.getFlag("battle-of-mytros", "commanderId"))?.name
+                            : "None",
                         injuries: stats.injuries ?? 0,
                         morale: stats.morale ?? "?",
                         vitality: stats.vitality ?? "?",
                         wit: stats.wit ?? "?",
                         isRouted: t.actor.getFlag("battle-of-mytros", "isRouted") ?? false,
                         isDestroyed: t.actor.getFlag("battle-of-mytros", "isDestroyed") ?? false,
-                        movedThree: t.actor.getFlag("battle-of-mytros", "movedThree") ?? false
+                        movedThree: t.actor.getFlag("battle-of-mytros", "movedThree") ?? false,
                     };
                 });
 
                 const supportTokens = globalThis.MytrosRegionManager.getSupportUnitsInSection(r);
-                const supportUnits = supportTokens.map(t => ({
+                const supportUnits = supportTokens.map((t) => ({
                     id: t.id,
                     name: t.name,
                     actorId: t.actor.id,
-                    deploymentMode: t.getFlag("battle-of-mytros", "deploymentMode") || "none"
+                    deploymentMode: t.getFlag("battle-of-mytros", "deploymentMode") || "none",
                 }));
-                
-                const hasActiveAllied = mappedLegions.some(l => l.faction === "allied" && !l.isRouted && !l.isDestroyed);
-                const hasSydon = mappedLegions.some(l => l.faction === "sydon" && !l.isDestroyed);
+
+                const hasActiveAllied = mappedLegions.some(
+                    (l) => l.faction === "allied" && !l.isRouted && !l.isDestroyed
+                );
+                const hasSydon = mappedLegions.some((l) => l.faction === "sydon" && !l.isDestroyed);
                 const pendingBattle = hasActiveAllied && hasSydon;
-                const hasRoutedAllied = mappedLegions.some(l => l.faction === "allied" && l.isRouted && !l.isDestroyed);
+                const hasRoutedAllied = mappedLegions.some(
+                    (l) => l.faction === "allied" && l.isRouted && !l.isDestroyed
+                );
                 const routedContested = hasRoutedAllied && hasSydon && !hasActiveAllied;
 
                 return {
@@ -549,7 +837,7 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
                     legions: mappedLegions,
                     supportUnits: supportUnits,
                     pendingBattle: pendingBattle,
-                    routedContested: routedContested
+                    routedContested: routedContested,
                 };
             });
         } else {
@@ -558,18 +846,63 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
 
         // Adjacency configuration (for Setup tab)
         const allSections = globalThis.MytrosRegionManager.getActiveSections();
-        const sectionOpts = allSections.map(r => ({
+        const sectionOpts = allSections.map((r) => ({
             id: r.id,
-            name: r.name.replace(globalThis.MytrosRegionManager.SECTION_PREFIX, "").trim()
+            name: r.name.replace(globalThis.MytrosRegionManager.SECTION_PREFIX, "").trim(),
         }));
         const rawPairs = JSON.parse(game.settings.get("battle-of-mytros", "adjacencyPairs") || "[]");
         context.adjacencyPairs = rawPairs.map(([aId, bId], index) => ({
             index,
-            aId, bId,
-            aName: sectionOpts.find(s => s.id === aId)?.name ?? aId,
-            bName: sectionOpts.find(s => s.id === bId)?.name ?? bId
+            aId,
+            bId,
+            aName: sectionOpts.find((s) => s.id === aId)?.name ?? aId,
+            bName: sectionOpts.find((s) => s.id === bId)?.name ?? bId,
         }));
         context.sectionOpts = sectionOpts;
+
+        // ── Legions Tab Data ─────────────────────────────────────────────
+        const allLegions = game.actors.filter((a) => globalThis.MytrosActorData.isLegion(a));
+        context.allLegions = allLegions
+            .map((a) => {
+                const stats = a.getFlag("battle-of-mytros", "stats") || {};
+                const commanderId = a.getFlag("battle-of-mytros", "commanderId");
+                return {
+                    id: a.id,
+                    name: a.name,
+                    faction: a.getFlag("battle-of-mytros", "faction") || "allied",
+                    vitality: stats.vitality ?? 4,
+                    morale: stats.morale ?? 4,
+                    wit: stats.wit ?? 4,
+                    injuries: stats.injuries ?? 0,
+                    commanderId: commanderId,
+                    commanderName: commanderId ? game.actors.get(commanderId)?.name ?? "—" : "—",
+                    isRouted: a.getFlag("battle-of-mytros", "isRouted") ?? false,
+                    isDestroyed: a.getFlag("battle-of-mytros", "isDestroyed") ?? false,
+                };
+            })
+            .sort((a, b) => {
+                // Allied first, then sydon; within faction sort by name
+                if (a.faction !== b.faction) return a.faction === "allied" ? -1 : 1;
+                return a.name.localeCompare(b.name);
+            });
+
+        // ── Commanders Tab Data ──────────────────────────────────────────
+        const allCommanders = game.actors.filter((a) => globalThis.MytrosActorData.isCommander(a));
+        context.allCommanders = allCommanders
+            .map((a) => {
+                const tags = a.items.map((i) => ({ id: i.id, name: i.name }));
+                // Find which legion this commander is assigned to
+                const assignedLegion = allLegions.find((l) => l.getFlag("battle-of-mytros", "commanderId") === a.id);
+                return {
+                    id: a.id,
+                    name: a.name,
+                    tags: tags,
+                    assignedLegionName: assignedLegion?.name ?? "—",
+                };
+            })
+            .sort((a, b) => a.name.localeCompare(b.name));
+
+        context.knownTags = BattleDashboard.KNOWN_TAGS;
 
         return context;
     }
