@@ -143,6 +143,9 @@ export async function advanceRound(_event, _target) {
 
     const allLegions = game.actors.filter((a) => globalThis.MytrosActorData.isLegion(a));
     let totalDeaths = 0;
+    let sydonPillageDeaths = 0;
+    let sydonPillageLegions = 0;
+    let objectiveDeaths = 0;
 
     // Passive recovery for unengaged legions; death toll for unengaged Sydon legions
     for (const legion of allLegions) {
@@ -171,7 +174,10 @@ export async function advanceRound(_event, _target) {
 
             if (faction === "sydon" && !deathTollFrozen) {
                 const r = await new Roll("1d6").evaluate();
-                totalDeaths += r.total * 50;
+                const deaths = r.total * 50;
+                totalDeaths += deaths;
+                sydonPillageDeaths += deaths;
+                sydonPillageLegions++;
             }
         }
 
@@ -226,8 +232,10 @@ export async function advanceRound(_event, _target) {
         ) {
             if (section.getFlag("battle-of-mytros", "objectiveDestroyed")) {
                 const r = await new Roll("1d4").evaluate();
-                const deaths = r.total * 10;
-                totalDeaths += sydonObjectiveHalved ? Math.floor(deaths / 2) : deaths;
+                let deaths = r.total * 10;
+                deaths = sydonObjectiveHalved ? Math.floor(deaths / 2) : deaths;
+                totalDeaths += deaths;
+                objectiveDeaths += deaths;
             }
         }
     }
@@ -242,8 +250,24 @@ export async function advanceRound(_event, _target) {
 
     // Commit death toll and advance round
     if (totalDeaths > 0) {
-        const current = game.settings.get("battle-of-mytros", "deathToll");
-        await game.settings.set("battle-of-mytros", "deathToll", current + totalDeaths);
+        const currentToll = Number(game.settings.get("battle-of-mytros", "deathToll")) || 0;
+        await game.settings.set("battle-of-mytros", "deathToll", currentToll + totalDeaths);
+
+        let chatHtml = `<div class="mytros-battle-card"><div class="card-header"><i class="fas fa-skull"></i> Civilian Casualties Overview</div>`;
+        chatHtml += `<div class="card-result"><p>The war takes its toll across the city...</p></div>`;
+        chatHtml += `<table class="card-table"><thead><tr><th>Source</th><th>Deaths</th></tr></thead><tbody>`;
+        if (sydonPillageLegions > 0) {
+            chatHtml += `<tr><td>${sydonPillageLegions} Unengaged Sydon Legion(s) Pillaging</td><td class="text-bad" style="color:var(--mytros-danger);font-weight:bold;">+${sydonPillageDeaths}</td></tr>`;
+        }
+        if (objectiveDeaths > 0) {
+            chatHtml += `<tr><td>Destroyed Strategic Objectives under Sydon Control</td><td class="text-bad" style="color:var(--mytros-danger);font-weight:bold;">+${objectiveDeaths}</td></tr>`;
+        }
+        chatHtml += `</tbody><tfoot><tr><th>Total Added</th><th class="text-bad" style="color:var(--mytros-danger);font-weight:bold;">+${totalDeaths}</th></tr></tfoot></table></div>`;
+
+        await ChatMessage.create({
+            content: chatHtml,
+            speaker: { alias: "Battle of Mytros" },
+        });
     }
 
     const round = game.settings.get("battle-of-mytros", "currentRound");

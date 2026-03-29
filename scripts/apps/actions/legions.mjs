@@ -22,8 +22,15 @@ export async function createLegion(_event, _target) {
         game.i18n.localize("MYTROS.CreateLegionHint")
     );
     if (!name) return;
-    await globalThis.MytrosActorData.createLegionActor(name, "allied");
-    ui.notifications.info(`Legion "${name}" created.`);
+
+    let actor = game.actors.getName(name);
+    if (actor) {
+        await globalThis.MytrosActorData.initLegion(actor, "allied");
+        ui.notifications.info(`Existing actor "${name}" converted to Allied Legion.`);
+    } else {
+        await globalThis.MytrosActorData.createLegionActor(name, "allied");
+        ui.notifications.info(`Legion "${name}" created.`);
+    }
     this.render();
 }
 

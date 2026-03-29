@@ -45,10 +45,25 @@ export function changeTab(event, target) {
  * Simple text input prompt via Foundry Dialog.
  */
 export async function promptInput(title, label) {
+    const content = `<div class="form-group"><label>${label}</label><input type="text" name="value" autofocus></div>`;
+
+    if (foundry.applications?.api?.DialogV2) {
+        return foundry.applications.api.DialogV2.prompt({
+            window: { title },
+            content: `<form>${content}</form>`,
+            ok: {
+                label: "OK",
+                icon: "fas fa-check",
+                callback: (event, button) => button.form.elements.value.value.trim() || null,
+            },
+            rejectClose: false,
+        });
+    }
+
     return new Promise((resolve) => {
         new Dialog({
             title,
-            content: `<form><div class="form-group"><label>${label}</label><input type="text" name="value" autofocus></div></form>`,
+            content: `<form>${content}</form>`,
             buttons: {
                 ok: {
                     label: "OK",

@@ -12,8 +12,15 @@ export async function createCommander(_event, _target) {
         game.i18n.localize("MYTROS.CreateCommanderHint")
     );
     if (!name) return;
-    await globalThis.MytrosActorData.createCommanderActor(name);
-    ui.notifications.info(`Commander "${name}" created.`);
+
+    let actor = game.actors.getName(name);
+    if (actor) {
+        await globalThis.MytrosActorData.initCommander(actor);
+        ui.notifications.info(`Existing actor "${name}" designated as a Commander.`);
+    } else {
+        await globalThis.MytrosActorData.createCommanderActor(name);
+        ui.notifications.info(`Commander "${name}" created.`);
+    }
     this.render();
 }
 
@@ -80,18 +87,19 @@ export async function removeCommanderTag(_event, target) {
     this.render();
 }
 
-export async function autoCreateTags(_event, target) {
+export async function autoCreateTags(_event, _target) {
     if (!game.user.isGM) return;
-    const commanderId = target.dataset.commanderId;
-    const actor = game.actors.get(commanderId);
-    if (!actor) return;
+    const allCommanders = game.actors.filter((a) => globalThis.MytrosActorData.isCommander(a));
+    let totalCount = 0;
 
-    // Auto-create all known tags that are missing
-    const count = await globalThis.MytrosActorData.ensureTagItems(actor, KNOWN_TAGS);
-    if (count > 0) {
-        ui.notifications.info(`Created ${count} missing tag items on ${actor.name}.`);
+    for (const actor of allCommanders) {
+        totalCount += await globalThis.MytrosActorData.ensureTagItems(actor, KNOWN_TAGS);
+    }
+
+    if (totalCount > 0) {
+        ui.notifications.info(`Created ${totalCount} missing tag items across ${allCommanders.length} commanders.`);
     } else {
-        ui.notifications.info(`All known tags already exist on ${actor.name}.`);
+        ui.notifications.info(`All known tags already exist on all commanders.`);
     }
     this.render();
 }

@@ -25,7 +25,7 @@
     "MYTROS.Routed": "Routed",
     "MYTROS.Destroyed": "Destroyed",
     "MYTROS.FortifiedLabel": "Fortified",
-    "MYTROS.ObjectiveLabel": "Strategic Objective",
+    "MYTROS.ObjectiveLabel": "Strategic Objective (Toggle if target present)",
     "MYTROS.ObjectiveDestroyedLabel": "Objective Destroyed",
     "MYTROS.VanguardLabel": "Vanguard: Moved 3 sections this round",
 

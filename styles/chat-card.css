@@ -116,7 +116,11 @@ body.theme-dark .mytros-battle-card .card-header,
     font-weight: 600;
 }
 .mytros-battle-card .text-neutral {
-    color: var(--mytros-text-muted-alt);
+    color: #4b5563;
+}
+body.theme-dark .mytros-battle-card .text-neutral,
+[data-theme="dark"] .mytros-battle-card .text-neutral {
+    color: #9ca3af;
 }
 
 .mytros-battle-card .card-death {
