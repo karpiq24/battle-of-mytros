@@ -60,7 +60,7 @@ Instead of manually creating actors and setting flags, fully manage your armies 
 
 ### 5. Add Commander Tags
 
-**Tags are Items on the Commander actor.** You no longer need to create them manually! Simply go to the **Setup** tab and click **Auto-create all known tag items**. The module will automatically generate every known tag as an item on all of your Commander actors. You can then add/remove active tags directly using the **Commanders** tab.
+**Tags are Items on the Commander actor.** You no longer need to create them manually in the Foundry interface! In the **Commanders Tab**, click the **Add Tag** button next to any commander to open a dropdown of all known tags and instantly apply them.
 
 ### 6. Place Tokens & Assign Commanders
 
@@ -93,7 +93,7 @@ Acastus,Tactician;Inspiring
 Gaius,Brutal;Headhunter;Veteran
 ```
 
-> **Note:** Tags are evaluated based on their exact spelling. You can rapidly generate all known tags for every imported commander by clicking the **Auto-create all known tag items** button in the dashboard's Setup tab.
+> **Note:** Tags are evaluated based on their exact spelling. You can quickly assign tags securely to imported commanders using the **Add Tag** button within the dashboard's Commanders tab.
 
 ---
 

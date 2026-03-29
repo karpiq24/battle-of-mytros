@@ -57,7 +57,6 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
             deleteCommander: commanderActions.deleteCommander,
             addCommanderTag: commanderActions.addCommanderTag,
             removeCommanderTag: commanderActions.removeCommanderTag,
-            autoCreateTags: commanderActions.autoCreateTags,
         },
     };
 

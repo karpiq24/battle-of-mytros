@@ -86,20 +86,3 @@ export async function removeCommanderTag(_event, target) {
     await item.delete();
     this.render();
 }
-
-export async function autoCreateTags(_event, _target) {
-    if (!game.user.isGM) return;
-    const allCommanders = game.actors.filter((a) => globalThis.MytrosActorData.isCommander(a));
-    let totalCount = 0;
-
-    for (const actor of allCommanders) {
-        totalCount += await globalThis.MytrosActorData.ensureTagItems(actor, KNOWN_TAGS);
-    }
-
-    if (totalCount > 0) {
-        ui.notifications.info(`Created ${totalCount} missing tag items across ${allCommanders.length} commanders.`);
-    } else {
-        ui.notifications.info(`All known tags already exist on all commanders.`);
-    }
-    this.render();
-}

@@ -181,6 +181,5 @@
     "MYTROS.AddTagTitle": "Add Commander Tag",
     "MYTROS.SelectTag": "Select a tag:",
     "MYTROS.RemoveTag": "Remove Tag",
-    "MYTROS.AutoCreateTags": "Auto-create all known tag items",
     "MYTROS.NoTags": "No tags assigned"
 }
