@@ -1,0 +1,62 @@
+<div class="management-panel">
+    <div class="management-header">
+        <h3><i class="fas fa-shield-alt"></i> {{localize "MYTROS.LegionsManageTitle"}}</h3>
+        <button type="button" class="btn-create" data-action="createLegion"><i class="fas fa-plus"></i> {{localize "MYTROS.CreateLegion"}}</button>
+    </div>
+
+    {{#if allLegions.length}}
+    <div class="management-table-wrapper">
+        <table class="management-table">
+            <thead>
+                <tr>
+                    <th class="col-name">{{localize "MYTROS.ColName"}}</th>
+                    <th class="col-faction">{{localize "MYTROS.ColFaction"}}</th>
+                    <th class="col-stat">{{localize "MYTROS.ColVit"}}</th>
+                    <th class="col-stat">{{localize "MYTROS.ColMor"}}</th>
+                    <th class="col-stat">{{localize "MYTROS.ColWit"}}</th>
+                    <th class="col-stat">{{localize "MYTROS.ColInj"}}</th>
+                    <th class="col-commander">{{localize "MYTROS.ColCommander"}}</th>
+                    <th class="col-status">{{localize "MYTROS.ColStatus"}}</th>
+                    <th class="col-actions"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each allLegions}}
+                <tr class="legion-row faction-row-{{this.faction}}{{#if this.isDestroyed}} row-destroyed{{/if}}{{#if this.isRouted}} row-routed{{/if}}">
+                    <td class="col-name">{{this.name}}</td>
+                    <td class="col-faction">
+                        <select data-action="updateLegionFaction" data-legion-id="{{this.id}}">
+                            <option value="allied" {{#if (eq this.faction 'allied')}}selected{{/if}}>{{localize "MYTROS.ControlAllied"}}</option>
+                            <option value="sydon" {{#if (eq this.faction 'sydon')}}selected{{/if}}>{{localize "MYTROS.ControlSydon"}}</option>
+                        </select>
+                    </td>
+                    <td class="col-stat"><input type="number" value="{{this.vitality}}" data-action="updateLegionStat" data-legion-id="{{this.id}}" data-stat="vitality" min="0"></td>
+                    <td class="col-stat"><input type="number" value="{{this.morale}}" data-action="updateLegionStat" data-legion-id="{{this.id}}" data-stat="morale" min="0"></td>
+                    <td class="col-stat"><input type="number" value="{{this.wit}}" data-action="updateLegionStat" data-legion-id="{{this.id}}" data-stat="wit" min="0"></td>
+                    <td class="col-stat"><input type="number" value="{{this.injuries}}" data-action="updateLegionStat" data-legion-id="{{this.id}}" data-stat="injuries" min="0"></td>
+                    <td class="col-commander">
+                        <select data-action="assignCommander" data-legion-id="{{this.id}}">
+                            <option value="">—</option>
+                            {{#each @root.commanders}}
+                                <option value="{{this.id}}" {{#if (eq this.id ../commanderId)}}selected{{/if}}>{{this.name}}</option>
+                            {{/each}}
+                        </select>
+                    </td>
+                    <td class="col-status">
+                        <div class="status-toggles">
+                            <button type="button" class="status-toggle {{#if this.isRouted}}active-routed{{/if}}" data-action="toggleLegionRouted" data-legion-id="{{this.id}}" title="{{localize "MYTROS.Routed"}}"><i class="fas fa-flag"></i></button>
+                            <button type="button" class="status-toggle {{#if this.isDestroyed}}active-destroyed{{/if}}" data-action="toggleLegionDestroyed" data-legion-id="{{this.id}}" title="{{localize "MYTROS.Destroyed"}}"><i class="fas fa-skull"></i></button>
+                        </div>
+                    </td>
+                    <td class="col-actions">
+                        <button type="button" class="btn-delete" data-action="deleteLegion" data-legion-id="{{this.id}}" title="{{localize "MYTROS.Delete"}}"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+    {{else}}
+    <p class="empty-state">{{localize "MYTROS.NoLegionsManage"}}</p>
+    {{/if}}
+</div>

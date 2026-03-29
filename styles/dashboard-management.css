@@ -1,0 +1,291 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   MANAGEMENT PANELS (Legions & Commanders Tabs)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.mytros-dashboard .management-panel {
+    padding: 12px;
+}
+.mytros-dashboard .management-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+.mytros-dashboard .management-header h3 {
+    margin: 0;
+    font-size: 1em;
+    font-weight: 700;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.mytros-dashboard .btn-create {
+    padding: 6px 14px;
+    font-size: 0.85em;
+    font-weight: 600;
+    background: var(--mytros-accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--mytros-radius);
+    cursor: pointer;
+    transition: all var(--mytros-transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.mytros-dashboard .btn-create:hover {
+    background: #b8860b;
+    transform: translateY(-1px);
+    box-shadow: var(--mytros-shadow);
+}
+
+/* ── Legions Management Table ──────────────────────────────────────────── */
+.mytros-dashboard .management-table-wrapper {
+    overflow-x: auto;
+}
+.mytros-dashboard .management-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88em;
+}
+.mytros-dashboard .management-table th {
+    text-align: left;
+    padding: 6px 8px;
+    font-size: 0.78em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--mytros-text-muted);
+    background: var(--mytros-surface-header);
+    border-bottom: 2px solid var(--mytros-divider);
+    white-space: nowrap;
+}
+.mytros-dashboard .management-table td {
+    padding: 5px 6px;
+    border-bottom: 1px solid var(--mytros-divider);
+    vertical-align: middle;
+}
+.mytros-dashboard .management-table .col-stat {
+    width: 55px;
+    text-align: center;
+}
+.mytros-dashboard .management-table .col-stat input {
+    width: 48px;
+    text-align: center;
+    padding: 3px 2px;
+    font-size: 0.92em;
+    border-radius: var(--mytros-radius);
+    border: 1px solid var(--mytros-btn-secondary-border);
+    background: var(--mytros-btn-secondary-bg);
+    color: var(--mytros-text);
+}
+.mytros-dashboard .management-table .col-faction {
+    width: 80px;
+}
+.mytros-dashboard .management-table .col-faction select {
+    width: 100%;
+    font-size: 0.88em;
+    padding: 3px 4px;
+    border-radius: var(--mytros-radius);
+    border: 1px solid var(--mytros-btn-secondary-border);
+    background: var(--mytros-btn-secondary-bg);
+    color: var(--mytros-text);
+}
+.mytros-dashboard .management-table .col-commander {
+    max-width: 140px;
+}
+.mytros-dashboard .management-table .col-commander select {
+    width: 100%;
+    font-size: 0.85em;
+    padding: 3px 4px;
+    border-radius: var(--mytros-radius);
+    border: 1px solid var(--mytros-btn-secondary-border);
+    background: var(--mytros-btn-secondary-bg);
+    color: var(--mytros-text);
+}
+.mytros-dashboard .management-table .col-name {
+    font-weight: 600;
+    white-space: nowrap;
+}
+.mytros-dashboard .management-table .col-actions {
+    width: 36px;
+    text-align: center;
+}
+
+/* Status toggles in management table */
+.mytros-dashboard .status-toggles {
+    display: flex;
+    gap: 3px;
+}
+.mytros-dashboard .status-toggle {
+    padding: 3px 6px;
+    font-size: 0.82em;
+    background: var(--mytros-btn-secondary-bg);
+    border: 1px solid var(--mytros-btn-secondary-border);
+    border-radius: 3px;
+    cursor: pointer;
+    color: var(--mytros-text-muted-alt);
+    transition: all var(--mytros-transition);
+}
+.mytros-dashboard .status-toggle:hover {
+    background: var(--mytros-btn-secondary-hover);
+}
+.mytros-dashboard .status-toggle.active-routed {
+    color: var(--mytros-warning);
+    border-color: var(--mytros-warning);
+    background: rgba(230, 126, 34, 0.1);
+}
+.mytros-dashboard .status-toggle.active-destroyed {
+    color: var(--mytros-danger);
+    border-color: var(--mytros-danger);
+    background: rgba(192, 57, 43, 0.1);
+}
+
+/* Row styling by faction */
+.mytros-dashboard .faction-row-allied .col-name {
+    color: var(--mytros-allied);
+}
+.mytros-dashboard .faction-row-sydon .col-name {
+    color: var(--mytros-sydon);
+}
+.mytros-dashboard .row-destroyed {
+    opacity: 0.4;
+}
+.mytros-dashboard .row-routed {
+    opacity: 0.65;
+    font-style: italic;
+}
+
+/* Delete button */
+.mytros-dashboard .btn-delete {
+    padding: 3px 6px;
+    font-size: 0.82em;
+    background: none;
+    border: 1px solid var(--mytros-divider);
+    border-radius: 3px;
+    cursor: pointer;
+    color: var(--mytros-text-muted-alt);
+    transition: all var(--mytros-transition);
+}
+.mytros-dashboard .btn-delete:hover {
+    color: var(--mytros-danger);
+    border-color: var(--mytros-danger);
+    background: rgba(192, 57, 43, 0.08);
+}
+
+/* ── Commanders Management ─────────────────────────────────────────────── */
+.mytros-dashboard .commanders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.mytros-dashboard .commander-card {
+    border: 1px solid var(--mytros-divider);
+    border-radius: var(--mytros-radius-lg);
+    padding: 10px 12px;
+    background: var(--mytros-surface-card);
+    box-shadow: var(--mytros-shadow);
+    transition: box-shadow var(--mytros-transition);
+}
+.mytros-dashboard .commander-card:hover {
+    box-shadow: var(--mytros-shadow-lg);
+}
+.mytros-dashboard .commander-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+.mytros-dashboard .commander-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.mytros-dashboard .commander-name {
+    font-size: 0.95em;
+}
+.mytros-dashboard .commander-assignment {
+    font-size: 0.78em;
+    color: var(--mytros-text-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.mytros-dashboard .commander-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.mytros-dashboard .btn-add-tag {
+    padding: 4px 10px;
+    font-size: 0.78em;
+    font-weight: 600;
+    background: var(--mytros-btn-primary-bg);
+    color: #fff;
+    border: none;
+    border-radius: var(--mytros-radius);
+    cursor: pointer;
+    transition: all var(--mytros-transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.mytros-dashboard .btn-add-tag:hover {
+    background: var(--mytros-btn-primary-hover);
+}
+.mytros-dashboard .btn-auto-tags {
+    padding: 4px 8px;
+    font-size: 0.82em;
+    background: var(--mytros-btn-secondary-bg);
+    border: 1px solid var(--mytros-btn-secondary-border);
+    border-radius: var(--mytros-radius);
+    cursor: pointer;
+    color: var(--mytros-accent);
+    transition: all var(--mytros-transition);
+}
+.mytros-dashboard .btn-auto-tags:hover {
+    background: var(--mytros-accent-bg);
+    border-color: var(--mytros-accent);
+}
+
+/* ── Commander Tag Chips ───────────────────────────────────────────────── */
+.mytros-dashboard .commander-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+.mytros-dashboard .tag-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    font-size: 0.82em;
+    font-weight: 500;
+    background: var(--mytros-chip-bg);
+    border: 1px solid var(--mytros-chip-border);
+    border-radius: 20px;
+    color: var(--mytros-text);
+    transition: all var(--mytros-transition);
+}
+.mytros-dashboard .tag-chip:hover {
+    border-color: var(--mytros-accent);
+}
+.mytros-dashboard .tag-remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--mytros-text-muted-alt);
+    font-size: 0.8em;
+    padding: 0 2px;
+    line-height: 1;
+    transition: color var(--mytros-transition);
+}
+.mytros-dashboard .tag-remove:hover {
+    color: var(--mytros-danger);
+}
+.mytros-dashboard .no-tags {
+    font-size: 0.82em;
+    color: var(--mytros-text-muted-alt);
+    font-style: italic;
+}

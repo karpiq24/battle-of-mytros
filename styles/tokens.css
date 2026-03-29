@@ -1,0 +1,120 @@
+/* styles/tokens.css — Design Tokens: Light Mode & Dark Mode */
+
+/* ── Design Tokens: Light Mode ─────────────────────────────────────────── */
+:root {
+    --mytros-allied: #1a6fa0;
+    --mytros-allied-light: #2196c8;
+    --mytros-allied-bg: rgba(26, 111, 160, 0.08);
+    --mytros-allied-border: rgba(26, 111, 160, 0.3);
+    --mytros-sydon: #9c2a1e;
+    --mytros-sydon-light: #c4392b;
+    --mytros-sydon-bg: rgba(156, 42, 30, 0.08);
+    --mytros-sydon-border: rgba(156, 42, 30, 0.3);
+    --mytros-surface: rgba(0, 0, 0, 0.035);
+    --mytros-surface-alt: rgba(0, 0, 0, 0.025);
+    --mytros-surface-header: rgba(0, 0, 0, 0.055);
+    --mytros-surface-completed: rgba(0, 0, 0, 0.02);
+    --mytros-surface-card: rgba(255, 255, 255, 0.6);
+    --mytros-divider: rgba(0, 0, 0, 0.1);
+    --mytros-text: #1a1a2e;
+    --mytros-text-muted: #555;
+    --mytros-text-muted-alt: #888;
+    --mytros-btn-primary-bg: #2c3e50;
+    --mytros-btn-primary-hover: #1a252f;
+    --mytros-btn-secondary-bg: #f4f6f7;
+    --mytros-btn-secondary-hover: #e2e5e8;
+    --mytros-btn-secondary-border: #c0c5ca;
+    --mytros-border-light: #ddd;
+    --mytros-accent: #d4a017;
+    --mytros-accent-bg: rgba(212, 160, 23, 0.1);
+    --mytros-success: #27ae60;
+    --mytros-danger: #c0392b;
+    --mytros-warning: #e67e22;
+    --mytros-info: #5dade2;
+    --mytros-chip-bg: rgba(0, 0, 0, 0.06);
+    --mytros-chip-border: rgba(0, 0, 0, 0.12);
+    --mytros-recon-bonus-bg: rgba(241, 196, 15, 0.15);
+    --mytros-recon-bonus-text: #7d6608;
+    --mytros-recon-frozen-bg: rgba(52, 73, 94, 0.1);
+    --mytros-recon-frozen-text: #2c3e50;
+    --mytros-radius: 6px;
+    --mytros-radius-lg: 10px;
+    --mytros-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --mytros-shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --mytros-transition: 0.2s ease;
+}
+
+/* ── Dark Mode (system + Foundry v13) ──────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --mytros-allied: #4db8e8;
+        --mytros-allied-light: #6ec8f0;
+        --mytros-allied-bg: rgba(77, 184, 232, 0.1);
+        --mytros-allied-border: rgba(77, 184, 232, 0.25);
+        --mytros-sydon: #e85548;
+        --mytros-sydon-light: #f06b5e;
+        --mytros-sydon-bg: rgba(232, 85, 72, 0.1);
+        --mytros-sydon-border: rgba(232, 85, 72, 0.25);
+        --mytros-surface: rgba(255, 255, 255, 0.05);
+        --mytros-surface-alt: rgba(255, 255, 255, 0.03);
+        --mytros-surface-header: rgba(255, 255, 255, 0.07);
+        --mytros-surface-completed: rgba(255, 255, 255, 0.02);
+        --mytros-surface-card: rgba(255, 255, 255, 0.06);
+        --mytros-divider: rgba(255, 255, 255, 0.1);
+        --mytros-text: #e0e0e0;
+        --mytros-text-muted: #999;
+        --mytros-text-muted-alt: #777;
+        --mytros-btn-primary-bg: #34516a;
+        --mytros-btn-primary-hover: #263d52;
+        --mytros-btn-secondary-bg: #2a2a30;
+        --mytros-btn-secondary-hover: #38383f;
+        --mytros-btn-secondary-border: #4a4a55;
+        --mytros-border-light: #3a3a42;
+        --mytros-accent: #e8b828;
+        --mytros-accent-bg: rgba(232, 184, 40, 0.12);
+        --mytros-chip-bg: rgba(255, 255, 255, 0.08);
+        --mytros-chip-border: rgba(255, 255, 255, 0.15);
+        --mytros-recon-bonus-bg: rgba(241, 196, 15, 0.12);
+        --mytros-recon-bonus-text: #e8c840;
+        --mytros-recon-frozen-bg: rgba(93, 140, 174, 0.15);
+        --mytros-recon-frozen-text: #7aadcc;
+        --mytros-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        --mytros-shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+}
+body.theme-dark,
+[data-theme="dark"] {
+    --mytros-allied: #4db8e8;
+    --mytros-allied-light: #6ec8f0;
+    --mytros-allied-bg: rgba(77, 184, 232, 0.1);
+    --mytros-allied-border: rgba(77, 184, 232, 0.25);
+    --mytros-sydon: #e85548;
+    --mytros-sydon-light: #f06b5e;
+    --mytros-sydon-bg: rgba(232, 85, 72, 0.1);
+    --mytros-sydon-border: rgba(232, 85, 72, 0.25);
+    --mytros-surface: rgba(255, 255, 255, 0.05);
+    --mytros-surface-alt: rgba(255, 255, 255, 0.03);
+    --mytros-surface-header: rgba(255, 255, 255, 0.07);
+    --mytros-surface-completed: rgba(255, 255, 255, 0.02);
+    --mytros-surface-card: rgba(255, 255, 255, 0.06);
+    --mytros-divider: rgba(255, 255, 255, 0.1);
+    --mytros-text: #e0e0e0;
+    --mytros-text-muted: #999;
+    --mytros-text-muted-alt: #777;
+    --mytros-btn-primary-bg: #34516a;
+    --mytros-btn-primary-hover: #263d52;
+    --mytros-btn-secondary-bg: #2a2a30;
+    --mytros-btn-secondary-hover: #38383f;
+    --mytros-btn-secondary-border: #4a4a55;
+    --mytros-border-light: #3a3a42;
+    --mytros-accent: #e8b828;
+    --mytros-accent-bg: rgba(232, 184, 40, 0.12);
+    --mytros-chip-bg: rgba(255, 255, 255, 0.08);
+    --mytros-chip-border: rgba(255, 255, 255, 0.15);
+    --mytros-recon-bonus-bg: rgba(241, 196, 15, 0.12);
+    --mytros-recon-bonus-text: #e8c840;
+    --mytros-recon-frozen-bg: rgba(93, 140, 174, 0.15);
+    --mytros-recon-frozen-text: #7aadcc;
+    --mytros-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --mytros-shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.4);
+}

@@ -1,0 +1,39 @@
+<div class="management-panel">
+    <div class="management-header">
+        <h3><i class="fas fa-user-crown"></i> {{localize "MYTROS.CommandersManageTitle"}}</h3>
+        <button type="button" class="btn-create" data-action="createCommander"><i class="fas fa-plus"></i> {{localize "MYTROS.CreateCommander"}}</button>
+    </div>
+
+    {{#if allCommanders.length}}
+    <div class="commanders-list">
+        {{#each allCommanders}}
+        <div class="commander-card">
+            <div class="commander-card-header">
+                <div class="commander-info">
+                    <strong class="commander-name">{{this.name}}</strong>
+                    <span class="commander-assignment"><i class="fas fa-shield-alt"></i> {{this.assignedLegionName}}</span>
+                </div>
+                <div class="commander-card-actions">
+                    <button type="button" class="btn-add-tag" data-action="addCommanderTag" data-commander-id="{{this.id}}" title="{{localize "MYTROS.AddTag"}}"><i class="fas fa-plus"></i> {{localize "MYTROS.AddTag"}}</button>
+                    <button type="button" class="btn-auto-tags" data-action="autoCreateTags" data-commander-id="{{this.id}}" title="{{localize "MYTROS.AutoCreateTags"}}"><i class="fas fa-magic"></i></button>
+                    <button type="button" class="btn-delete" data-action="deleteCommander" data-commander-id="{{this.id}}" title="{{localize "MYTROS.Delete"}}"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+            <div class="commander-tags">
+                {{#each this.tags}}
+                <span class="tag-chip">
+                    {{this.name}}
+                    <button type="button" class="tag-remove" data-action="removeCommanderTag" data-commander-id="{{../id}}" data-item-id="{{this.id}}" title="{{localize "MYTROS.RemoveTag"}}"><i class="fas fa-times"></i></button>
+                </span>
+                {{/each}}
+                {{#unless this.tags.length}}
+                <span class="no-tags">{{localize "MYTROS.NoTags"}}</span>
+                {{/unless}}
+            </div>
+        </div>
+        {{/each}}
+    </div>
+    {{else}}
+    <p class="empty-state">{{localize "MYTROS.NoCommandersManage"}}</p>
+    {{/if}}
+</div>

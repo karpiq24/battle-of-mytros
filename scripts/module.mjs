@@ -26,6 +26,16 @@ Hooks.once("init", async function () {
         return a + b;
     });
 
+    // Register Handlebars partials
+    const templatePaths = [
+        "modules/battle-of-mytros/templates/partials/tab-overview.hbs",
+        "modules/battle-of-mytros/templates/partials/tab-miracles.hbs",
+        "modules/battle-of-mytros/templates/partials/tab-legions.hbs",
+        "modules/battle-of-mytros/templates/partials/tab-commanders.hbs",
+        "modules/battle-of-mytros/templates/partials/tab-setup.hbs",
+    ];
+    loadTemplates(templatePaths);
+
     game.settings.register("battle-of-mytros", "battleSceneId", {
         name: "Battlemap Scene ID",
         hint: "The ID of the scene acting as the main Battle of Mytros map. Region tracking only runs here.",

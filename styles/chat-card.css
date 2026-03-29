@@ -1,0 +1,166 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   CHAT CARD
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.mytros-battle-card {
+    font-size: 0.9em;
+    border-radius: var(--mytros-radius);
+    overflow: hidden;
+}
+.mytros-battle-card .card-header {
+    font-size: 1.05em;
+    font-weight: 700;
+    padding: 8px 10px;
+    background: linear-gradient(135deg, rgba(44, 62, 80, 0.12), transparent);
+    border-bottom: 2px solid var(--mytros-divider);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+body.theme-dark .mytros-battle-card .card-header,
+[data-theme="dark"] .mytros-battle-card .card-header {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), transparent);
+}
+
+.mytros-battle-card .card-matchup {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 6px 10px;
+    font-size: 0.95em;
+}
+.mytros-battle-card .card-vs {
+    color: var(--mytros-text-muted-alt);
+    font-size: 0.82em;
+    font-weight: 400;
+}
+.mytros-battle-card .faction-allied {
+    color: var(--mytros-allied);
+    font-weight: 700;
+}
+.mytros-battle-card .faction-sydon {
+    color: var(--mytros-sydon);
+    font-weight: 700;
+}
+
+.mytros-battle-card .card-result {
+    padding: 6px 10px 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.mytros-battle-card .card-result strong {
+    font-size: 1em;
+}
+.mytros-battle-card .card-score {
+    color: var(--mytros-text-muted);
+    font-size: 0.88em;
+    font-weight: 500;
+    background: var(--mytros-chip-bg);
+    padding: 2px 8px;
+    border-radius: 3px;
+}
+
+.mytros-battle-card .card-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 4px 0 8px;
+}
+.mytros-battle-card .card-table th,
+.mytros-battle-card .card-table td {
+    padding: 5px 8px;
+    border: 1px solid var(--mytros-border-light);
+    font-size: 0.88em;
+}
+.mytros-battle-card .card-table th {
+    background: var(--mytros-surface-header);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.78em;
+    letter-spacing: 0.04em;
+}
+.mytros-battle-card .card-table td {
+    vertical-align: top;
+}
+.mytros-battle-card .card-final td {
+    font-size: 0.85em;
+}
+
+/* ── Roll Detail in Chat Card ──────────────────────────────────────────── */
+.mytros-battle-card .roll-detail {
+    font-size: 0.78em;
+    color: var(--mytros-text-muted-alt);
+    margin-top: 2px;
+}
+.mytros-battle-card .card-mod-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    margin-top: 3px;
+}
+.mytros-battle-card .card-mod-chip {
+    font-size: 0.72em;
+    background: var(--mytros-chip-bg);
+    border: 1px solid var(--mytros-chip-border);
+    padding: 0 5px;
+    border-radius: 2px;
+    color: var(--mytros-text-muted);
+}
+
+.mytros-battle-card .text-good {
+    color: var(--mytros-success);
+    font-weight: 600;
+}
+.mytros-battle-card .text-bad {
+    color: var(--mytros-danger);
+    font-weight: 600;
+}
+.mytros-battle-card .text-neutral {
+    color: var(--mytros-text-muted-alt);
+}
+
+.mytros-battle-card .card-death {
+    color: var(--mytros-danger);
+    font-weight: 700;
+    margin: 6px 10px;
+    padding: 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.mytros-battle-card .card-status {
+    margin: 4px 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 8px;
+    border-radius: var(--mytros-radius);
+}
+.mytros-battle-card .card-status-destroyed {
+    color: var(--mytros-danger);
+    background: rgba(192, 57, 43, 0.08);
+}
+.mytros-battle-card .card-status-routed {
+    color: var(--mytros-warning);
+    background: rgba(230, 126, 34, 0.08);
+}
+.mytros-battle-card .card-toll {
+    color: var(--mytros-text-muted);
+    font-size: 0.82em;
+    margin: 0;
+    padding: 6px 10px;
+    border-top: 1px solid var(--mytros-border-light);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--mytros-surface);
+}
+
+/* ── Warning Message ───────────────────────────────────────────────────── */
+.mytros-dashboard .warning {
+    text-align: center;
+    padding: 20px;
+    color: var(--mytros-text-muted);
+    font-style: italic;
+}

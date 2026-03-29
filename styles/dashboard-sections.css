@@ -1,0 +1,219 @@
+/* ── Section Cards ─────────────────────────────────────────────────────── */
+.mytros-dashboard .sections-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+    padding: 10px;
+}
+.mytros-dashboard .section-card {
+    border: 1px solid var(--mytros-divider);
+    border-radius: var(--mytros-radius-lg);
+    padding: 10px;
+    background: var(--mytros-surface-card);
+    box-shadow: var(--mytros-shadow);
+    transition: box-shadow var(--mytros-transition);
+}
+.mytros-dashboard .section-card:hover {
+    box-shadow: var(--mytros-shadow-lg);
+}
+.mytros-dashboard .section-card.control-allied {
+    border-top: 3px solid var(--mytros-allied);
+}
+.mytros-dashboard .section-card.control-sydon {
+    border-top: 3px solid var(--mytros-sydon);
+}
+
+.mytros-dashboard .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--mytros-divider);
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+}
+.mytros-dashboard .section-header h3 {
+    margin: 0;
+    font-size: 1em;
+    border: none;
+    font-weight: 700;
+}
+.mytros-dashboard .section-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+.mytros-dashboard .section-controls select {
+    font-size: 0.8em;
+    padding: 2px 4px;
+    border-radius: var(--mytros-radius);
+    border: 1px solid var(--mytros-btn-secondary-border);
+    background: var(--mytros-btn-secondary-bg);
+    color: var(--mytros-text);
+}
+.mytros-dashboard .section-controls button {
+    padding: 3px 6px;
+    background: var(--mytros-btn-secondary-bg);
+    border: 1px solid var(--mytros-btn-secondary-border);
+    border-radius: var(--mytros-radius);
+    cursor: pointer;
+    color: var(--mytros-text-muted-alt);
+    font-size: 0.8em;
+    transition: all var(--mytros-transition);
+}
+.mytros-dashboard .section-controls button:hover {
+    background: var(--mytros-btn-secondary-hover);
+}
+.mytros-dashboard .section-controls button.active {
+    color: var(--mytros-accent);
+    border-color: var(--mytros-accent);
+    background: var(--mytros-accent-bg);
+}
+
+/* ── Badges ────────────────────────────────────────────────────────────── */
+.mytros-dashboard .badge {
+    font-size: 0.75em;
+    font-weight: 600;
+    padding: 1px 5px;
+    border-radius: 3px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+.mytros-dashboard .badge.fortified {
+    color: var(--mytros-info);
+}
+.mytros-dashboard .badge.objective {
+    color: var(--mytros-accent);
+}
+.mytros-dashboard .badge.destroyed {
+    color: var(--mytros-danger);
+    background: rgba(192, 57, 43, 0.08);
+}
+.mytros-dashboard .badge.routed {
+    color: var(--mytros-warning);
+    background: rgba(230, 126, 34, 0.08);
+}
+
+/* ── Legion Items ──────────────────────────────────────────────────────── */
+.mytros-dashboard .section-legions ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.mytros-dashboard .legion-item {
+    font-weight: 600;
+    padding: 4px 0;
+}
+.mytros-dashboard .legion-item.faction-allied {
+    color: var(--mytros-allied);
+}
+.mytros-dashboard .legion-item.faction-sydon {
+    color: var(--mytros-sydon);
+}
+.mytros-dashboard .legion-item.is-routed {
+    opacity: 0.6;
+    font-style: italic;
+}
+.mytros-dashboard .legion-item.is-destroyed {
+    opacity: 0.35;
+    text-decoration: line-through;
+}
+.mytros-dashboard .legion-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.mytros-dashboard .legion-stats {
+    font-size: 0.8em;
+    color: var(--mytros-text-muted);
+    font-weight: 400;
+    background: var(--mytros-chip-bg);
+    padding: 1px 6px;
+    border-radius: 3px;
+}
+.mytros-dashboard .legion-flag-btn {
+    padding: 1px 5px;
+    font-size: 0.8em;
+    background: none;
+    border: 1px solid var(--mytros-divider);
+    border-radius: 3px;
+    cursor: pointer;
+    color: var(--mytros-text-muted-alt);
+    transition: all var(--mytros-transition);
+}
+.mytros-dashboard .legion-flag-btn:hover {
+    background: var(--mytros-surface-alt);
+}
+.mytros-dashboard .legion-flag-btn.active {
+    color: var(--mytros-accent);
+    border-color: var(--mytros-accent);
+    background: var(--mytros-accent-bg);
+}
+.mytros-dashboard .legion-item select {
+    font-size: 0.8em;
+    margin-top: 3px;
+    width: 100%;
+    padding: 2px 4px;
+    border-radius: var(--mytros-radius);
+    border: 1px solid var(--mytros-btn-secondary-border);
+    background: var(--mytros-btn-secondary-bg);
+    color: var(--mytros-text);
+}
+.mytros-dashboard .commander-tag {
+    font-size: 0.8em;
+    color: var(--mytros-text-muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: var(--mytros-chip-bg);
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-top: 3px;
+}
+.mytros-dashboard .empty-state {
+    font-style: italic;
+    color: var(--mytros-text-muted-alt);
+    margin: 4px 0;
+    font-size: 0.85em;
+}
+
+/* ── Support Units ─────────────────────────────────────────────────────── */
+.mytros-dashboard .support-units {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid var(--mytros-divider);
+}
+.mytros-dashboard .support-units h4 {
+    font-size: 0.75em;
+    margin: 0 0 4px 0;
+    color: var(--mytros-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+}
+.mytros-dashboard .support-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85em;
+    padding: 2px 0;
+}
+.mytros-dashboard .support-item select {
+    font-size: 0.8em;
+    max-width: 180px;
+    padding: 2px 4px;
+    border-radius: var(--mytros-radius);
+    border: 1px solid var(--mytros-btn-secondary-border);
+    background: var(--mytros-btn-secondary-bg);
+    color: var(--mytros-text);
+}
+.mytros-dashboard .support-mode-badge {
+    font-size: 0.7em;
+    background: var(--mytros-chip-bg);
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid var(--mytros-chip-border);
+    color: var(--mytros-text-muted);
+}

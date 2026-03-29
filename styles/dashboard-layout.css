@@ -1,0 +1,226 @@
+/* ── Dashboard Layout ──────────────────────────────────────────────────── */
+.mytros-dashboard {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    font-family: inherit;
+}
+.mytros-dashboard .tabs {
+    flex-shrink: 0;
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--mytros-divider);
+    background: var(--mytros-surface-header);
+}
+.mytros-dashboard .tabs .item {
+    flex: 1;
+    text-align: center;
+    padding: 8px 12px;
+    font-size: 0.85em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--mytros-text-muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    cursor: pointer;
+    transition: all var(--mytros-transition);
+}
+.mytros-dashboard .tabs .item:hover {
+    color: var(--mytros-text);
+    background: var(--mytros-surface);
+}
+.mytros-dashboard .tabs .item.active {
+    color: var(--mytros-accent);
+    border-bottom-color: var(--mytros-accent);
+}
+.mytros-dashboard .dashboard-body {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+/* ── Header & Phase Tracker ────────────────────────────────────────────── */
+.mytros-dashboard .dashboard-header {
+    flex-shrink: 0;
+    padding: 10px 12px 8px;
+    border-bottom: 1px solid var(--mytros-divider);
+    background: var(--mytros-surface-header);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.mytros-dashboard .header-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.mytros-dashboard .round-label {
+    font-size: 0.75em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--mytros-accent);
+}
+.mytros-dashboard .death-toll-display {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.82em;
+    font-weight: 700;
+    color: var(--mytros-danger);
+    background: rgba(192, 57, 43, 0.08);
+    padding: 3px 10px;
+    border-radius: var(--mytros-radius);
+    border: 1px solid rgba(192, 57, 43, 0.2);
+}
+.mytros-dashboard .death-toll-count {
+    font-size: 1.1em;
+}
+.mytros-dashboard .death-toll-frozen-icon {
+    color: var(--mytros-info);
+    margin-left: 2px;
+    font-size: 0.85em;
+}
+.mytros-dashboard .phase-track {
+    display: flex;
+    gap: 4px;
+}
+.mytros-dashboard .phase-pip {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 6px 4px;
+    border-radius: var(--mytros-radius);
+    border: 1px solid var(--mytros-divider);
+    background: var(--mytros-surface);
+    cursor: default;
+    transition: all var(--mytros-transition);
+}
+.mytros-dashboard .phase-pip.active {
+    background: var(--mytros-accent-bg);
+    border-color: var(--mytros-accent);
+    box-shadow: 0 0 8px rgba(212, 160, 23, 0.15);
+}
+.mytros-dashboard .pip-number {
+    font-size: 0.9em;
+    font-weight: 700;
+    color: var(--mytros-text-muted);
+    line-height: 1;
+}
+.mytros-dashboard .phase-pip.active .pip-number {
+    color: var(--mytros-accent);
+}
+.mytros-dashboard .pip-label {
+    font-size: 0.8em;
+    color: var(--mytros-text-muted-alt);
+    text-align: center;
+    line-height: 1.2;
+    margin-top: 2px;
+}
+.mytros-dashboard .phase-pip.active .pip-label {
+    color: var(--mytros-text);
+    font-weight: 600;
+}
+.mytros-dashboard .phase-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: center;
+}
+.mytros-dashboard .phase-current-label {
+    flex: 1;
+    text-align: center;
+    font-size: 0.85em;
+    font-weight: 700;
+    color: var(--mytros-text);
+}
+
+/* ── Buttons ───────────────────────────────────────────────────────────── */
+.mytros-dashboard .phase-btn {
+    padding: 4px 10px;
+    background: var(--mytros-btn-secondary-bg);
+    border: 1px solid var(--mytros-btn-secondary-border);
+    border-radius: var(--mytros-radius);
+    cursor: pointer;
+    font-size: 0.85em;
+    line-height: 1.4;
+    transition: all var(--mytros-transition);
+    color: var(--mytros-text);
+}
+.mytros-dashboard .phase-btn:hover:not(:disabled) {
+    background: var(--mytros-btn-secondary-hover);
+}
+.mytros-dashboard .phase-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+.mytros-dashboard .phase-btn-advance {
+    background: var(--mytros-accent);
+    border-color: var(--mytros-accent);
+    color: #fff;
+    font-weight: 700;
+    padding: 4px 14px;
+}
+.mytros-dashboard .phase-btn-advance:hover {
+    background: #b8860b;
+    border-color: #b8860b;
+}
+.mytros-dashboard .phase-btn-next {
+    padding: 4px 12px;
+}
+.mytros-dashboard .advance-round-btn {
+    width: 100%;
+    margin-top: 10px;
+    background: var(--mytros-accent);
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: var(--mytros-radius);
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.95em;
+    transition: all var(--mytros-transition);
+}
+.mytros-dashboard .advance-round-btn:hover {
+    background: #b8860b;
+    transform: translateY(-1px);
+    box-shadow: var(--mytros-shadow-lg);
+}
+.mytros-dashboard .resolve-btn {
+    padding: 4px 10px;
+    font-size: 0.8em;
+    font-weight: 600;
+    background: var(--mytros-accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--mytros-radius);
+    cursor: pointer;
+    transition: all var(--mytros-transition);
+    white-space: nowrap;
+}
+.mytros-dashboard .resolve-btn:hover {
+    background: #b8860b;
+}
+.mytros-dashboard .resolve-btn.resolve-btn-battle {
+    padding: 6px 14px;
+    font-size: 0.88em;
+    font-weight: 700;
+    animation: mytros-pulse 2s ease-in-out infinite;
+}
+@keyframes mytros-pulse {
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(212, 160, 23, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 6px rgba(212, 160, 23, 0);
+    }
+}
+.mytros-dashboard .resolve-btn.resolve-rout {
+    background: var(--mytros-warning);
+}
+.mytros-dashboard .resolve-btn.resolve-rout:hover {
+    background: #cf6d17;
+}

@@ -1,0 +1,109 @@
+<div class="setup-form">
+    <h3><i class="fas fa-map"></i> {{localize "MYTROS.SetupSectionScene"}}</h3>
+    <div class="form-group">
+        <label>{{localize "MYTROS.SetupBattleScene"}}</label>
+        <select data-action="updateSetting" data-setting="battleSceneId">
+            <option value="">— {{localize "MYTROS.SetupBattleSceneNone"}} —</option>
+            {{#each scenes}}
+            <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.name}}</option>
+            {{/each}}
+        </select>
+    </div>
+    <div class="form-group">
+        <label>{{localize "MYTROS.SetupSectionPrefix"}}</label>
+        <input type="text" data-action="updateSetting" data-setting="sectionPrefix" value="{{sectionPrefix}}">
+    </div>
+
+    <hr>
+    <h3><i class="fas fa-calendar"></i> {{localize "MYTROS.SetupBattleState"}}</h3>
+    <div class="form-group">
+        <label>{{localize "MYTROS.SetupRoundLabel"}}</label>
+        <input type="number" data-action="updateSetting" data-setting="currentRound" value="{{round}}">
+    </div>
+    <div class="form-group">
+        <label>{{localize "MYTROS.SetupPhaseLabel"}}</label>
+        <input type="number" data-action="updateSetting" data-setting="currentPhase" value="{{phase}}">
+    </div>
+    <div class="form-group">
+        <label>{{localize "MYTROS.AlliedMiracles"}}</label>
+        <input type="number" data-action="updateSetting" data-setting="alliedMiracles" value="{{alliedMiracles}}">
+    </div>
+    <div class="form-group">
+        <label>{{localize "MYTROS.SydonMiracles"}}</label>
+        <input type="number" data-action="updateSetting" data-setting="sydonMiracles" value="{{sydonMiracles}}">
+    </div>
+    <div class="form-group">
+        <label>{{localize "MYTROS.SetupDeathTollLabel"}}</label>
+        <input type="number" data-action="updateSetting" data-setting="deathToll" value="{{deathToll}}">
+    </div>
+    <div class="form-group form-group-checkbox">
+        <label>{{localize "MYTROS.SetupDeathTollFrozen"}}</label>
+        <input type="checkbox" data-action="updateSetting" data-setting="deathTollFrozen" {{#if deathTollFrozen}}checked{{/if}}>
+    </div>
+    <div class="form-group form-group-checkbox">
+        <label>{{localize "MYTROS.SetupSydonObjectiveHalved"}}</label>
+        <input type="checkbox" data-action="updateSetting" data-setting="sydonObjectiveHalved" {{#if sydonObjectiveHalved}}checked{{/if}}>
+    </div>
+    <div class="form-group">
+        <button type="button" data-action="resetCompletedEvents" class="btn-danger-subtle"><i class="fas fa-rotate-left"></i> {{localize "MYTROS.SetupResetEvents"}}</button>
+    </div>
+
+    <hr>
+    <h3><i class="fas fa-sliders"></i> {{localize "MYTROS.SetupRules"}}</h3>
+    <div class="form-group">
+        <label>{{localize "MYTROS.SetupMaxMorale"}}</label>
+        <input type="number" data-action="updateSetting" data-setting="maxMorale" value="{{maxMorale}}" min="1">
+    </div>
+    <div class="form-group">
+        <label>{{localize "MYTROS.SetupDestroyThreshold"}}</label>
+        <input type="number" data-action="updateSetting" data-setting="destroyThreshold" value="{{destroyThreshold}}" min="1">
+    </div>
+    <div class="form-group">
+        <label>{{localize "MYTROS.SetupHopeDC"}}</label>
+        <input type="number" data-action="updateSetting" data-setting="hopeDC" value="{{hopeDC}}" min="1">
+    </div>
+    <div class="form-group">
+        <label>{{localize "MYTROS.SetupSalvageDC"}}</label>
+        <input type="number" data-action="updateSetting" data-setting="salvageDC" value="{{salvageDC}}" min="1">
+    </div>
+
+    <hr>
+    <div class="form-group">
+        <button type="button" class="advance-round-btn" data-action="advanceRound"><i class="fas fa-forward"></i> {{localize "MYTROS.AdvanceRound"}} {{round}} + 1</button>
+    </div>
+
+    <hr>
+    <h3><i class="fas fa-link"></i> {{localize "MYTROS.AdjacencyTitle"}}</h3>
+    <p class="adjacency-hint">{{localize "MYTROS.AdjacencyHint"}}</p>
+    {{#if adjacencyPairs.length}}
+    <div class="adjacency-pairs">
+        {{#each adjacencyPairs}}
+        <div class="adjacency-pair">
+            <span>{{this.aName}} ↔ {{this.bName}}</span>
+            <button type="button" data-action="removeAdjacencyPair" data-index="{{this.index}}">×</button>
+        </div>
+        {{/each}}
+    </div>
+    {{/if}}
+    <div class="adjacency-add-row">
+        <select data-ref="adjA">
+            {{#each sectionOpts}}<option value="{{this.id}}">{{this.name}}</option>{{/each}}
+        </select>
+        <span>↔</span>
+        <select data-ref="adjB">
+            {{#each sectionOpts}}<option value="{{this.id}}">{{this.name}}</option>{{/each}}
+        </select>
+        <button type="button" data-action="addAdjacencyPair"><i class="fas fa-plus"></i> {{localize "MYTROS.AdjacencyAdd"}}</button>
+    </div>
+
+    <hr>
+    <h3><i class="fas fa-database"></i> {{localize "MYTROS.DataManagement"}}</h3>
+    <div class="form-group data-mgmt-group">
+        <button type="button" data-action="importCSV" data-type="legion"><i class="fas fa-file-import"></i> {{localize "MYTROS.ImportLegions"}}</button>
+        <button type="button" data-action="exportCSV" data-type="legion"><i class="fas fa-file-export"></i> {{localize "MYTROS.ExportLegions"}}</button>
+    </div>
+    <div class="form-group data-mgmt-group">
+        <button type="button" data-action="importCSV" data-type="commander"><i class="fas fa-file-import"></i> {{localize "MYTROS.ImportCommanders"}}</button>
+        <button type="button" data-action="exportCSV" data-type="commander"><i class="fas fa-file-export"></i> {{localize "MYTROS.ExportCommanders"}}</button>
+    </div>
+</div>

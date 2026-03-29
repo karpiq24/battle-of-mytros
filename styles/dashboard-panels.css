@@ -1,0 +1,348 @@
+/* ── Reconnaissance Panel ──────────────────────────────────────────────── */
+.mytros-dashboard .recon-panel {
+    background: var(--mytros-surface-alt);
+    border: 1px solid var(--mytros-divider);
+    border-radius: var(--mytros-radius-lg);
+    padding: 10px 12px;
+    margin: 10px 10px 0;
+}
+.mytros-dashboard .recon-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+.mytros-dashboard .recon-header strong {
+    font-size: 0.9em;
+}
+.mytros-dashboard .recon-btn {
+    padding: 5px 12px;
+    font-size: 0.82em;
+    font-weight: 600;
+    background: var(--mytros-btn-primary-bg);
+    color: #fff;
+    border: none;
+    border-radius: var(--mytros-radius);
+    cursor: pointer;
+    transition: all var(--mytros-transition);
+}
+.mytros-dashboard .recon-btn:hover {
+    background: var(--mytros-btn-primary-hover);
+}
+.mytros-dashboard .recon-result {
+    margin-top: 8px;
+    font-size: 0.88em;
+    padding: 6px 10px;
+    background: var(--mytros-surface);
+    border-radius: var(--mytros-radius);
+    border-left: 3px solid var(--mytros-divider);
+}
+.mytros-dashboard .recon-result.recon-bonus {
+    background: var(--mytros-recon-bonus-bg);
+    color: var(--mytros-recon-bonus-text);
+    font-weight: 600;
+    border-left-color: var(--mytros-accent);
+}
+.mytros-dashboard .recon-result.recon-frozen {
+    background: var(--mytros-recon-frozen-bg);
+    color: var(--mytros-recon-frozen-text);
+    border-left-color: var(--mytros-info);
+}
+
+/* ── Miracles Panel ────────────────────────────────────────────────────── */
+.mytros-dashboard .miracles-panel {
+    padding: 12px;
+}
+.mytros-dashboard .miracles-panel > hr {
+    border: none;
+    border-top: 1px solid var(--mytros-divider);
+    margin: 14px 0;
+}
+.mytros-dashboard .miracles-panel > h3 {
+    font-size: 1em;
+    margin: 0 0 10px 0;
+    font-weight: 700;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.mytros-dashboard .miracle-pools {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+.mytros-dashboard .miracle-pool {
+    border: 1px solid var(--mytros-divider);
+    border-radius: var(--mytros-radius-lg);
+    padding: 12px;
+    background: var(--mytros-surface-card);
+    box-shadow: var(--mytros-shadow);
+}
+.mytros-dashboard .miracle-pool h3 {
+    margin: 0 0 6px 0;
+    font-size: 0.95em;
+    border: none;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.mytros-dashboard .pool-allied {
+    border-top: 3px solid var(--mytros-allied);
+}
+.mytros-dashboard .pool-allied h3 {
+    color: var(--mytros-allied);
+}
+.mytros-dashboard .pool-sydon {
+    border-top: 3px solid var(--mytros-sydon);
+}
+.mytros-dashboard .pool-sydon h3 {
+    color: var(--mytros-sydon);
+}
+.mytros-dashboard .pool-count {
+    font-size: 2.2em;
+    font-weight: 800;
+    text-align: center;
+    margin: 8px 0;
+}
+.mytros-dashboard .pool-allied .pool-count {
+    color: var(--mytros-allied);
+}
+.mytros-dashboard .pool-sydon .pool-count {
+    color: var(--mytros-sydon);
+}
+.mytros-dashboard .miracle-spend-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.mytros-dashboard .miracle-spend-btn {
+    padding: 5px 10px;
+    font-size: 0.8em;
+    background: var(--mytros-btn-secondary-bg);
+    border: 1px solid var(--mytros-btn-secondary-border);
+    border-radius: var(--mytros-radius);
+    cursor: pointer;
+    text-align: left;
+    font-weight: 500;
+    transition: all var(--mytros-transition);
+    color: var(--mytros-text);
+}
+.mytros-dashboard .miracle-spend-btn:hover {
+    background: var(--mytros-btn-secondary-hover);
+}
+
+/* ── Major Events ──────────────────────────────────────────────────────── */
+.mytros-dashboard .major-events-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.mytros-dashboard .event-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border: 1px solid var(--mytros-divider);
+    border-radius: var(--mytros-radius);
+    background: var(--mytros-surface-card);
+    box-shadow: var(--mytros-shadow);
+    transition: all var(--mytros-transition);
+}
+.mytros-dashboard .event-item:hover {
+    box-shadow: var(--mytros-shadow-lg);
+}
+.mytros-dashboard .event-item.event-completed {
+    opacity: 0.55;
+}
+.mytros-dashboard .event-info {
+    flex: 1;
+}
+.mytros-dashboard .event-info strong {
+    display: block;
+    font-size: 0.92em;
+}
+.mytros-dashboard .event-desc {
+    font-size: 0.78em;
+    color: var(--mytros-text-muted);
+    margin-top: 2px;
+}
+.mytros-dashboard .event-trigger-btn {
+    padding: 5px 12px;
+    font-size: 0.8em;
+    font-weight: 600;
+    background: var(--mytros-accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--mytros-radius);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--mytros-transition);
+}
+.mytros-dashboard .event-trigger-btn:hover {
+    background: #b8860b;
+}
+.mytros-dashboard .event-done {
+    font-size: 0.8em;
+    color: var(--mytros-success);
+    white-space: nowrap;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ── Setup Form ────────────────────────────────────────────────────────── */
+.mytros-dashboard .setup-form {
+    padding: 12px;
+}
+.mytros-dashboard .setup-form > hr {
+    border: none;
+    border-top: 1px solid var(--mytros-divider);
+    margin: 14px 0;
+}
+.mytros-dashboard .setup-form h3 {
+    font-size: 0.9em;
+    margin: 10px 0 6px 0;
+    color: var(--mytros-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border: none;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.mytros-dashboard .setup-form .form-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+.mytros-dashboard .setup-form .form-group label {
+    flex: 1;
+    font-size: 0.88em;
+    font-weight: 500;
+}
+.mytros-dashboard .setup-form .form-group input[type="number"],
+.mytros-dashboard .setup-form .form-group input[type="text"],
+.mytros-dashboard .setup-form .form-group select {
+    flex: 1;
+    max-width: 200px;
+    padding: 4px 6px;
+    border-radius: var(--mytros-radius);
+    border: 1px solid var(--mytros-btn-secondary-border);
+    background: var(--mytros-btn-secondary-bg);
+    color: var(--mytros-text);
+    font-size: 0.88em;
+}
+.mytros-dashboard .setup-form .form-group-checkbox {
+    align-items: center;
+}
+.mytros-dashboard .setup-form .form-group-checkbox input[type="checkbox"] {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--mytros-accent);
+}
+.mytros-dashboard .setup-form .form-group button {
+    font-weight: 600;
+}
+.mytros-dashboard .btn-danger-subtle {
+    background: rgba(192, 57, 43, 0.08);
+    border: 1px solid rgba(192, 57, 43, 0.3);
+    color: var(--mytros-danger);
+    border-radius: var(--mytros-radius);
+    padding: 5px 12px;
+    font-size: 0.82em;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all var(--mytros-transition);
+}
+.mytros-dashboard .btn-danger-subtle:hover {
+    background: rgba(192, 57, 43, 0.18);
+}
+
+/* ── Adjacency Config ──────────────────────────────────────────────────── */
+.mytros-dashboard .adjacency-hint {
+    font-size: 0.8em;
+    color: var(--mytros-text-muted);
+    margin: 0 0 8px 0;
+}
+.mytros-dashboard .adjacency-pairs {
+    margin-bottom: 10px;
+}
+.mytros-dashboard .adjacency-pair {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+    font-size: 0.88em;
+}
+.mytros-dashboard .adjacency-pair button {
+    padding: 2px 7px;
+    font-size: 0.85em;
+    background: var(--mytros-btn-secondary-bg);
+    border: 1px solid var(--mytros-btn-secondary-border);
+    border-radius: var(--mytros-radius);
+    cursor: pointer;
+    color: var(--mytros-danger);
+    transition: all var(--mytros-transition);
+}
+.mytros-dashboard .adjacency-pair button:hover {
+    background: rgba(192, 57, 43, 0.1);
+}
+.mytros-dashboard .adjacency-add-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.mytros-dashboard .adjacency-add-row select {
+    flex: 1;
+    font-size: 0.88em;
+    padding: 3px 5px;
+    border-radius: var(--mytros-radius);
+    border: 1px solid var(--mytros-btn-secondary-border);
+    background: var(--mytros-btn-secondary-bg);
+    color: var(--mytros-text);
+}
+.mytros-dashboard .adjacency-add-row span {
+    color: var(--mytros-text-muted);
+}
+.mytros-dashboard .adjacency-add-row button {
+    padding: 4px 10px;
+    font-size: 0.85em;
+    font-weight: 600;
+    background: var(--mytros-btn-primary-bg);
+    color: #fff;
+    border: none;
+    border-radius: var(--mytros-radius);
+    cursor: pointer;
+    transition: all var(--mytros-transition);
+}
+.mytros-dashboard .adjacency-add-row button:hover {
+    background: var(--mytros-btn-primary-hover);
+}
+
+/* ── Data Management Buttons ───────────────────────────────────────────── */
+.mytros-dashboard .setup-form .data-mgmt-group button {
+    padding: 5px 10px;
+    font-size: 0.82em;
+    font-weight: 600;
+    background: var(--mytros-btn-secondary-bg);
+    border: 1px solid var(--mytros-btn-secondary-border);
+    border-radius: var(--mytros-radius);
+    cursor: pointer;
+    transition: all var(--mytros-transition);
+    color: var(--mytros-text);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.mytros-dashboard .setup-form .data-mgmt-group button:hover {
+    background: var(--mytros-btn-secondary-hover);
+}

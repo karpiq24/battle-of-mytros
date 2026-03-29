@@ -1,0 +1,258 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   RESOLVER
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.mytros-resolver {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    font-family: inherit;
+}
+.mytros-resolver > header {
+    padding: 12px 14px 10px;
+    border-bottom: 2px solid var(--mytros-divider);
+    background: var(--mytros-surface-header);
+}
+.mytros-resolver > header h2 {
+    margin: 0 0 4px 0;
+    font-size: 1.15em;
+    font-weight: 700;
+    border: none;
+}
+.mytros-resolver .matchup {
+    font-size: 0.95em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.mytros-resolver .allied {
+    color: var(--mytros-allied);
+    font-weight: 700;
+}
+.mytros-resolver .sydon {
+    color: var(--mytros-sydon);
+    font-weight: 700;
+}
+.mytros-resolver > main {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+    padding: 12px;
+}
+
+/* ── Resolver Breadcrumb ───────────────────────────────────────────────── */
+.mytros-resolver .resolver-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 8px;
+    padding: 6px 0;
+}
+.mytros-resolver .breadcrumb-step {
+    font-size: 0.78em;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: var(--mytros-surface);
+    color: var(--mytros-text-muted-alt);
+    border: 1px solid var(--mytros-divider);
+    transition: all var(--mytros-transition);
+}
+.mytros-resolver .breadcrumb-step.bc-active {
+    background: var(--mytros-accent-bg);
+    color: var(--mytros-accent);
+    border-color: var(--mytros-accent);
+    font-weight: 700;
+    box-shadow: 0 0 6px rgba(212, 160, 23, 0.2);
+}
+.mytros-resolver .breadcrumb-step.bc-done {
+    background: rgba(39, 174, 96, 0.1);
+    color: var(--mytros-success);
+    border-color: rgba(39, 174, 96, 0.3);
+}
+.mytros-resolver .bc-arrow {
+    font-size: 0.6em;
+    color: var(--mytros-text-muted-alt);
+}
+
+/* ── Battle Log ────────────────────────────────────────────────────────── */
+.mytros-resolver .battle-log {
+    border: 1px solid var(--mytros-divider);
+    border-radius: var(--mytros-radius-lg);
+    padding: 10px;
+    margin-bottom: 12px;
+    height: 220px;
+    overflow-y: auto;
+    background: var(--mytros-surface);
+}
+.mytros-resolver .battle-log ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.mytros-resolver .log-entry {
+    padding: 5px 8px;
+    border-radius: var(--mytros-radius);
+    font-size: 0.85em;
+    background: var(--mytros-surface-card);
+    border-left: 3px solid var(--mytros-divider);
+    transition: background var(--mytros-transition);
+}
+.mytros-resolver .log-entry:hover {
+    background: var(--mytros-surface-alt);
+}
+.mytros-resolver .log-entry.log-allied-win {
+    border-left-color: var(--mytros-allied);
+}
+.mytros-resolver .log-entry.log-sydon-win {
+    border-left-color: var(--mytros-sydon);
+}
+.mytros-resolver .log-entry.log-allied-loss {
+    border-left-color: var(--mytros-danger);
+}
+.mytros-resolver .log-entry.log-sydon-loss {
+    border-left-color: var(--mytros-danger);
+}
+.mytros-resolver .log-entry.log-score {
+    font-weight: 700;
+    background: var(--mytros-accent-bg);
+    border-left-color: var(--mytros-accent);
+}
+.mytros-resolver .log-entry.log-neutral {
+    border-left-color: var(--mytros-text-muted-alt);
+}
+.mytros-resolver .log-text {
+    line-height: 1.4;
+}
+
+/* ── Modifier Chips ────────────────────────────────────────────────────── */
+.mytros-resolver .mod-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    margin-top: 4px;
+}
+.mytros-resolver .mod-chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    align-items: center;
+}
+.mytros-resolver .mod-chip-label {
+    font-size: 0.72em;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--mytros-text-muted-alt);
+    margin-right: 2px;
+}
+.mytros-resolver .mod-chip-label.mod-allied {
+    color: var(--mytros-allied);
+}
+.mytros-resolver .mod-chip-label.mod-sydon {
+    color: var(--mytros-sydon);
+}
+.mytros-resolver .mod-chip {
+    font-size: 0.72em;
+    background: var(--mytros-chip-bg);
+    border: 1px solid var(--mytros-chip-border);
+    padding: 1px 6px;
+    border-radius: 3px;
+    color: var(--mytros-text-muted);
+    white-space: nowrap;
+}
+
+/* ── Resolver Controls ─────────────────────────────────────────────────── */
+.mytros-resolver .controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.mytros-resolver .controls h3 {
+    font-size: 1em;
+    font-weight: 700;
+    margin: 4px 0 2px 0;
+    border: none;
+}
+.mytros-resolver .controls p {
+    font-size: 0.88em;
+    color: var(--mytros-text-muted);
+    margin: 0 0 4px 0;
+}
+.mytros-resolver .controls button {
+    padding: 8px 14px;
+    font-size: 0.88em;
+    font-weight: 600;
+    background: var(--mytros-btn-primary-bg);
+    color: #fff;
+    border: none;
+    border-radius: var(--mytros-radius);
+    cursor: pointer;
+    transition: all var(--mytros-transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.mytros-resolver .controls button:hover {
+    background: var(--mytros-btn-primary-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--mytros-shadow);
+}
+
+/* ── Resolver Benefit Buttons ──────────────────────────────────────────── */
+.mytros-resolver .benefit-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.mytros-resolver .benefit-group button {
+    padding: 7px 12px;
+    font-size: 0.85em;
+    font-weight: 500;
+    background: var(--mytros-btn-secondary-bg);
+    border: 1px solid var(--mytros-btn-secondary-border);
+    border-radius: var(--mytros-radius);
+    cursor: pointer;
+    text-align: left;
+    color: var(--mytros-text);
+    transition: all var(--mytros-transition);
+}
+.mytros-resolver .benefit-group button:hover {
+    background: var(--mytros-btn-secondary-hover);
+    border-color: var(--mytros-accent);
+}
+
+/* ── Resolver Divine Blood Panels ──────────────────────────────────────── */
+.mytros-resolver .divine-panel {
+    margin: 8px 0;
+    padding: 10px 12px;
+    border-radius: var(--mytros-radius);
+}
+.mytros-resolver .divine-panel strong {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.9em;
+}
+.mytros-resolver .divine-panel button {
+    margin-top: 4px;
+    margin-right: 4px;
+}
+.mytros-resolver .divine-panel-allied {
+    border: 1px solid var(--mytros-accent-bg);
+    background: rgba(212, 160, 23, 0.05);
+    border-color: rgba(192, 160, 96, 0.4);
+}
+.mytros-resolver .divine-panel-sydon {
+    border: 1px solid var(--mytros-sydon-border);
+    background: var(--mytros-sydon-bg);
+}
+.mytros-resolver .divine-panel-salvage-allied {
+    border: 1px solid var(--mytros-allied-border);
+    background: var(--mytros-allied-bg);
+}
+.mytros-resolver .divine-panel-salvage-sydon {
+    border: 1px solid var(--mytros-sydon-border);
+    background: var(--mytros-sydon-bg);
+}

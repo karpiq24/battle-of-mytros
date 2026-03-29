@@ -1,0 +1,48 @@
+<div class="miracles-panel">
+    <div class="miracle-pools">
+        <div class="miracle-pool pool-allied">
+            <h3><i class="fas fa-sun"></i> {{localize "MYTROS.AlliedMiracles"}}</h3>
+            <div class="pool-count">{{alliedMiracles}}</div>
+            {{#if isGM}}
+            <div class="miracle-spend-group">
+                <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-cost="1"><i class="fas fa-dice-d20"></i> {{localize "MYTROS.SpendRollBonus"}}</button>
+                <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-cost="2"><i class="fas fa-star"></i> {{localize "MYTROS.SpendDivineAdvantage"}}</button>
+                <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-cost="2"><i class="fas fa-campground"></i> {{localize "MYTROS.SpendShortRest"}}</button>
+                <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-cost="4"><i class="fas fa-bed"></i> {{localize "MYTROS.SpendLongRest"}}</button>
+            </div>
+            {{/if}}
+        </div>
+        <div class="miracle-pool pool-sydon">
+            <h3><i class="fas fa-bolt"></i> {{localize "MYTROS.SydonMiracles"}}</h3>
+            <div class="pool-count">{{sydonMiracles}}</div>
+            {{#if isGM}}
+            <div class="miracle-spend-group">
+                <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="sydon" data-cost="1"><i class="fas fa-dice-d20"></i> {{localize "MYTROS.SpendRollBonus"}}</button>
+                <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="sydon" data-cost="2"><i class="fas fa-star"></i> {{localize "MYTROS.SpendDivineAdvantage"}}</button>
+            </div>
+            {{/if}}
+        </div>
+    </div>
+
+    {{#if isGM}}
+    <hr>
+    <h3><i class="fas fa-star"></i> {{localize "MYTROS.MajorEventsTitle"}}</h3>
+    <div class="major-events-list">
+        {{#each majorEvents}}
+        <div class="event-item {{#if this.completed}}event-completed{{/if}}">
+            <div class="event-info">
+                <strong>{{this.name}}</strong>
+                <span class="event-desc">{{this.description}}</span>
+            </div>
+            {{#if this.completed}}
+            <span class="event-done"><i class="fas fa-check-circle"></i> {{localize "MYTROS.EventResolved"}} (+{{this.reward}} {{localize "MYTROS.Miracles"}})</span>
+            {{else}}
+            <button type="button" class="event-trigger-btn" data-action="triggerMajorEvent" data-event-id="{{this.id}}">
+                <i class="fas fa-bolt"></i> {{localize "MYTROS.EventTriggerBtn"}} (+{{this.reward}} {{localize "MYTROS.AlliedMiracles"}})
+            </button>
+            {{/if}}
+        </div>
+        {{/each}}
+    </div>
+    {{/if}}
+</div>
