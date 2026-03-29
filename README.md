@@ -38,33 +38,40 @@ A GM-facing mass combat system for _Odyssey of the Dragonlords_. Resolves legion
 
 ## Initial World Setup
 
-### 1. Set the Battle Scene
+### 1. Launch the Dashboard
 
-Game Settings → Module Settings → **Battlemap Scene ID**. The module only tracks tokens and renders section data when the active canvas matches this scene.
+Select the standard Token Controls panel on the left side of your screen. Look for the crossed swords icon to open the **Battle of Mytros Dashboard**.
 
-### 2. Create Map Sections as Scene Regions
+### 2. Set the Battle Scene
 
-Draw Scene Regions named with the prefix `Section:` (e.g. `Section: The Docks`). On scene load the module initialises each matching region with default flags. Regions without the prefix are ignored.
+Navigate to the **Setup** tab within the dashboard. Under the Scene & Regions section, select your primary battle map from the **Battle Scene** dropdown. The module will only track tokens and resolve engagements when the active canvas matches this scene.
 
-### 3. Create Legion Actors
+### 3. Create Map Sections as Scene Regions
 
-One actor per legion. Set flag `battle-of-mytros.isLegion = true` manually, or use CSV import (sets it automatically).
+On the selected battlemap, draw Scene Regions using the Foundry region tools and name them using the prefix specified in your Setup tab (default is `Section:` — e.g. `Section: The Docks`). Regions without this prefix are ignored by the module.
 
-### 4. Create Commander Actors
+### 4. Create and Manage Legions & Commanders
 
-One actor per commander. Set flag `battle-of-mytros.isCommander = true`. **Tags are Items on the actor** — create plain items named exactly after each tag (case-insensitive, e.g. `Tactician`, `Divine Blood`).
+Instead of manually creating actors and setting flags, fully manage your armies directly via the dashboard:
 
-### 5. Assign Commanders to Legions
+-   **Legions Tab**: Click **New Legion**, enter the name, and the actor is automatically created (or converted from an existing actor) with all proper flags.
+-   **Commanders Tab**: Click **New Commander**. All commanders appear here.
+-   **Bulk Import**: Navigate to the **Setup** tab and use the **Import Legions** and **Import Commanders** buttons to upload CSV files.
 
-In the Dashboard Overview tab, each legion card has a commander dropdown. Only actors flagged as commanders appear.
+### 5. Add Commander Tags
 
-### 6. Place Tokens
+**Tags are Items on the Commander actor.** You no longer need to create them manually! Simply go to the **Setup** tab and click **Auto-create all known tag items**. The module will automatically generate every known tag as an item on all of your Commander actors. You can then add/remove active tags directly using the **Commanders** tab.
 
-Drag legion tokens onto the battlemap. The Dashboard auto-refreshes when tokens enter or exit `Section:` regions. PC tokens appear in each section's Support panel for deployment mode assignment.
+### 6. Place Tokens & Assign Commanders
+
+Drag your prepared legion tokens directly onto the battlemap. The Dashboard's Overview tab auto-refreshes when tokens enter or exit your `Section:` regions.
+
+-   Assign commanders to your engaged legions using the dropdown directly on the legion's card in the Overview tab.
+-   Player Character (PC) tokens dragged into a section automatically appear in the Support panel, allowing you to assign them specific deployment modes.
 
 ### 7. Configure Section Adjacency
 
-Dashboard → **Setup tab** → Section Adjacency. Select two sections and click **Add Pair**. Pairs are bidirectional.
+In the **Setup** tab under Section Adjacency, select two adjacent map sections from the dropdowns and click **Add Pair**. This informs the Tag Engine when evaluating adjacency-based tags like Warden or Rallier.
 
 ---
 
@@ -86,7 +93,7 @@ Acastus,Tactician;Inspiring
 Gaius,Brutal;Headhunter;Veteran
 ```
 
-> **Note:** Tag items are not auto-created from CSV — add them manually on the actor sheet after import.
+> **Note:** Tags are evaluated based on their exact spelling. You can rapidly generate all known tags for every imported commander by clicking the **Auto-create all known tag items** button in the dashboard's Setup tab.
 
 ---
 
