@@ -78,14 +78,14 @@ SALVAGE_BENEFITS = [
 ]
 
 STRATEGIC_OBJECTIVES = {
-    "Temple of the Five": {"miracles": 3, "section": 1},
+    "Temple of the Five": {"miracles": 2, "section": 1},
     "Royal Palace": {"miracles": 2, "section": 2},
-    "The Dockyard": {"miracles": 2, "section": 3},
-    "Soldier's Gate": {"miracles": 2, "section": 4},
-    "The Agora": {"miracles": 2, "section": 5},
+    "The Dockyard": {"miracles": 1, "section": 3},
+    "Soldier's Gate": {"miracles": 1, "section": 4},
+    "The Agora": {"miracles": 1, "section": 5},
     "The Academy": {"miracles": 2, "section": 6},
-    "The Gymnasium": {"miracles": 2, "section": 7},
-    "The Harp Bridge": {"miracles": 2, "section": 8},
-    "The Vineyards": {"miracles": 2, "section": 9},
+    "The Gymnasium": {"miracles": 1, "section": 7},
+    "The Harp Bridge": {"miracles": 1, "section": 8},
+    "The Vineyards": {"miracles": 1, "section": 9},
     "Fish Market": {"miracles": 1, "section": 10},
 }
