@@ -36,19 +36,10 @@ class MiraclePool:
     def __init__(self, points: int):
         self.points = points
 
-    def spend_bonus(self, amount: int = 1) -> int:
-        """Spend points for a flat bonus. Returns the bonus granted."""
+    def spend(self, amount: int = 1) -> bool:
+        """Spend points. Returns True if points were spent."""
         if self.points >= amount:
             self.points -= amount
-            return amount
-        b = self.points
-        self.points = 0
-        return b
-
-    def spend_advantage(self) -> bool:
-        """Spend 2 points for advantage. Returns True if advantage granted."""
-        if self.points >= 2:
-            self.points -= 2
             return True
         return False
 

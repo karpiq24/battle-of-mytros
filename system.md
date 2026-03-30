@@ -331,8 +331,8 @@ Each side possesses a pool of Miracle Points per round. Typically, Sydon starts 
 
 These points are a flexible resource that can be spent to influence the tide of war:
 
--   **Roll Bonuses**: Distribute points as flat bonuses to any rolls made during the round (Battle rolls, Aftermath rolls, or Reconnaissance).
--   **Divine Advantage (2 Points)**: Grant advantage on any roll before its made.
+-   **Divine Healing (1 Point)**: Remove 1 injury from one active legion.
+-   **Divine Inspiration (1 Point)**: Grant +1 Morale to one active legion (up to the cap of 10).
 -   **Divine Restoration**: A PC can restore their strength.
     -   **Short Rest (2 Points)**: One PC immediately gains the benefits of a Short Rest.
     -   **Long Rest (4 Points)**: One PC immediately gains the benefits of a Long Rest.

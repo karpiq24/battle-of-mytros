@@ -51,13 +51,52 @@ export async function rollRecon(_event, _target) {
 export async function spendMiracle(_event, target) {
     if (!game.user.isGM) return;
     const faction = target.dataset.faction;
+    const type = target.dataset.type; // "healing" or "morale" or undefined for rests
     const cost = Number(target.dataset.cost);
     const settingKey = faction === "allied" ? "alliedMiracles" : "sydonMiracles";
     const current = game.settings.get("battle-of-mytros", settingKey);
+
     if (current < cost) {
         ui.notifications.warn(`Not enough ${faction} Miracle Points!`);
         return;
     }
+
+    if (type === "healing" || type === "morale") {
+        const selectId = faction === "allied" ? "allied-miracle-legion" : "sydon-miracle-legion";
+        const select = document.getElementById(selectId);
+        const legionId = select?.value;
+        if (!legionId) {
+            ui.notifications.warn("No legion selected!");
+            return;
+        }
+
+        const legion = game.actors.get(legionId);
+        if (!legion) {
+            ui.notifications.error("Selected legion not found!");
+            return;
+        }
+
+        const stats = { ...(legion.getFlag("battle-of-mytros", "stats") || {}) };
+        if (type === "healing") {
+            if ((stats.injuries ?? 0) <= 0) {
+                ui.notifications.warn(`${legion.name} has no injuries to heal.`);
+                return;
+            }
+            stats.injuries = Math.max(0, (stats.injuries ?? 0) - 1);
+            ui.notifications.info(`Divine Healing: ${legion.name} healed 1 injury.`);
+        } else if (type === "morale") {
+            const maxMorale = game.settings.get("battle-of-mytros", "maxMorale") ?? 10;
+            if ((stats.morale ?? 0) >= maxMorale) {
+                ui.notifications.warn(`${legion.name} is already at maximum morale.`);
+                return;
+            }
+            stats.morale = Math.min(maxMorale, (stats.morale ?? 0) + 1);
+            ui.notifications.info(`Divine Inspiration: ${legion.name} gained 1 morale.`);
+        }
+
+        await legion.setFlag("battle-of-mytros", "stats", stats);
+    }
+
     await game.settings.set("battle-of-mytros", settingKey, current - cost);
     this.render();
 }

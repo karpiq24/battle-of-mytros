@@ -5,8 +5,16 @@
             <div class="pool-count">{{alliedMiracles}}</div>
             {{#if isGM}}
             <div class="miracle-spend-group">
-                <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-cost="1"><i class="fas fa-dice-d20"></i> {{localize "MYTROS.SpendRollBonus"}}</button>
-                <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-cost="2"><i class="fas fa-star"></i> {{localize "MYTROS.SpendDivineAdvantage"}}</button>
+                <div class="miracle-select-row">
+                    <select class="miracle-legion-select" id="allied-miracle-legion">
+                        {{#each activeAlliedLegions}}
+                        <option value="{{this.id}}">{{this.name}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+                <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-type="healing" data-cost="1"><i class="fas fa-heart"></i> {{localize "MYTROS.SpendHealing"}}</button>
+                <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-type="morale" data-cost="1"><i class="fas fa-fist-raised"></i> {{localize "MYTROS.SpendMorale"}}</button>
+                <div class="miracle-divider"></div>
                 <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-cost="2"><i class="fas fa-campground"></i> {{localize "MYTROS.SpendShortRest"}}</button>
                 <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="allied" data-cost="4"><i class="fas fa-bed"></i> {{localize "MYTROS.SpendLongRest"}}</button>
             </div>
@@ -17,8 +25,15 @@
             <div class="pool-count">{{sydonMiracles}}</div>
             {{#if isGM}}
             <div class="miracle-spend-group">
-                <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="sydon" data-cost="1"><i class="fas fa-dice-d20"></i> {{localize "MYTROS.SpendRollBonus"}}</button>
-                <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="sydon" data-cost="2"><i class="fas fa-star"></i> {{localize "MYTROS.SpendDivineAdvantage"}}</button>
+                <div class="miracle-select-row">
+                    <select class="miracle-legion-select" id="sydon-miracle-legion">
+                        {{#each activeSydonLegions}}
+                        <option value="{{this.id}}">{{this.name}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+                <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="sydon" data-type="healing" data-cost="1"><i class="fas fa-heart"></i> {{localize "MYTROS.SpendHealing"}}</button>
+                <button type="button" class="miracle-spend-btn" data-action="spendMiracle" data-faction="sydon" data-type="morale" data-cost="1"><i class="fas fa-fist-raised"></i> {{localize "MYTROS.SpendMorale"}}</button>
             </div>
             {{/if}}
         </div>

@@ -87,31 +87,40 @@ def simulate_round(
     random.shuffle(active_enemy)
     num_battles = min(len(active_allied), len(active_enemy))
 
-    # --- Miracle Spending ---
-    # Allied side spends on their battles, Enemy on theirs
-    # Distribute available points into MiraclePools for each battle
-    miracle_pool_allied = MiraclePool(summary.allied_miracles)
-    miracle_pool_enemy = MiraclePool(summary.enemy_miracles)
+    # --- Miracle Spending (AI) ---
+    # 1. Divine Healing (Priority: most injuries)
+    # 2. Divine Inspiration (Priority: lowest morale)
 
+    def ai_spend(legions, pool_points):
+        remaining = pool_points
+        # Healing
+        injured = sorted(
+            [legion for legion in legions if not legion.destroyed and legion.injuries > 0],
+            key=lambda x: x.injuries,
+            reverse=True,
+        )
+        for legion in injured:
+            while legion.injuries > 0 and remaining > 0:
+                legion.injuries -= 1
+                remaining -= 1
+        # Morale
+        low_morale = sorted(
+            [legion for legion in legions if not legion.destroyed and legion.mor_total < 10],
+            key=lambda x: x.mor_total,
+        )
+        for legion in low_morale:
+            while legion.mor_total < 10 and remaining > 0:
+                legion.morale_mod += 1
+                remaining -= 1
+        return remaining
+
+    summary.allied_miracles = ai_spend(allied, summary.allied_miracles)
+    summary.enemy_miracles = ai_spend(enemy, summary.enemy_miracles)
+
+    # Empty pools for passing to combat (no longer used for dice,
+    # but kept for signature compatibility)
     battle_pools_a = [MiraclePool(0) for _ in range(num_battles)]
     battle_pools_e = [MiraclePool(0) for _ in range(num_battles)]
-
-    if num_battles > 0:
-        # Greedily distribute points to battles
-        while miracle_pool_allied.points > 0:
-            for i in range(num_battles):
-                if miracle_pool_allied.points > 0:
-                    battle_pools_a[i].points += 1
-                    miracle_pool_allied.points -= 1
-                else:
-                    break
-        while miracle_pool_enemy.points > 0:
-            for i in range(num_battles):
-                if miracle_pool_enemy.points > 0:
-                    battle_pools_e[i].points += 1
-                    miracle_pool_enemy.points -= 1
-                else:
-                    break
 
     # --- PC Deployment (Allied side only for sim) ---
     # Randomly assign 3 PCs to allied battles

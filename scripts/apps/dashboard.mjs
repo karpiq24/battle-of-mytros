@@ -232,6 +232,9 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
                 return a.name.localeCompare(b.name);
             });
 
+        context.activeAlliedLegions = context.allLegions.filter((l) => l.faction === "allied" && !l.isDestroyed);
+        context.activeSydonLegions = context.allLegions.filter((l) => l.faction === "sydon" && !l.isDestroyed);
+
         // ── Commanders Tab Data ──────────────────────────────────────────
         const allCommanders = game.actors.filter((a) => globalThis.MytrosActorData.isCommander(a));
         context.allCommanders = allCommanders

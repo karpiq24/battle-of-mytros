@@ -887,8 +887,14 @@ def plot_monte_carlo(
         al, en, pool = build_armies_from_csv(legions_path, commanders_path)
         final_rnd = num_rounds
         sim_deaths = 0
+        mir_a, mir_e = 8, 10
+        destroyed_objs = []
+        hold_counters = {}
         for rnd in range(1, num_rounds + 1):
-            rs = simulate_round(al, en, rnd, pool)
+            rs = simulate_round(al, en, rnd, pool, mir_a, mir_e, destroyed_objs, hold_counters)
+            mir_a, mir_e = rs.allied_miracles, rs.enemy_miracles
+            destroyed_objs = rs.destroyed_objectives
+            hold_counters = rs.objective_hold_counters
             for name in rs.allied_commander_deaths + rs.enemy_commander_deaths:
                 cmdr_death_rounds[name].append(rnd)
             all_death_events.extend(rs.allied_commander_death_events)

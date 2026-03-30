@@ -253,7 +253,32 @@ Hooks.on("updateRegion", (region, changes, options, userId) => {
 });
 
 Hooks.on("updateActor", (actor, changes, options, userId) => {
-    if (globalThis.MytrosActorData.isLegion(actor) && changes.flags?.["battle-of-mytros"]) {
+    const isRelevant = globalThis.MytrosActorData.isLegion(actor) || globalThis.MytrosActorData.isCommander(actor);
+    if (isRelevant) {
+        foundry.applications.instances.get("mytros-battle-dashboard")?.render({ force: true });
+    }
+});
+
+Hooks.on("updateItem", (item, changes, options, userId) => {
+    if (item.parent && globalThis.MytrosActorData.isCommander(item.parent)) {
+        foundry.applications.instances.get("mytros-battle-dashboard")?.render({ force: true });
+    }
+});
+
+Hooks.on("createItem", (item, options, userId) => {
+    if (item.parent && globalThis.MytrosActorData.isCommander(item.parent)) {
+        foundry.applications.instances.get("mytros-battle-dashboard")?.render({ force: true });
+    }
+});
+
+Hooks.on("deleteItem", (item, options, userId) => {
+    if (item.parent && globalThis.MytrosActorData.isCommander(item.parent)) {
+        foundry.applications.instances.get("mytros-battle-dashboard")?.render({ force: true });
+    }
+});
+
+Hooks.on("updateSetting", (setting, changes, options, userId) => {
+    if (setting.key.startsWith("battle-of-mytros.")) {
         foundry.applications.instances.get("mytros-battle-dashboard")?.render({ force: true });
     }
 });

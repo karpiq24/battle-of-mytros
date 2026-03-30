@@ -55,17 +55,9 @@ def simulate_battle(
                 adv = True
         return bonus, adv
 
-    def get_miracle(pool):
-        if not pool:
-            return 0, False
-        # Spend 1 for +1 bonus, or 2 for advantage if pool is large
-        bonus = 0
-        adv = False
-        if pool.points >= 2:
-            adv = pool.spend_advantage()
-        elif pool.points >= 1:
-            bonus = pool.spend_bonus(1)
-        return bonus, adv
+    # --- Reconnaissance bonus ---
+    rec_a = recon_maneuver_bonus if la.faction == Faction.ALLIED else 0
+    rec_b = recon_maneuver_bonus if lb.faction == Faction.ALLIED else 0
 
     # ── Phase 1: Maneuver (Wit) ──────────────────────────────────────────
     bon_a, adv_a, _ = legion_battle_bonuses(la, "maneuver")
@@ -76,15 +68,11 @@ def simulate_battle(
     pc_bon_a, pc_adv_a = roll_pc(pc_a, "maneuver")
     pc_bon_b, pc_adv_b = roll_pc(pc_b, "maneuver")
 
-    mir_bon_a, mir_adv_a = get_miracle(pool_a)
-    mir_bon_b, mir_adv_b = get_miracle(pool_b)
+    pc_bon_a, pc_adv_a = roll_pc(pc_a, "maneuver")
+    pc_bon_b, pc_adv_b = roll_pc(pc_b, "maneuver")
 
-    # recon bonus only applies to the allied side
-    rec_a = recon_maneuver_bonus if la.faction == Faction.ALLIED else 0
-    rec_b = recon_maneuver_bonus if lb.faction == Faction.ALLIED else 0
-
-    tot_a = la.wit_total + bon_a + pen_a + fort_a + rec_a + pc_bon_a + mir_bon_a
-    tot_b = lb.wit_total + bon_b + pen_b + fort_b + rec_b + pc_bon_b + mir_bon_b
+    tot_a = la.wit_total + bon_a + pen_a + fort_a + rec_a + pc_bon_a
+    tot_b = lb.wit_total + bon_b + pen_b + fort_b + rec_b + pc_bon_b
 
     # Up to 3 rerolls on tie
     winner = "tie"
@@ -92,8 +80,8 @@ def simulate_battle(
         ra, rb, ta, tb, n20a, n20b, n1a, n1b = contested_roll(
             tot_a,
             tot_b,
-            adv_a=adv_a or pc_adv_a or mir_adv_a,
-            adv_b=adv_b or pc_adv_b or mir_adv_b,
+            adv_a=adv_a or pc_adv_a,
+            adv_b=adv_b or pc_adv_b,
             disadv_a=dd_a,
             disadv_b=dd_b,
             vet_a=vet_a,
@@ -158,17 +146,17 @@ def simulate_battle(
     pc_bon_a2, pc_adv_a2 = roll_pc(pc_a, "charge")
     pc_bon_b2, pc_adv_b2 = roll_pc(pc_b, "charge")
 
-    mir_bon_a2, mir_adv_a2 = get_miracle(pool_a)
-    mir_bon_b2, mir_adv_b2 = get_miracle(pool_b)
+    pc_bon_a2, pc_adv_a2 = roll_pc(pc_a, "charge")
+    pc_bon_b2, pc_adv_b2 = roll_pc(pc_b, "charge")
 
-    tot_a2 = la.mor_total + bon_a2 + pen_a2 + charge_bonus_a + fort_a + pc_bon_a2 + mir_bon_a2
-    tot_b2 = lb.mor_total + bon_b2 + pen_b2 + charge_bonus_b + fort_b + pc_bon_b2 + mir_bon_b2
+    tot_a2 = la.mor_total + bon_a2 + pen_a2 + charge_bonus_a + fort_a + pc_bon_a2
+    tot_b2 = lb.mor_total + bon_b2 + pen_b2 + charge_bonus_b + fort_b + pc_bon_b2
 
     ra, rb, ta, tb, n20a, n20b, n1a, n1b = contested_roll(
         tot_a2,
         tot_b2,
-        adv_a=adv_a2 or pc_adv_a2 or mir_adv_a2,
-        adv_b=adv_b2 or pc_adv_b2 or mir_adv_b2,
+        adv_a=adv_a2 or pc_adv_a2,
+        adv_b=adv_b2 or pc_adv_b2,
         disadv_a=dd_a2,
         disadv_b=dd_b2,
         vet_a=vet_a,
@@ -181,8 +169,8 @@ def simulate_battle(
         ra, rb, ta, tb, n20a, n20b, n1a, n1b = contested_roll(
             tot_a2,
             tot_b2,
-            adv_a=adv_a2 or pc_adv_a2 or mir_adv_a2,
-            adv_b=adv_b2 or pc_adv_b2 or mir_adv_b2,
+            adv_a=adv_a2 or pc_adv_a2,
+            adv_b=adv_b2 or pc_adv_b2,
             disadv_a=dd_a2,
             disadv_b=dd_b2,
             vet_a=vet_a,
@@ -216,17 +204,17 @@ def simulate_battle(
     pc_bon_a3, pc_adv_a3 = roll_pc(pc_a, "clash")
     pc_bon_b3, pc_adv_b3 = roll_pc(pc_b, "clash")
 
-    mir_bon_a3, mir_adv_a3 = get_miracle(pool_a)
-    mir_bon_b3, mir_adv_b3 = get_miracle(pool_b)
+    pc_bon_a3, pc_adv_a3 = roll_pc(pc_a, "clash")
+    pc_bon_b3, pc_adv_b3 = roll_pc(pc_b, "clash")
 
-    tot_a3 = la.vit_total + bon_a3 + pen_a3 + clash_bonus_a + fort_a + pc_bon_a3 + mir_bon_a3
-    tot_b3 = lb.vit_total + bon_b3 + pen_b3 + clash_bonus_b + fort_b + pc_bon_b3 + mir_bon_b3
+    tot_a3 = la.vit_total + bon_a3 + pen_a3 + clash_bonus_a + fort_a + pc_bon_a3
+    tot_b3 = lb.vit_total + bon_b3 + pen_b3 + clash_bonus_b + fort_b + pc_bon_b3
 
     ra, rb, ta, tb, n20a, n20b, n1a, n1b = contested_roll(
         tot_a3,
         tot_b3,
-        adv_a=adv_a3 or pc_adv_a3 or mir_adv_a3,
-        adv_b=adv_b3 or pc_adv_b3 or mir_adv_b3,
+        adv_a=adv_a3 or pc_adv_a3,
+        adv_b=adv_b3 or pc_adv_b3,
         disadv_a=dd_a3,
         disadv_b=dd_b3,
         vet_a=vet_a,

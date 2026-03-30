@@ -59,30 +59,18 @@ def run_aftermath(
                 bonus += random.randint(1, 8)
         return bonus
 
-    def get_miracle(pool):
-        if not pool:
-            return 0, False
-        bonus = 0
-        adv = False
-        if pool.points >= 2:
-            adv = pool.spend_advantage()
-        elif pool.points >= 1:
-            bonus = pool.spend_bonus(1)
-        return bonus, adv
-
     # ── Recovery Check (Vitality) ─────────────────────────────────────────
     adv_rec = _has(legion, "Medic")  # Medic: advantage on Recovery
     disadv_rec = disadv_recovery or _has(legion, "Fanatic")  # Fanatic: disadvantage
-    mir_bon_r, mir_adv_r = get_miracle(pool)
-    rec_bonus = warden_recovery_bonus + fort_bonus + roll_pc_aft("recovery") + mir_bon_r
+    rec_bonus = warden_recovery_bonus + fort_bonus + roll_pc_aft("recovery")
     if _has(legion, "Ironclad"):
         rec_bonus += IRONCLAD_BONUS
 
     dc = RECOVERY_BASE_DC + legion.injuries
 
-    if (adv_rec or mir_adv_r) and not disadv_rec:
+    if adv_rec and not disadv_rec:
         roll_r = max(d20(vet), d20(vet))
-    elif disadv_rec and not (adv_rec or mir_adv_r):
+    elif disadv_rec and not adv_rec:
         roll_r = min(d20(vet), d20(vet))
     else:
         roll_r = d20(vet)
@@ -121,17 +109,14 @@ def run_aftermath(
     }
 
     # ── Hope Check (Morale) ───────────────────────────────────────────────
-    mir_bon_h, mir_adv_h = get_miracle(pool)
-    hope_bonus = rallier_hope_bonus + fort_bonus + roll_pc_aft("hope") + mir_bon_h
+    hope_bonus = rallier_hope_bonus + fort_bonus + roll_pc_aft("hope")
     if _has(legion, "Rallier"):
         hope_bonus += RALLIER_OWN_HOPE_BONUS
     if _has(legion, "Inspiring"):
         hope_bonus += INSPIRING_BONUS
 
-    if disadv_hope and not mir_adv_h:
+    if disadv_hope:
         roll_h = min(d20(vet), d20(vet))
-    elif mir_adv_h and not disadv_hope:
-        roll_h = max(d20(vet), d20(vet))
     else:
         roll_h = d20(vet)
 
@@ -155,15 +140,11 @@ def run_aftermath(
     results["hope"] = {"roll": roll_h, "passed": passed_h, "morale_change": mor_chg}
 
     # ── Salvage Check (Wit) ───────────────────────────────────────────────
-    mir_bon_s, mir_adv_s = get_miracle(pool)
-    salvage_bonus = fort_bonus + roll_pc_aft("salvage") + mir_bon_s
+    salvage_bonus = fort_bonus + roll_pc_aft("salvage")
     if _has(legion, "Cunning"):
         salvage_bonus += CUNNING_BONUS
 
-    if mir_adv_s:
-        roll_s = max(d20(vet), d20(vet))
-    else:
-        roll_s = d20(vet)
+    roll_s = d20(vet)
 
     passed_s = roll_s + legion.wit_total + salvage_bonus >= SALVAGE_DC
 

@@ -39,8 +39,8 @@
 
     "MYTROS.AlliedMiracles": "Allied Miracles",
     "MYTROS.SydonMiracles": "Sydon Miracles",
-    "MYTROS.SpendRollBonus": "−1 Roll Bonus (1pt)",
-    "MYTROS.SpendDivineAdvantage": "−2 Divine Advantage (2pt)",
+    "MYTROS.SpendHealing": "−1 Remove Injury (1pt)",
+    "MYTROS.SpendMorale": "−1 Grant Morale (1pt)",
     "MYTROS.SpendShortRest": "−2 PC Short Rest (2pt)",
     "MYTROS.SpendLongRest": "−4 PC Long Rest (4pt)",
     "MYTROS.StrategicObjectivesTitle": "Strategic Objectives",

@@ -41,8 +41,8 @@
 
     "MYTROS.AlliedMiracles": "Cuda sojuszników",
     "MYTROS.SydonMiracles": "Cuda Sydona",
-    "MYTROS.SpendRollBonus": "−1 Bonus do rzutu (1pkt)",
-    "MYTROS.SpendDivineAdvantage": "−2 Boska przewaga (2pkt)",
+    "MYTROS.SpendHealing": "−1 Usuń Ranę (1pkt)",
+    "MYTROS.SpendMorale": "−1 Dodaj Morale (1pkt)",
     "MYTROS.SpendShortRest": "−2 Krótki odpoczynek BG (2pkt)",
     "MYTROS.SpendLongRest": "−4 Długi odpoczynek BG (4pkt)",
     "MYTROS.MajorEventsTitle": "Kluczowe wydarzenia",
