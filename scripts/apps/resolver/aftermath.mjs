@@ -246,7 +246,10 @@ export async function runCommanderCasualty(_event, _target) {
         }
 
         const isWinner = side === winner;
-        let baseChance = isWinner ? 6 : counterDiff >= 3 ? 20 : 12;
+        const cmdrWin = game.settings.get("battle-of-mytros", "cmdrCasualtyWin") ?? 6;
+        const cmdrLose = game.settings.get("battle-of-mytros", "cmdrCasualtyLose") ?? 12;
+        const cmdrCrush = game.settings.get("battle-of-mytros", "cmdrCasualtyCrush") ?? 20;
+        let baseChance = isWinner ? cmdrWin : counterDiff >= 3 ? cmdrCrush : cmdrLose;
         const enemySide = side === "allied" ? "sydon" : "allied";
 
         if (this.hasTag(this.battleState[enemySide], "headhunter")) baseChance += 5;
@@ -399,7 +402,10 @@ export async function commitAftermath(_event, _target) {
     // Roll death toll for this engagement and add to running total
     const alliedWon = this.battleState.overallWinner === "allied";
     const deathDie = await new Roll(alliedWon ? "1d4" : "1d6").evaluate();
-    const deathsThisBattle = deathDie.total * (alliedWon ? 10 : 50);
+    const deathMult = alliedWon
+        ? game.settings.get("battle-of-mytros", "deathMultAllied") ?? 10
+        : game.settings.get("battle-of-mytros", "deathMultSydon") ?? 50;
+    const deathsThisBattle = deathDie.total * deathMult;
     const currentToll = game.settings.get("battle-of-mytros", "deathToll");
     await game.settings.set("battle-of-mytros", "deathToll", currentToll + deathsThisBattle);
 
@@ -460,7 +466,8 @@ export async function runDivineBloodReroll(_event, target) {
             isVeteran,
             support.dice
         );
-        const success = reroll.total >= 12;
+        const hopeDC = game.settings.get("battle-of-mytros", "hopeDC") ?? 12;
+        const success = reroll.total >= hopeDC;
         const moraleDelta = isWinner ? (success ? 2 : 1) : success ? -1 : -2;
         const orig = this.battleState.hopeResult[side];
         if (moraleDelta > orig.moraleDelta) {
@@ -485,7 +492,8 @@ export async function runDivineBloodReroll(_event, target) {
             isVeteran,
             support.dice
         );
-        const success = reroll.total >= 12;
+        const salvageDC = game.settings.get("battle-of-mytros", "salvageDC") ?? 12;
+        const success = reroll.total >= salvageDC;
         const benefitCount = !success ? 0 : reroll.isNat20 ? 2 : 1;
         const orig = this.battleState.salvageResult[side];
         if (benefitCount > orig.benefitCount) {

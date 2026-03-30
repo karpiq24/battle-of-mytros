@@ -4,12 +4,15 @@ import { BattleDashboard } from "./apps/dashboard.mjs";
 import { MytrosCSVParser } from "./utils/csv-parser.mjs";
 import { BattleRoller } from "./utils/battle-roller.mjs";
 import { TagEngine } from "./utils/tag-engine.mjs";
+import { STRATEGIC_OBJECTIVES, MAJOR_EVENTS } from "./apps/constants.mjs";
+import { AdjacencyOverlay } from "./canvas/adjacency-overlay.mjs";
 
 globalThis.MytrosActorData = MytrosActorData; // expose for macros/testing
 globalThis.MytrosRegionManager = MytrosRegionManager;
 globalThis.MytrosCSVParser = MytrosCSVParser;
 globalThis.BattleRoller = BattleRoller;
 globalThis.TagEngine = TagEngine;
+globalThis.MytrosAdjacencyOverlay = AdjacencyOverlay;
 
 Hooks.once("init", async function () {
     console.log("Battle of Mytros | Initializing module");
@@ -146,48 +149,136 @@ Hooks.once("init", async function () {
     });
 
     game.settings.register("battle-of-mytros", "sectionPrefix", {
-        name: "Section Region Prefix",
-        hint: "Regions whose names start with this prefix are treated as battle sections.",
+        name: "MYTROS.SettingSectionPrefix",
+        hint: "MYTROS.SettingSectionPrefixHint",
         scope: "world",
-        config: false,
+        config: true,
         type: String,
         default: "Section:",
     });
 
     game.settings.register("battle-of-mytros", "maxMorale", {
-        name: "Maximum Morale",
-        hint: "Hard cap for legion morale.",
+        name: "MYTROS.SettingMaxMorale",
+        hint: "MYTROS.SettingMaxMoraleHint",
         scope: "world",
-        config: false,
+        config: true,
         type: Number,
         default: 10,
     });
 
     game.settings.register("battle-of-mytros", "destroyThreshold", {
-        name: "Injury Destroy Threshold",
-        hint: "Injuries at which a legion is destroyed (Bulwark adds +1).",
+        name: "MYTROS.SettingDestroyThreshold",
+        hint: "MYTROS.SettingDestroyThresholdHint",
         scope: "world",
-        config: false,
+        config: true,
         type: Number,
         default: 6,
     });
 
     game.settings.register("battle-of-mytros", "hopeDC", {
-        name: "Hope Roll DC",
-        hint: "DC for the Hope aftermath roll.",
+        name: "MYTROS.SettingHopeDC",
+        hint: "MYTROS.SettingHopeDCHint",
         scope: "world",
-        config: false,
+        config: true,
         type: Number,
         default: 12,
     });
 
     game.settings.register("battle-of-mytros", "salvageDC", {
-        name: "Salvage Roll DC",
-        hint: "DC for the Salvage aftermath roll.",
+        name: "MYTROS.SettingSalvageDC",
+        hint: "MYTROS.SettingSalvageDCHint",
         scope: "world",
-        config: false,
+        config: true,
         type: Number,
         default: 12,
+    });
+
+    game.settings.register("battle-of-mytros", "alliedMiraclePool", {
+        name: "MYTROS.SettingAlliedMiraclePool",
+        hint: "MYTROS.SettingAlliedMiraclePoolHint",
+        scope: "world",
+        config: true,
+        type: Number,
+        default: 8,
+    });
+
+    game.settings.register("battle-of-mytros", "sydonMiraclePool", {
+        name: "MYTROS.SettingSydonMiraclePool",
+        hint: "MYTROS.SettingSydonMiraclePoolHint",
+        scope: "world",
+        config: true,
+        type: Number,
+        default: 10,
+    });
+
+    game.settings.register("battle-of-mytros", "deathMultAllied", {
+        name: "MYTROS.SettingDeathMultAllied",
+        hint: "MYTROS.SettingDeathMultAlliedHint",
+        scope: "world",
+        config: true,
+        type: Number,
+        default: 10,
+    });
+
+    game.settings.register("battle-of-mytros", "deathMultSydon", {
+        name: "MYTROS.SettingDeathMultSydon",
+        hint: "MYTROS.SettingDeathMultSydonHint",
+        scope: "world",
+        config: true,
+        type: Number,
+        default: 50,
+    });
+
+    game.settings.register("battle-of-mytros", "deathMultObjective", {
+        name: "MYTROS.SettingDeathMultObjective",
+        hint: "MYTROS.SettingDeathMultObjectiveHint",
+        scope: "world",
+        config: true,
+        type: Number,
+        default: 10,
+    });
+
+    game.settings.register("battle-of-mytros", "cmdrCasualtyWin", {
+        name: "MYTROS.SettingCmdrCasualtyWin",
+        hint: "MYTROS.SettingCmdrCasualtyWinHint",
+        scope: "world",
+        config: true,
+        type: Number,
+        default: 6,
+    });
+
+    game.settings.register("battle-of-mytros", "cmdrCasualtyLose", {
+        name: "MYTROS.SettingCmdrCasualtyLose",
+        hint: "MYTROS.SettingCmdrCasualtyLoseHint",
+        scope: "world",
+        config: true,
+        type: Number,
+        default: 12,
+    });
+
+    game.settings.register("battle-of-mytros", "cmdrCasualtyCrush", {
+        name: "MYTROS.SettingCmdrCasualtyCrush",
+        hint: "MYTROS.SettingCmdrCasualtyCrushHint",
+        scope: "world",
+        config: true,
+        type: Number,
+        default: 20,
+    });
+
+    game.settings.register("battle-of-mytros", "strategicObjectives", {
+        name: "Strategic Objectives",
+        scope: "world",
+        config: false,
+        type: String,
+        default: JSON.stringify(STRATEGIC_OBJECTIVES),
+    });
+
+    game.settings.register("battle-of-mytros", "majorEvents", {
+        name: "Major Events",
+        scope: "world",
+        config: false,
+        type: String,
+        default: JSON.stringify(MAJOR_EVENTS),
     });
 });
 
@@ -201,6 +292,9 @@ Hooks.on("canvasReady", async () => {
     for (const section of sections) {
         await MytrosRegionManager.initSectionFlags(section);
     }
+
+    // Redraw adjacency overlay if it was visible (survives scene reload)
+    if (AdjacencyOverlay._visible) AdjacencyOverlay.draw();
 });
 
 Hooks.on("getSceneControlButtons", (controls) => {
@@ -217,17 +311,35 @@ Hooks.on("getSceneControlButtons", (controls) => {
                 onClick: () => new BattleDashboard().render({ force: true }),
                 button: true,
             });
+            tokenControls.tools.push({
+                name: "adjacencyOverlay",
+                title: game.i18n.localize("MYTROS.ToggleAdjacencyOverlay"),
+                icon: "fas fa-project-diagram",
+                visible: true,
+                onClick: () => AdjacencyOverlay.toggle(),
+                button: true,
+            });
         }
     } else if (controls.tokens) {
         // v13: tools is also a Record keyed by tool name
+        const toolCount = Object.keys(controls.tokens.tools).length;
         controls.tokens.tools.battleDashboard = {
             name: "battleDashboard",
             title: "Battle of Mytros",
             icon: "fas fa-swords",
-            order: Object.keys(controls.tokens.tools).length,
+            order: toolCount,
             button: true,
             visible: true,
             onChange: () => new BattleDashboard().render({ force: true }),
+        };
+        controls.tokens.tools.adjacencyOverlay = {
+            name: "adjacencyOverlay",
+            title: game.i18n.localize("MYTROS.ToggleAdjacencyOverlay"),
+            icon: "fas fa-project-diagram",
+            order: toolCount + 1,
+            button: true,
+            visible: true,
+            onChange: () => AdjacencyOverlay.toggle(),
         };
     }
 });
@@ -255,7 +367,9 @@ Hooks.on("updateRegion", (region, changes, options, userId) => {
 Hooks.on("updateActor", (actor, changes, options, userId) => {
     const isRelevant = globalThis.MytrosActorData.isLegion(actor) || globalThis.MytrosActorData.isCommander(actor);
     if (isRelevant) {
-        foundry.applications.instances.get("mytros-battle-dashboard")?.render({ force: true });
+        const dashboard = foundry.applications.instances.get("mytros-battle-dashboard");
+        if (dashboard && dashboard._pendingOps > 0) return;
+        dashboard?.render({ force: true });
     }
 });
 
@@ -279,7 +393,14 @@ Hooks.on("deleteItem", (item, options, userId) => {
 
 Hooks.on("updateSetting", (setting, changes, options, userId) => {
     if (setting.key.startsWith("battle-of-mytros.")) {
-        foundry.applications.instances.get("mytros-battle-dashboard")?.render({ force: true });
+        const dashboard = foundry.applications.instances.get("mytros-battle-dashboard");
+        if (dashboard && dashboard._pendingOps > 0) return;
+        dashboard?.render({ force: true });
+
+        // Redraw adjacency overlay when pairs change
+        if (setting.key === "battle-of-mytros.adjacencyPairs" && AdjacencyOverlay._visible) {
+            AdjacencyOverlay.draw();
+        }
     }
 });
 

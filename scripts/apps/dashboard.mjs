@@ -1,4 +1,5 @@
 import { MAJOR_EVENTS, KNOWN_TAGS, STRATEGIC_OBJECTIVES } from "./constants.mjs";
+// STRATEGIC_OBJECTIVES and MAJOR_EVENTS kept as static defaults for reset functionality
 import * as overviewActions from "./actions/overview.mjs";
 import * as sectionActions from "./actions/sections.mjs";
 import * as legionActions from "./actions/legions.mjs";
@@ -58,16 +59,45 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
             deleteCommander: commanderActions.deleteCommander,
             addCommanderTag: commanderActions.addCommanderTag,
             removeCommanderTag: commanderActions.removeCommanderTag,
+            // Config CRUD
+            addObjective: dataIoActions.addObjective,
+            removeObjective: dataIoActions.removeObjective,
+            addMajorEvent: dataIoActions.addMajorEvent,
+            removeMajorEvent: dataIoActions.removeMajorEvent,
+            resetObjectivesAndEvents: dataIoActions.resetObjectivesAndEvents,
+            resetBattle: dataIoActions.resetBattle,
         },
     };
 
     tab = "overview";
+    _pendingOps = 0;
+    _focusedSetting = null;
+    _focusedSelectionStart = null;
+    _focusedSelectionEnd = null;
 
     static PARTS = {
         form: {
             template: "modules/battle-of-mytros/templates/dashboard.hbs",
         },
     };
+
+    _onRender(context, options) {
+        super._onRender?.(context, options);
+        if (this._focusedSetting) {
+            const input = this.element.querySelector(`[data-setting="${this._focusedSetting}"]`);
+            if (input) {
+                input.focus();
+                if (this._focusedSelectionStart != null && input.setSelectionRange) {
+                    try {
+                        input.setSelectionRange(this._focusedSelectionStart, this._focusedSelectionEnd);
+                    } catch {
+                        // setSelectionRange throws on some input types (checkbox)
+                    }
+                }
+            }
+            this._focusedSetting = null;
+        }
+    }
 
     async _prepareContext(options) {
         const context = await super._prepareContext(options);
@@ -109,16 +139,20 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
         context.salvageDC = game.settings.get("battle-of-mytros", "salvageDC") ?? 12;
 
         const completedEventIds = JSON.parse(game.settings.get("battle-of-mytros", "completedEvents") || "[]");
-        context.majorEvents = MAJOR_EVENTS.map((e) => ({
+        const majorEventsDef = JSON.parse(game.settings.get("battle-of-mytros", "majorEvents") || "[]");
+        context.majorEvents = majorEventsDef.map((e) => ({
             ...e,
             completed: completedEventIds.includes(e.id),
         }));
+        context.majorEventsDef = majorEventsDef;
 
         const completedObjectives = JSON.parse(game.settings.get("battle-of-mytros", "destroyedObjectives") || "[]");
-        context.strategicObjectives = STRATEGIC_OBJECTIVES.map((o) => ({
+        const objectivesDef = JSON.parse(game.settings.get("battle-of-mytros", "strategicObjectives") || "[]");
+        context.strategicObjectives = objectivesDef.map((o) => ({
             ...o,
             destroyed: completedObjectives.includes(o.id),
         }));
+        context.objectivesDef = objectivesDef;
 
         // Grab regions if we are on the battle scene
         context.isBattleScene = canvas.scene?.id === battleSceneId;

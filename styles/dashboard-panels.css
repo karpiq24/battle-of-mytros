@@ -266,6 +266,66 @@
     background: rgba(192, 57, 43, 0.18);
 }
 
+/* ── Setup Read-only Values ───────────────────────────────────────────── */
+.mytros-dashboard .setup-value {
+    font-weight: 600;
+    font-size: 0.88em;
+}
+.mytros-dashboard .setup-rules-hint {
+    font-size: 0.8em;
+    color: var(--mytros-text-muted);
+    margin: 0 0 8px 0;
+}
+.mytros-dashboard .setup-rules-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    font-size: 0.85em;
+    color: var(--mytros-text-muted);
+}
+.mytros-dashboard .setup-rules-summary strong {
+    color: var(--mytros-text);
+}
+
+/* ── Config Items (Objectives/Events CRUD) ────────────────────────────── */
+.mytros-dashboard .config-items {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+.mytros-dashboard .config-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    font-size: 0.85em;
+    background: var(--mytros-surface-card);
+    border: 1px solid var(--mytros-divider);
+    border-radius: var(--mytros-radius);
+}
+.mytros-dashboard .config-item span {
+    flex: 1;
+}
+.mytros-dashboard .config-item .config-reward {
+    color: var(--mytros-accent);
+    font-weight: 600;
+    flex: none;
+}
+.mytros-dashboard .config-item button {
+    padding: 2px 7px;
+    font-size: 0.85em;
+    background: var(--mytros-btn-secondary-bg);
+    border: 1px solid var(--mytros-btn-secondary-border);
+    border-radius: var(--mytros-radius);
+    cursor: pointer;
+    color: var(--mytros-danger);
+    transition: all var(--mytros-transition);
+}
+.mytros-dashboard .config-item button:hover {
+    background: rgba(192, 57, 43, 0.1);
+}
+
 /* ── Adjacency Config ──────────────────────────────────────────────────── */
 .mytros-dashboard .adjacency-hint {
     font-size: 0.8em;

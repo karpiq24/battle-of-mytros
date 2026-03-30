@@ -43,7 +43,13 @@ export async function updateLegionStat(_event, target) {
     if (!actor) return;
     const stats = { ...actor.getFlag("battle-of-mytros", "stats") };
     stats[stat] = value;
-    await actor.setFlag("battle-of-mytros", "stats", stats);
+    this._pendingOps++;
+    try {
+        await actor.setFlag("battle-of-mytros", "stats", stats);
+    } finally {
+        this._pendingOps = Math.max(0, this._pendingOps - 1);
+        if (this._pendingOps === 0) this.render();
+    }
 }
 
 export async function updateLegionFaction(_event, target) {

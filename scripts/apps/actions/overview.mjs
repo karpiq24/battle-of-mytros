@@ -1,5 +1,3 @@
-import { MAJOR_EVENTS, STRATEGIC_OBJECTIVES } from "../constants.mjs";
-
 /**
  * Overview tab action handlers.
  * Each function is a static action method bound to the BattleDashboard instance via `this`.
@@ -104,7 +102,8 @@ export async function spendMiracle(_event, target) {
 export async function triggerMajorEvent(_event, target) {
     if (!game.user.isGM) return;
     const eventId = target.dataset.eventId;
-    const event = MAJOR_EVENTS.find((e) => e.id === eventId);
+    const eventsDef = JSON.parse(game.settings.get("battle-of-mytros", "majorEvents") || "[]");
+    const event = eventsDef.find((e) => e.id === eventId);
     if (!event) return;
 
     const completed = JSON.parse(game.settings.get("battle-of-mytros", "completedEvents") || "[]");
@@ -115,23 +114,6 @@ export async function triggerMajorEvent(_event, target) {
     const current = game.settings.get("battle-of-mytros", "alliedMiracles");
     await game.settings.set("battle-of-mytros", "alliedMiracles", current + event.reward);
 
-    if (event.specialEffect === "acastus_redeemed") {
-        const acastus = game.actors.find((a) => a.name.toLowerCase().includes("acastus"));
-        if (acastus) {
-            await acastus.setFlag("battle-of-mytros", "isCommander", true);
-            ui.notifications.info(`Acastus has joined the battle as a Commander!`);
-        } else {
-            ui.notifications.warn(`Acastus Redeemed: No actor named "Acastus" found. Add him manually as a Commander.`);
-        }
-    } else if (event.specialEffect === "sydon_defeated") {
-        await game.settings.set("battle-of-mytros", "sydonObjectiveHalved", true);
-    } else if (event.specialEffect === "lutheria_defeated") {
-        const toll = game.settings.get("battle-of-mytros", "deathToll");
-        await game.settings.set("battle-of-mytros", "deathToll", Math.max(0, toll - 800));
-    } else if (event.specialEffect === "kentimane_defeated") {
-        await game.settings.set("battle-of-mytros", "deathTollFrozen", true);
-    }
-
     ui.notifications.info(`Major Event: ${event.name}! Allied Miracles +${event.reward}.`);
     this.render();
 }
@@ -139,8 +121,8 @@ export async function triggerMajorEvent(_event, target) {
 export async function triggerObjectiveDestroyed(_event, target) {
     if (!game.user.isGM) return;
     const objId = target.dataset.objId;
-    const { STRATEGIC_OBJECTIVES } = await import("../constants.mjs");
-    const obj = STRATEGIC_OBJECTIVES.find((o) => o.id === objId);
+    const objectivesDef = JSON.parse(game.settings.get("battle-of-mytros", "strategicObjectives") || "[]");
+    const obj = objectivesDef.find((o) => o.id === objId);
     if (!obj) return;
 
     const destroyed = JSON.parse(game.settings.get("battle-of-mytros", "destroyedObjectives") || "[]");
@@ -177,7 +159,8 @@ export async function disbandRoutedLegions(_event, target) {
     const sectionName = region.name.replace(globalThis.MytrosRegionManager.SECTION_PREFIX, "").trim();
 
     const deathRoll = await new Roll(`${routedLegions.length}d6`).evaluate();
-    const deaths = deathRoll.total * 50;
+    const deathMultSydon = game.settings.get("battle-of-mytros", "deathMultSydon") ?? 50;
+    const deaths = deathRoll.total * deathMultSydon;
     if (!game.settings.get("battle-of-mytros", "deathTollFrozen")) {
         const current = game.settings.get("battle-of-mytros", "deathToll");
         await game.settings.set("battle-of-mytros", "deathToll", current + deaths);
@@ -242,7 +225,8 @@ export async function advanceRound(_event, _target) {
 
             if (faction === "sydon" && !deathTollFrozen && activeLegionIds.has(legion.id)) {
                 const r = await new Roll("1d6").evaluate();
-                const deaths = r.total * 50;
+                const pillMult = game.settings.get("battle-of-mytros", "deathMultSydon") ?? 50;
+                const deaths = r.total * pillMult;
                 totalDeaths += deaths;
                 sydonPillageDeaths += deaths;
                 sydonPillageLegions++;
@@ -267,7 +251,8 @@ export async function advanceRound(_event, _target) {
     for (const objId of destroyedObjectives) {
         if (!deathTollFrozen) {
             const r = await new Roll("1d4").evaluate();
-            let deaths = r.total * 10;
+            const objMult = game.settings.get("battle-of-mytros", "deathMultObjective") ?? 10;
+            let deaths = r.total * objMult;
             deaths = sydonObjectiveHalved ? Math.floor(deaths / 2) : deaths;
             totalDeaths += deaths;
             objectiveDeaths += deaths;
