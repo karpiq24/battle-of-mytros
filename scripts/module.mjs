@@ -6,6 +6,7 @@ import { BattleRoller } from "./utils/battle-roller.mjs";
 import { TagEngine } from "./utils/tag-engine.mjs";
 import { STRATEGIC_OBJECTIVES, MAJOR_EVENTS } from "./apps/constants.mjs";
 import { AdjacencyOverlay } from "./canvas/adjacency-overlay.mjs";
+import { BattleLogViewerApp } from "./apps/battle-log-viewer.mjs";
 
 globalThis.MytrosActorData = MytrosActorData; // expose for macros/testing
 globalThis.MytrosRegionManager = MytrosRegionManager;
@@ -279,6 +280,13 @@ Hooks.once("init", async function () {
         config: false,
         type: String,
         default: JSON.stringify(MAJOR_EVENTS),
+    });
+});
+
+Hooks.once("ready", () => {
+    game.socket.on("module.battle-of-mytros", (data) => {
+        if (data.type === "battleLogUpdate") BattleLogViewerApp.update(data);
+        else if (data.type === "battleLogClear") BattleLogViewerApp.clear();
     });
 });
 

@@ -3,6 +3,7 @@
  */
 
 export async function runRecovery(_event, _target) {
+    this.battleState.log.push({ text: "AFTERMATH — RECOVERY", type: "phase-header" });
     const winner = this.battleState.overallWinner;
     const loser = winner === "allied" ? "sydon" : "allied";
     const results = {};
@@ -99,6 +100,7 @@ export async function runRecovery(_event, _target) {
 }
 
 export async function runHope(_event, _target) {
+    this.battleState.log.push({ text: "AFTERMATH — HOPE", type: "phase-header" });
     const winner = this.battleState.overallWinner;
     const results = {};
     const adjacency = this._computeAdjacencyContext();
@@ -164,6 +166,7 @@ export async function runHope(_event, _target) {
 }
 
 export async function runSalvage(_event, _target) {
+    this.battleState.log.push({ text: "AFTERMATH — SALVAGE", type: "phase-header" });
     const results = {};
 
     for (const side of ["allied", "sydon"]) {
@@ -263,6 +266,7 @@ export async function selectSalvageBenefit(_event, target) {
 }
 
 export async function runCommanderCasualty(_event, _target) {
+    this.battleState.log.push({ text: "COMMANDER CASUALTY CHECK", type: "phase-header" });
     const winner = this.battleState.overallWinner;
     const counterDiff = Math.abs(this.battleState.counter.allied - this.battleState.counter.sydon);
     const results = {};

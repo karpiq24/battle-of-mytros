@@ -1,0 +1,167 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   BATTLE LOG VIEWER (player-facing readonly window)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.mytros-log-viewer {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    font-family: inherit;
+}
+
+/* ── Header ────────────────────────────────────────────────────────────── */
+.mytros-log-viewer .log-viewer-header {
+    padding: 10px 14px 8px;
+    border-bottom: 2px solid var(--mytros-divider);
+    background: var(--mytros-surface-header);
+    flex-shrink: 0;
+}
+.mytros-log-viewer .log-matchup {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 1em;
+    font-weight: 700;
+}
+.mytros-log-viewer .log-matchup .allied {
+    color: var(--mytros-allied);
+}
+.mytros-log-viewer .log-matchup .sydon {
+    color: var(--mytros-sydon);
+}
+.mytros-log-viewer .log-matchup .vs {
+    color: var(--mytros-text-muted-alt);
+    font-weight: 400;
+    font-size: 0.85em;
+}
+.mytros-log-viewer .log-region {
+    font-size: 0.82em;
+    color: var(--mytros-text-muted);
+    margin-top: 3px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.mytros-log-viewer .log-live-badge {
+    display: inline-block;
+    background: var(--mytros-danger, #c0392b);
+    color: #fff;
+    font-size: 0.68em;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 1px 6px;
+    border-radius: 3px;
+    vertical-align: middle;
+    animation: mytros-pulse 2s ease-in-out infinite;
+}
+@keyframes mytros-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* ── Log area fills the rest of the window ─────────────────────────────── */
+.mytros-log-viewer .battle-log {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+    padding: 10px;
+    background: var(--mytros-surface);
+}
+.mytros-log-viewer .battle-log ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.mytros-log-viewer .log-empty {
+    text-align: center;
+    color: var(--mytros-text-muted-alt);
+    font-size: 0.88em;
+    margin-top: 20px;
+}
+
+/* ── Log entry styles (mirrors resolver.css) ────────────────────────────── */
+.mytros-log-viewer .log-entry {
+    padding: 5px 8px;
+    border-radius: var(--mytros-radius);
+    font-size: 0.85em;
+    background: var(--mytros-surface-card);
+    border-left: 3px solid var(--mytros-divider);
+}
+.mytros-log-viewer .log-entry.log-allied-win {
+    border-left-color: var(--mytros-allied);
+}
+.mytros-log-viewer .log-entry.log-sydon-win {
+    border-left-color: var(--mytros-sydon);
+}
+.mytros-log-viewer .log-entry.log-allied-loss,
+.mytros-log-viewer .log-entry.log-sydon-loss {
+    border-left-color: var(--mytros-danger);
+}
+.mytros-log-viewer .log-entry.log-score {
+    font-weight: 700;
+    background: var(--mytros-accent-bg);
+    border-left-color: var(--mytros-accent);
+}
+.mytros-log-viewer .log-entry.log-neutral {
+    border-left-color: var(--mytros-text-muted-alt);
+}
+.mytros-log-viewer .log-entry.log-phase-header {
+    background: transparent;
+    border-left: none;
+    border-top: 1px solid var(--mytros-divider);
+    border-radius: 0;
+    padding: 6px 4px 2px;
+    margin-top: 2px;
+    font-size: 0.72em;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--mytros-text-muted-alt);
+    text-align: center;
+}
+.mytros-log-viewer .log-entry.log-phase-header:first-child {
+    border-top: none;
+    margin-top: 0;
+}
+.mytros-log-viewer .log-text {
+    line-height: 1.4;
+}
+
+/* ── Modifier chips (mirrors resolver.css) ─────────────────────────────── */
+.mytros-log-viewer .mod-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    margin-top: 4px;
+}
+.mytros-log-viewer .mod-chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    align-items: center;
+}
+.mytros-log-viewer .mod-chip-label {
+    font-size: 0.72em;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--mytros-text-muted-alt);
+    margin-right: 2px;
+}
+.mytros-log-viewer .mod-chip-label.mod-allied {
+    color: var(--mytros-allied);
+}
+.mytros-log-viewer .mod-chip-label.mod-sydon {
+    color: var(--mytros-sydon);
+}
+.mytros-log-viewer .mod-chip {
+    font-size: 0.72em;
+    background: var(--mytros-chip-bg);
+    border: 1px solid var(--mytros-chip-border);
+    padding: 1px 6px;
+    border-radius: 3px;
+    color: var(--mytros-text-muted);
+    white-space: nowrap;
+}

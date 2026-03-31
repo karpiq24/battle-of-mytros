@@ -1,0 +1,43 @@
+<div class="mytros-log-viewer">
+    <header class="log-viewer-header">
+        <div class="log-matchup">
+            <span class="allied">{{meta.alliedName}}</span>
+            <span class="vs">vs</span>
+            <span class="sydon">{{meta.sydonName}}</span>
+        </div>
+        <div class="log-region">
+            <i class="fas fa-map-marker-alt"></i> {{meta.regionName}}
+            {{#if isLive}}<span class="log-live-badge">LIVE</span>{{/if}}
+        </div>
+    </header>
+
+    <div class="battle-log">
+        {{#if log.length}}
+        <ul>
+            {{#each log}}
+            <li class="log-entry {{#if this.type}}log-{{this.type}}{{/if}}">
+                <div class="log-text">{{#if this.text}}{{this.text}}{{else}}{{this}}{{/if}}</div>
+                {{#if this.mods}}
+                <div class="mod-chips">
+                    {{#if this.mods.allied}}
+                    <div class="mod-chip-group">
+                        <span class="mod-chip-label mod-allied">Allied:</span>
+                        {{#each this.mods.allied}}<span class="mod-chip">{{this}}</span>{{/each}}
+                    </div>
+                    {{/if}}
+                    {{#if this.mods.sydon}}
+                    <div class="mod-chip-group">
+                        <span class="mod-chip-label mod-sydon">Sydon:</span>
+                        {{#each this.mods.sydon}}<span class="mod-chip">{{this}}</span>{{/each}}
+                    </div>
+                    {{/if}}
+                </div>
+                {{/if}}
+            </li>
+            {{/each}}
+        </ul>
+        {{else}}
+        <p class="log-empty">Waiting for battle to begin…</p>
+        {{/if}}
+    </div>
+</div>

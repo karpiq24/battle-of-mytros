@@ -4,6 +4,7 @@
  */
 
 export async function runManeuver(_event, _target) {
+    this.battleState.log.push({ text: "MANEUVER PHASE", type: "phase-header" });
     const alliedIsFortified =
         this.region.getFlag("battle-of-mytros", "control") === "allied" &&
         this.region.getFlag("battle-of-mytros", "fortified");
@@ -134,6 +135,7 @@ export async function selectManeuverBenefit(_event, target) {
 }
 
 export async function runCharge(_event, _target) {
+    this.battleState.log.push({ text: "CHARGE PHASE", type: "phase-header" });
     const alliedIsFortified =
         this.region.getFlag("battle-of-mytros", "control") === "allied" &&
         this.region.getFlag("battle-of-mytros", "fortified");
@@ -258,6 +260,7 @@ export async function runCharge(_event, _target) {
 }
 
 export async function runClash(_event, _target) {
+    this.battleState.log.push({ text: "CLASH PHASE", type: "phase-header" });
     const alliedIsFortified =
         this.region.getFlag("battle-of-mytros", "control") === "allied" &&
         this.region.getFlag("battle-of-mytros", "fortified");

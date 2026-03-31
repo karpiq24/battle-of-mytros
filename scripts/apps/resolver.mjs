@@ -70,6 +70,31 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
         context.sydonName = this.battleState.sydon?.name || "None";
         return context;
     }
+
+    _onRender(context, options) {
+        super._onRender?.(context, options);
+        // Auto-scroll the GM's own log
+        const log = this.element.querySelector(".battle-log");
+        if (log) log.scrollTop = log.scrollHeight;
+        // Broadcast to players
+        this._emitLogUpdate();
+    }
+
+    _emitLogUpdate() {
+        game.socket.emit("module.battle-of-mytros", {
+            type: "battleLogUpdate",
+            log: this.battleState.log,
+            regionName: this.region.name.replace(globalThis.MytrosRegionManager.SECTION_PREFIX, "").trim(),
+            alliedName: this.battleState.allied?.name ?? "None",
+            sydonName: this.battleState.sydon?.name ?? "None",
+            phase: this.battleState.phase,
+        });
+    }
+
+    async close(options = {}) {
+        game.socket.emit("module.battle-of-mytros", { type: "battleLogClear" });
+        return super.close(options);
+    }
 }
 
 // ── Mix in helper methods onto the prototype ──────────────────────────────
