@@ -5,6 +5,7 @@
         {{#if isGM}}
         <a class="item {{#if (eq tab 'legions')}}active{{/if}}" data-action="changeTab" data-tab="legions"><i class="fas fa-shield-alt"></i> {{localize "MYTROS.TabLegions"}}</a>
         <a class="item {{#if (eq tab 'commanders')}}active{{/if}}" data-action="changeTab" data-tab="commanders"><i class="fas fa-user-crown"></i> {{localize "MYTROS.TabCommanders"}}</a>
+        <a class="item {{#if (eq tab 'support')}}active{{/if}}" data-action="changeTab" data-tab="support"><i class="fas fa-users"></i> {{localize "MYTROS.TabSupport"}}</a>
         <a class="item {{#if (eq tab 'setup')}}active{{/if}}" data-action="changeTab" data-tab="setup"><i class="fas fa-cog"></i> {{localize "MYTROS.TabSetup"}}</a>
         {{/if}}
     </nav>
@@ -56,6 +57,10 @@
 
         {{#if (eq tab 'commanders')}}
             {{> modules/battle-of-mytros/templates/partials/tab-commanders.hbs}}
+        {{/if}}
+
+        {{#if (eq tab 'support')}}
+            {{> modules/battle-of-mytros/templates/partials/tab-support-units.hbs}}
         {{/if}}
 
         {{#if (eq tab 'setup')}}

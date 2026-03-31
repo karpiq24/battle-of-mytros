@@ -1,0 +1,48 @@
+<div class="management-panel">
+    <div class="management-header">
+        <h3><i class="fas fa-users"></i> {{localize "MYTROS.SupportManageTitle"}}</h3>
+        <button type="button" class="btn-create" data-action="createFastResponse"><i class="fas fa-plus"></i> {{localize "MYTROS.CreateSupport"}}</button>
+    </div>
+
+    {{#if allFastResponseActors.length}}
+    <div class="management-table-wrapper">
+        <table class="management-table">
+            <thead>
+                <tr>
+                    <th class="col-name">{{localize "MYTROS.ColName"}}</th>
+                    <th class="col-type">{{localize "MYTROS.ColType"}}</th>
+                    <th class="col-faction">{{localize "MYTROS.ColFaction"}}</th>
+                    <th class="col-actions"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each allFastResponseActors}}
+                <tr class="support-row faction-row-{{this.faction}}">
+                    <td class="col-name">{{this.name}}</td>
+                    <td class="col-type">
+                        {{#if this.isAutoIncluded}}
+                        <span class="type-badge type-badge-pc">{{localize "MYTROS.SupportTypePC"}}</span>
+                        {{else}}
+                        <span class="type-badge type-badge-unit">{{localize "MYTROS.SupportTypeUnit"}}</span>
+                        {{/if}}
+                    </td>
+                    <td class="col-faction">
+                        <select data-action="updateFastResponseFaction" data-actor-id="{{this.id}}">
+                            <option value="allied" {{#if (eq this.faction 'allied')}}selected{{/if}}>{{localize "MYTROS.ControlAllied"}}</option>
+                            <option value="sydon" {{#if (eq this.faction 'sydon')}}selected{{/if}}>{{localize "MYTROS.ControlSydon"}}</option>
+                        </select>
+                    </td>
+                    <td class="col-actions">
+                        {{#unless this.isAutoIncluded}}
+                        <button type="button" class="btn-delete" data-action="removeFastResponse" data-actor-id="{{this.id}}" title="{{localize "MYTROS.RemoveSupport"}}"><i class="fas fa-times"></i></button>
+                        {{/unless}}
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+    {{else}}
+    <p class="empty-state">{{localize "MYTROS.NoSupportManage"}}</p>
+    {{/if}}
+</div>

@@ -4,6 +4,7 @@
     "MYTROS.TabSetup": "Ustawienia",
     "MYTROS.TabLegions": "Legiony",
     "MYTROS.TabCommanders": "Dowódcy",
+    "MYTROS.TabSupport": "Wsparcie",
     "MYTROS.Round": "Runda",
     "MYTROS.Phase": "Faza",
 
@@ -143,6 +144,16 @@
     "MYTROS.BCClash": "Starcie",
     "MYTROS.BCAftermath": "Następstwa",
     "MYTROS.BCCommit": "Zatwierdzenie",
+
+    "MYTROS.SupportManageTitle": "Zarządzanie jednostkami wsparcia",
+    "MYTROS.CreateSupport": "Nowa jednostka wsparcia",
+    "MYTROS.CreateSupportTitle": "Dodaj jednostkę wsparcia",
+    "MYTROS.CreateSupportHint": "Podaj nazwę aktora:",
+    "MYTROS.RemoveSupport": "Usuń",
+    "MYTROS.NoSupportManage": "Brak jednostek wsparcia. Utwórz nową lub oznacz istniejącego aktora.",
+    "MYTROS.SupportTypePC": "Gracz",
+    "MYTROS.SupportTypeUnit": "Jednostka wsparcia",
+    "MYTROS.ColType": "Typ",
 
     "MYTROS.LegionsManageTitle": "Zarządzanie legionami",
     "MYTROS.CommandersManageTitle": "Zarządzanie dowódcami",

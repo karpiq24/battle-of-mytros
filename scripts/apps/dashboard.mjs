@@ -5,6 +5,7 @@ import * as sectionActions from "./actions/sections.mjs";
 import * as legionActions from "./actions/legions.mjs";
 import * as commanderActions from "./actions/commanders.mjs";
 import * as dataIoActions from "./actions/data-io.mjs";
+import * as supportUnitActions from "./actions/support-units.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -59,6 +60,10 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
             deleteCommander: commanderActions.deleteCommander,
             addCommanderTag: commanderActions.addCommanderTag,
             removeCommanderTag: commanderActions.removeCommanderTag,
+            // Support Units
+            createFastResponse: supportUnitActions.createFastResponse,
+            removeFastResponse: supportUnitActions.removeFastResponse,
+            updateFastResponseFaction: supportUnitActions.updateFastResponseFaction,
             // Config CRUD
             addObjective: dataIoActions.addObjective,
             removeObjective: dataIoActions.removeObjective,
@@ -196,6 +201,7 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
                     id: t.id,
                     name: t.name,
                     actorId: t.actor.id,
+                    faction: t.actor.getFlag("battle-of-mytros", "faction") || "allied",
                     deploymentMode: t.getFlag("battle-of-mytros", "deploymentMode") || "none",
                 }));
 
@@ -291,6 +297,20 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
             });
 
         context.knownTags = KNOWN_TAGS;
+
+        // ── Support Units Tab Data ───────────────────────────────────────
+        context.allFastResponseActors = game.actors
+            .filter((a) => globalThis.MytrosActorData.isFastResponse(a))
+            .map((a) => ({
+                id: a.id,
+                name: a.name,
+                faction: a.getFlag("battle-of-mytros", "faction") || "allied",
+                isAutoIncluded: a.hasPlayerOwner === true && a.getFlag("battle-of-mytros", "isFastResponse") !== true,
+            }))
+            .sort((a, b) => {
+                if (a.faction !== b.faction) return a.faction === "allied" ? -1 : 1;
+                return a.name.localeCompare(b.name);
+            });
 
         return context;
     }

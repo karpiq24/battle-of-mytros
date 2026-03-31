@@ -83,8 +83,9 @@
                 <div class="support-units">
                     <h4><i class="fas fa-users"></i> {{localize "MYTROS.Support"}}</h4>
                     {{#each this.supportUnits}}
-                    <div class="support-item">
-                        <span>{{this.name}}</span>
+                    <div class="support-item faction-row-{{this.faction}}">
+                        <span class="support-item-name">{{this.name}}</span>
+                        <span class="faction-badge faction-badge-{{this.faction}}">{{this.faction}}</span>
                         {{#if (eq @root.phase 3)}}
                             {{#if @root.isGM}}
                             <select data-action="setDeploymentMode" data-token-id="{{this.id}}">

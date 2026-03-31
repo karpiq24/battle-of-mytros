@@ -4,6 +4,7 @@
     "MYTROS.TabSetup": "Setup",
     "MYTROS.TabLegions": "Legions",
     "MYTROS.TabCommanders": "Commanders",
+    "MYTROS.TabSupport": "Support",
     "MYTROS.Round": "Round",
     "MYTROS.Phase": "Phase",
 
@@ -146,6 +147,16 @@
     "MYTROS.BCClash": "Clash",
     "MYTROS.BCAftermath": "Aftermath",
     "MYTROS.BCCommit": "Commit",
+
+    "MYTROS.SupportManageTitle": "Support Unit Management",
+    "MYTROS.CreateSupport": "New Support Unit",
+    "MYTROS.CreateSupportTitle": "Add Support Unit",
+    "MYTROS.CreateSupportHint": "Enter the actor name:",
+    "MYTROS.RemoveSupport": "Remove",
+    "MYTROS.NoSupportManage": "No support units found. Create one or tag an existing actor.",
+    "MYTROS.SupportTypePC": "Player",
+    "MYTROS.SupportTypeUnit": "Support Unit",
+    "MYTROS.ColType": "Type",
 
     "MYTROS.LegionsManageTitle": "Legion Management",
     "MYTROS.CommandersManageTitle": "Commander Management",

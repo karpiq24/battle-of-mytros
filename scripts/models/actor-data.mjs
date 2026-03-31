@@ -13,8 +13,18 @@ export class MytrosActorData {
         return actor.hasPlayerOwner === true || actor.getFlag(this.MODULE_ID, "isFastResponse") === true;
     }
 
-    static async initFastResponse(actor) {
+    static async initFastResponse(actor, faction = "allied") {
+        const normalizedFaction = this.normalizeFaction(faction);
         await actor.setFlag(this.MODULE_ID, "isFastResponse", true);
+        await actor.setFlag(this.MODULE_ID, "faction", normalizedFaction);
+    }
+
+    static async createFastResponseActor(name, faction = "allied") {
+        const rootFolder = await this.getOrCreateFolder("Battle of Mytros");
+        const supportFolder = await this.getOrCreateFolder("Support Units", rootFolder);
+        const actor = await Actor.create({ name, type: "npc", folder: supportFolder.id });
+        await this.initFastResponse(actor, faction);
+        return actor;
     }
 
     /**
