@@ -11,7 +11,7 @@
             <i class="fas fa-chevron-right bc-arrow"></i>
             <span class="breadcrumb-step {{#if (eq state.phase 'clash')}}bc-active{{/if}} {{#if state.overallWinner}}bc-done{{/if}}">{{localize "MYTROS.BCClash"}}</span>
             <i class="fas fa-chevron-right bc-arrow"></i>
-            <span class="breadcrumb-step {{#if (eq state.phase 'aftermath_recovery')}}bc-active{{else}}{{#if (eq state.phase 'aftermath_hope')}}bc-active{{else}}{{#if (eq state.phase 'aftermath_salvage')}}bc-active{{else}}{{#if (eq state.phase 'aftermath_salvage_allied_choice')}}bc-active{{else}}{{#if (eq state.phase 'aftermath_salvage_sydon_choice')}}bc-active{{else}}{{#if (eq state.phase 'aftermath_divine_blood')}}bc-active{{else}}{{#if (eq state.phase 'aftermath_commander')}}bc-active{{/if}}{{/if}}{{/if}}{{/if}}{{/if}}{{/if}}{{/if}} {{#if (eq state.phase 'done')}}bc-done{{else}}{{#if (eq state.phase 'complete')}}bc-done{{/if}}{{/if}}">{{localize "MYTROS.BCAftermath"}}</span>
+            <span class="breadcrumb-step {{#if (eq state.phase 'aftermath_recovery')}}bc-active{{else}}{{#if (eq state.phase 'aftermath_hope')}}bc-active{{else}}{{#if (eq state.phase 'aftermath_salvage')}}bc-active{{else}}{{#if (eq state.phase 'aftermath_salvage_allied_choice')}}bc-active{{else}}{{#if (eq state.phase 'aftermath_salvage_sydon_choice')}}bc-active{{else}}{{#if (eq state.phase 'aftermath_commander')}}bc-active{{/if}}{{/if}}{{/if}}{{/if}}{{/if}}{{/if}} {{#if (eq state.phase 'done')}}bc-done{{else}}{{#if (eq state.phase 'complete')}}bc-done{{/if}}{{/if}}">{{localize "MYTROS.BCAftermath"}}</span>
             <i class="fas fa-chevron-right bc-arrow"></i>
             <span class="breadcrumb-step {{#if (eq state.phase 'done')}}bc-active{{/if}} {{#if (eq state.phase 'complete')}}bc-done{{/if}}">{{localize "MYTROS.BCCommit"}}</span>
         </div>
@@ -115,67 +115,6 @@
                     <button type="button" data-action="selectSalvageBenefit" data-benefit="enemy_shaken"><i class="fas fa-heart-broken"></i> {{localize "MYTROS.SalvageEnemyShaken"}}</button>
                     <button type="button" data-action="selectSalvageBenefit" data-benefit="quick_fortify"><i class="fas fa-chess-rook"></i> {{localize "MYTROS.SalvageQuickFortify"}}</button>
                 </div>
-            {{/if}}
-
-            {{#if (eq state.phase 'aftermath_divine_blood')}}
-                <h3><i class="fas fa-tint"></i> {{localize "MYTROS.DivineBloodTitle"}}</h3>
-                <p>{{localize "MYTROS.DivineBloodHint"}}</p>
-
-                {{#if state.divineBloodPending.allied}}
-                <div class="divine-panel divine-panel-allied">
-                    <strong>{{alliedName}} (Divine Blood) — {{localize "MYTROS.DivineBloodChoose"}}</strong>
-                    {{#if state.divineBloodPending.allied.recovery}}
-                    <button type="button" data-action="runDivineBloodReroll" data-side="allied" data-check="recovery"><i class="fas fa-redo"></i> {{localize "MYTROS.DivineBloodRerollRecovery"}} ({{localize "MYTROS.Rolled"}} {{state.divineBloodPending.allied.recovery}})</button>
-                    {{/if}}
-                    {{#if state.divineBloodPending.allied.hope}}
-                    <button type="button" data-action="runDivineBloodReroll" data-side="allied" data-check="hope"><i class="fas fa-redo"></i> {{localize "MYTROS.DivineBloodRerollHope"}} ({{localize "MYTROS.Rolled"}} {{state.divineBloodPending.allied.hope}})</button>
-                    {{/if}}
-                    {{#if state.divineBloodPending.allied.salvage}}
-                    <button type="button" data-action="runDivineBloodReroll" data-side="allied" data-check="salvage"><i class="fas fa-redo"></i> {{localize "MYTROS.DivineBloodRerollSalvage"}}</button>
-                    {{/if}}
-                </div>
-                {{/if}}
-
-                {{#if state.divineBloodSalvageNeedChoice.allied}}
-                <div class="divine-panel divine-panel-salvage-allied">
-                    <strong>{{localize "MYTROS.DivineBloodSalvageChoice"}} — {{alliedName}} ({{state.salvageBenefits.allied.length}}/{{state.divineBloodSalvageNeedChoice.allied}})</strong>
-                    <div class="benefit-group">
-                        <button type="button" data-action="selectDivineBloodSalvageBenefit" data-side="allied" data-benefit="captured_supplies"><i class="fas fa-medkit"></i> {{localize "MYTROS.SalvageCapturedSupplies"}}</button>
-                        <button type="button" data-action="selectDivineBloodSalvageBenefit" data-side="allied" data-benefit="tactical_insight"><i class="fas fa-lightbulb"></i> {{localize "MYTROS.SalvageTacticalInsight"}}</button>
-                        <button type="button" data-action="selectDivineBloodSalvageBenefit" data-side="allied" data-benefit="enemy_shaken"><i class="fas fa-heart-broken"></i> {{localize "MYTROS.SalvageEnemyShaken"}}</button>
-                        <button type="button" data-action="selectDivineBloodSalvageBenefit" data-side="allied" data-benefit="quick_fortify"><i class="fas fa-chess-rook"></i> {{localize "MYTROS.SalvageQuickFortify"}}</button>
-                    </div>
-                </div>
-                {{/if}}
-
-                {{#if state.divineBloodPending.sydon}}
-                <div class="divine-panel divine-panel-sydon">
-                    <strong>{{sydonName}} (Divine Blood) — {{localize "MYTROS.DivineBloodChoose"}}</strong>
-                    {{#if state.divineBloodPending.sydon.recovery}}
-                    <button type="button" data-action="runDivineBloodReroll" data-side="sydon" data-check="recovery"><i class="fas fa-redo"></i> {{localize "MYTROS.DivineBloodRerollRecovery"}} ({{localize "MYTROS.Rolled"}} {{state.divineBloodPending.sydon.recovery}})</button>
-                    {{/if}}
-                    {{#if state.divineBloodPending.sydon.hope}}
-                    <button type="button" data-action="runDivineBloodReroll" data-side="sydon" data-check="hope"><i class="fas fa-redo"></i> {{localize "MYTROS.DivineBloodRerollHope"}} ({{localize "MYTROS.Rolled"}} {{state.divineBloodPending.sydon.hope}})</button>
-                    {{/if}}
-                    {{#if state.divineBloodPending.sydon.salvage}}
-                    <button type="button" data-action="runDivineBloodReroll" data-side="sydon" data-check="salvage"><i class="fas fa-redo"></i> {{localize "MYTROS.DivineBloodRerollSalvage"}}</button>
-                    {{/if}}
-                </div>
-                {{/if}}
-
-                {{#if state.divineBloodSalvageNeedChoice.sydon}}
-                <div class="divine-panel divine-panel-salvage-sydon">
-                    <strong>{{localize "MYTROS.DivineBloodSalvageChoice"}} — {{sydonName}} ({{state.salvageBenefits.sydon.length}}/{{state.divineBloodSalvageNeedChoice.sydon}})</strong>
-                    <div class="benefit-group">
-                        <button type="button" data-action="selectDivineBloodSalvageBenefit" data-side="sydon" data-benefit="captured_supplies"><i class="fas fa-medkit"></i> {{localize "MYTROS.SalvageCapturedSupplies"}}</button>
-                        <button type="button" data-action="selectDivineBloodSalvageBenefit" data-side="sydon" data-benefit="tactical_insight"><i class="fas fa-lightbulb"></i> {{localize "MYTROS.SalvageTacticalInsight"}}</button>
-                        <button type="button" data-action="selectDivineBloodSalvageBenefit" data-side="sydon" data-benefit="enemy_shaken"><i class="fas fa-heart-broken"></i> {{localize "MYTROS.SalvageEnemyShaken"}}</button>
-                        <button type="button" data-action="selectDivineBloodSalvageBenefit" data-side="sydon" data-benefit="quick_fortify"><i class="fas fa-chess-rook"></i> {{localize "MYTROS.SalvageQuickFortify"}}</button>
-                    </div>
-                </div>
-                {{/if}}
-
-                <button type="button" data-action="proceedToCommander"><i class="fas fa-arrow-right"></i> {{localize "MYTROS.ProceedToCommander"}}</button>
             {{/if}}
 
             {{#if (eq state.phase 'aftermath_commander')}}

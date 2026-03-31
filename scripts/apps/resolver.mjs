@@ -55,9 +55,6 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
             selectSalvageBenefit: aftermath.selectSalvageBenefit,
             runCommanderCasualty: aftermath.runCommanderCasualty,
             commitAftermath: aftermath.commitAftermath,
-            runDivineBloodReroll: aftermath.runDivineBloodReroll,
-            selectDivineBloodSalvageBenefit: aftermath.selectDivineBloodSalvageBenefit,
-            proceedToCommander: aftermath.proceedToCommander,
         },
     };
 
@@ -82,7 +79,6 @@ Object.assign(BattleResolverApp.prototype, {
     getCommander: helpers.getCommander,
     getSupportBonuses: helpers.getSupportBonuses,
     getSupportBonusesAftermath: helpers.getSupportBonusesAftermath,
-    _computeDivineBloodPending: helpers._computeDivineBloodPending,
     _computeAdjacencyContext: helpers._computeAdjacencyContext,
     _nextPhaseAfterSalvage: helpers._nextPhaseAfterSalvage,
     _postChatCard: _postChatCard,

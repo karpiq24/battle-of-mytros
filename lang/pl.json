@@ -117,17 +117,7 @@
     "MYTROS.SalvageEnemyShaken": "Wróg zachwiany (−1 Morale wroga)",
     "MYTROS.SalvageQuickFortify": "Szybkie umocnienie (natychmiastowe ufortyfikowanie sekcji)",
 
-    "MYTROS.DivineBloodTitle": "Boska Krew — Ponów jeden nieudany rzut",
-    "MYTROS.DivineBloodHint": "Każda strona z cechą Boska Krew może ponowić jeden nieudany rzut następstw i wziąć lepszy wynik. Opcjonalne — kliknij Dalej, aby pominąć.",
-    "MYTROS.DivineBloodChoose": "wybierz nieudany rzut do powtórzenia:",
-    "MYTROS.DivineBloodRerollRecovery": "Ponów Regenerację",
-    "MYTROS.DivineBloodRerollHope": "Ponów Nadzieję",
-    "MYTROS.DivineBloodRerollSalvage": "Ponów Łupy (nieudane)",
-    "MYTROS.Rolled": "wyrzucono",
-    "MYTROS.DivineBloodSalvageChoice": "Łupy (Boska Krew) — wybierz korzyść",
-    "MYTROS.ProceedToCommander": "Przejdź do strat dowódców →",
-
-    "MYTROS.AftermathCommander": "Następstwa 4/4 — Straty dowódców",
+    "MYTROS.AftermathCommander": "Następstwa 3/3 — Straty dowódców",
     "MYTROS.CommanderHint": "Wygrana=6%, Przegrana=12%, Przegrana o 3+=20%. Odejmij Morale dla finalnego celu. Min 1%.",
     "MYTROS.RollCommander": "Rzuć na straty dowódców",
     "MYTROS.CommitTitle": "Zatwierdź wyniki",

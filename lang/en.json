@@ -120,17 +120,7 @@
     "MYTROS.SalvageEnemyShaken": "Enemy Shaken (−1 enemy Morale)",
     "MYTROS.SalvageQuickFortify": "Quick Fortify (fortify this section immediately)",
 
-    "MYTROS.DivineBloodTitle": "Divine Blood — Re-roll One Failed Check",
-    "MYTROS.DivineBloodHint": "Each side with the Divine Blood tag may re-roll one failed aftermath check and take the better result. This is optional — proceed to skip.",
-    "MYTROS.DivineBloodChoose": "choose a failed check to re-roll:",
-    "MYTROS.DivineBloodRerollRecovery": "Re-roll Recovery",
-    "MYTROS.DivineBloodRerollHope": "Re-roll Hope",
-    "MYTROS.DivineBloodRerollSalvage": "Re-roll Salvage (failed)",
-    "MYTROS.Rolled": "rolled",
-    "MYTROS.DivineBloodSalvageChoice": "Salvage (Divine Blood) — Choose Benefit",
-    "MYTROS.ProceedToCommander": "Proceed to Commander Casualty →",
-
-    "MYTROS.AftermathCommander": "Aftermath 4/4 — Commander Casualty",
+    "MYTROS.AftermathCommander": "Aftermath 3/3 — Commander Casualty",
     "MYTROS.CommanderHint": "Won=6%, Lost=12%, Lost by 3+=20%. Subtract Morale for final target. Min 1%.",
     "MYTROS.RollCommander": "Roll Commander Casualty Checks",
     "MYTROS.CommitTitle": "Commit Results",

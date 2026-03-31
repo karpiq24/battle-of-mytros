@@ -7,6 +7,7 @@ export async function runRecovery(_event, _target) {
     const loser = winner === "allied" ? "sydon" : "allied";
     const results = {};
     const adjacency = this._computeAdjacencyContext();
+    this.battleState.divineBloodUsed = { allied: false, sydon: false };
 
     for (const side of ["allied", "sydon"]) {
         const legion = this.battleState[side];
@@ -32,7 +33,7 @@ export async function runRecovery(_event, _target) {
             support.dice
         );
 
-        const success = !rollResult.isNat1 && rollResult.total >= dc;
+        let success = !rollResult.isNat1 && rollResult.total >= dc;
         let injuries;
         if (isWinner) {
             injuries = success ? 0 : 1;
@@ -48,11 +49,27 @@ export async function runRecovery(_event, _target) {
         if (isVeteran) modSummary.push("Veteran: floor 5");
         if (isWinner) modSummary.push("Winner");
 
-        results[side] = { rollTotal: rollResult.total, dc, success, injuries, modSummary };
         this.battleState.log.push({
             text: `${side} Recovery (Vit ${stats.vitality}): ${rollResult.total} vs DC ${dc} — ${success ? "SUCCESS" : "FAIL"} → ${injuries >= 0 ? "+" : ""}${injuries} injuries`,
             mods: { [side]: modSummary },
         });
+
+        if (!success && this.hasTag(legion, "divine blood") && !this.battleState.divineBloodUsed[side]) {
+            this.battleState.divineBloodUsed[side] = true;
+            const reroll = await globalThis.BattleRoller.executeRoll(
+                stats.vitality, mods.flatBonus, mods.advantage, mods.disadvantage, isVeteran, support.dice
+            );
+            const rerollSuccess = !reroll.isNat1 && reroll.total >= dc;
+            let rerollInjuries = isWinner ? (rerollSuccess ? 0 : 1) : rerollSuccess ? 1 : 2;
+            if (rerollSuccess && this.hasTag(legion, "medic")) rerollInjuries = -1;
+            const improved = rerollInjuries < injuries;
+            if (improved) { success = rerollSuccess; injuries = rerollInjuries; }
+            this.battleState.log.push({
+                text: `Divine Blood (${side}): Recovery auto-reroll ${reroll.total} → ${improved ? "improved" : "original kept"} (${injuries >= 0 ? "+" : ""}${injuries} injuries).`,
+            });
+        }
+
+        results[side] = { rollTotal: rollResult.total, dc, success, injuries, modSummary };
     }
 
     // Seized Initiative: maneuver winner = overall winner AND chose seized_initiative
@@ -110,8 +127,8 @@ export async function runHope(_event, _target) {
         );
 
         const hopeDC = game.settings.get("battle-of-mytros", "hopeDC") ?? 12;
-        const success = rollResult.total >= hopeDC;
-        const moraleDelta = isWinner ? (success ? 2 : 1) : success ? -1 : -2;
+        let success = rollResult.total >= hopeDC;
+        let moraleDelta = isWinner ? (success ? 2 : 1) : success ? -1 : -2;
 
         const modSummary = this._buildModSummary(
             mods,
@@ -120,11 +137,25 @@ export async function runHope(_event, _target) {
         if (isVeteran) modSummary.push("Veteran: floor 5");
         if (isWinner) modSummary.push("Winner");
 
-        results[side] = { rollTotal: rollResult.total, success, moraleDelta, modSummary };
         this.battleState.log.push({
             text: `${side} Hope (Morale ${currentMorale}): ${rollResult.total} vs DC ${hopeDC} — ${success ? "SUCCESS" : "FAIL"} → ${moraleDelta >= 0 ? "+" : ""}${moraleDelta} Morale`,
             mods: { [side]: modSummary },
         });
+
+        if (!success && this.hasTag(legion, "divine blood") && !this.battleState.divineBloodUsed[side]) {
+            this.battleState.divineBloodUsed[side] = true;
+            const reroll = await globalThis.BattleRoller.executeRoll(
+                currentMorale, mods.flatBonus, mods.advantage, mods.disadvantage, isVeteran, support.dice
+            );
+            const rerollSuccess = reroll.total >= hopeDC;
+            const rerollDelta = isWinner ? (rerollSuccess ? 2 : 1) : rerollSuccess ? -1 : -2;
+            if (rerollDelta > moraleDelta) { success = rerollSuccess; moraleDelta = rerollDelta; }
+            this.battleState.log.push({
+                text: `Divine Blood (${side}): Hope auto-reroll ${reroll.total} → ${moraleDelta >= 0 ? "+" : ""}${moraleDelta} Morale.`,
+            });
+        }
+
+        results[side] = { rollTotal: rollResult.total, success, moraleDelta, modSummary };
     }
 
     this.battleState.hopeResult = results;
@@ -157,14 +188,32 @@ export async function runSalvage(_event, _target) {
         );
 
         const salvageDC = game.settings.get("battle-of-mytros", "salvageDC") ?? 12;
-        const success = rollResult.total >= salvageDC;
-        const benefitCount = !success ? 0 : rollResult.isNat20 ? 2 : 1;
+        let success = rollResult.total >= salvageDC;
+        let benefitCount = !success ? 0 : rollResult.isNat20 ? 2 : 1;
 
         const modSummary = this._buildModSummary(
             mods,
             support.dice.map((d) => `Support: +${d}`)
         );
         if (isVeteran) modSummary.push("Veteran: floor 5");
+
+        this.battleState.log.push({
+            text: `${side} Salvage (Wit ${stats.wit}): ${rollResult.total} vs DC ${salvageDC} — ${!success ? "FAIL" : rollResult.isNat20 ? "NAT 20! (2 benefits)" : "SUCCESS (1 benefit)"}`,
+            mods: { [side]: modSummary },
+        });
+
+        if (!success && this.hasTag(legion, "divine blood") && !this.battleState.divineBloodUsed[side]) {
+            this.battleState.divineBloodUsed[side] = true;
+            const reroll = await globalThis.BattleRoller.executeRoll(
+                stats.wit, mods.flatBonus, mods.advantage, mods.disadvantage, isVeteran, support.dice
+            );
+            const rerollSuccess = reroll.total >= salvageDC;
+            const rerollBenefits = !rerollSuccess ? 0 : reroll.isNat20 ? 2 : 1;
+            if (rerollBenefits > benefitCount) { success = rerollSuccess; benefitCount = rerollBenefits; }
+            this.battleState.log.push({
+                text: `Divine Blood (${side}): Salvage auto-reroll ${reroll.total} → ${benefitCount} benefit(s).`,
+            });
+        }
 
         results[side] = {
             rollTotal: rollResult.total,
@@ -173,10 +222,6 @@ export async function runSalvage(_event, _target) {
             benefitCount,
             modSummary,
         };
-        this.battleState.log.push({
-            text: `${side} Salvage (Wit ${stats.wit}): ${rollResult.total} vs DC ${salvageDC} — ${!success ? "FAIL" : rollResult.isNat20 ? "NAT 20! (2 benefits)" : "SUCCESS (1 benefit)"}`,
-            mods: { [side]: modSummary },
-        });
     }
 
     this.battleState.salvageResult = results;
@@ -416,123 +461,3 @@ export async function commitAftermath(_event, _target) {
     this.render();
 }
 
-export async function runDivineBloodReroll(_event, target) {
-    const side = target.dataset.side;
-    const check = target.dataset.check;
-    const enemySide = side === "allied" ? "sydon" : "allied";
-    const legion = this.battleState[side];
-    const stats = legion.getFlag("battle-of-mytros", "stats");
-    const isWinner = side === this.battleState.overallWinner;
-    const isVeteran = this.hasTag(legion, "veteran");
-    const support = this.getSupportBonusesAftermath(side);
-
-    if (check === "recovery") {
-        const dc = 12 + (stats.injuries || 0);
-        const mods = globalThis.TagEngine.getAftermathModifiers(legion, this.battleState[enemySide], "recovery", {
-            isWinner,
-        });
-        const reroll = await globalThis.BattleRoller.executeRoll(
-            stats.vitality,
-            mods.flatBonus,
-            mods.advantage,
-            mods.disadvantage,
-            isVeteran,
-            support.dice
-        );
-        const success = !reroll.isNat1 && reroll.total >= dc;
-        let injuries = isWinner ? (success ? 0 : 1) : success ? 1 : 2;
-        if (success && this.hasTag(legion, "medic")) injuries = -1;
-        const orig = this.battleState.recoveryResult[side];
-        if (injuries < orig.injuries) {
-            this.battleState.recoveryResult[side] = { ...orig, rollTotal: reroll.total, success, injuries };
-            this.battleState.log.push({
-                text: `Divine Blood (${side}): Recovery re-roll ${reroll.total} — improved to ${injuries >= 0 ? "+" : ""}${injuries} injuries.`,
-            });
-        } else {
-            this.battleState.log.push({
-                text: `Divine Blood (${side}): Recovery re-roll ${reroll.total} — original kept (${orig.injuries >= 0 ? "+" : ""}${orig.injuries} injuries).`,
-            });
-        }
-    } else if (check === "hope") {
-        const currentMorale = stats.morale ?? 5;
-        const mods = globalThis.TagEngine.getAftermathModifiers(legion, this.battleState[enemySide], "hope", {
-            isWinner,
-        });
-        const reroll = await globalThis.BattleRoller.executeRoll(
-            currentMorale,
-            mods.flatBonus,
-            mods.advantage,
-            mods.disadvantage,
-            isVeteran,
-            support.dice
-        );
-        const hopeDC = game.settings.get("battle-of-mytros", "hopeDC") ?? 12;
-        const success = reroll.total >= hopeDC;
-        const moraleDelta = isWinner ? (success ? 2 : 1) : success ? -1 : -2;
-        const orig = this.battleState.hopeResult[side];
-        if (moraleDelta > orig.moraleDelta) {
-            this.battleState.hopeResult[side] = { ...orig, rollTotal: reroll.total, success, moraleDelta };
-            this.battleState.log.push({
-                text: `Divine Blood (${side}): Hope re-roll ${reroll.total} — improved to ${moraleDelta >= 0 ? "+" : ""}${moraleDelta} Morale.`,
-            });
-        } else {
-            this.battleState.log.push({
-                text: `Divine Blood (${side}): Hope re-roll ${reroll.total} — original kept (${orig.moraleDelta >= 0 ? "+" : ""}${orig.moraleDelta} Morale).`,
-            });
-        }
-    } else if (check === "salvage") {
-        const mods = globalThis.TagEngine.getAftermathModifiers(legion, this.battleState[enemySide], "salvage", {
-            isWinner,
-        });
-        const reroll = await globalThis.BattleRoller.executeRoll(
-            stats.wit,
-            mods.flatBonus,
-            mods.advantage,
-            mods.disadvantage,
-            isVeteran,
-            support.dice
-        );
-        const salvageDC = game.settings.get("battle-of-mytros", "salvageDC") ?? 12;
-        const success = reroll.total >= salvageDC;
-        const benefitCount = !success ? 0 : reroll.isNat20 ? 2 : 1;
-        const orig = this.battleState.salvageResult[side];
-        if (benefitCount > orig.benefitCount) {
-            this.battleState.salvageResult[side] = {
-                ...orig,
-                rollTotal: reroll.total,
-                success,
-                nat20: reroll.isNat20,
-                benefitCount,
-            };
-            this.battleState.salvageBenefits[side] = [];
-            this.battleState.divineBloodSalvageNeedChoice[side] = benefitCount;
-            this.battleState.log.push({
-                text: `Divine Blood (${side}): Salvage re-roll ${reroll.total} — ${benefitCount} benefit(s) gained.`,
-            });
-        } else {
-            this.battleState.log.push({
-                text: `Divine Blood (${side}): Salvage re-roll ${reroll.total} — original kept (no benefits).`,
-            });
-        }
-    }
-
-    this.battleState.divineBloodPending[side] = null;
-    this.render();
-}
-
-export async function selectDivineBloodSalvageBenefit(_event, target) {
-    const side = target.dataset.side;
-    const benefit = target.dataset.benefit;
-    this.battleState.salvageBenefits[side].push(benefit);
-    this.battleState.log.push({ text: `${side} Divine Blood salvage benefit: ${benefit}` });
-    this.battleState.divineBloodSalvageNeedChoice[side] = Math.max(
-        0,
-        (this.battleState.divineBloodSalvageNeedChoice[side] || 0) - 1
-    );
-    this.render();
-}
-
-export async function proceedToCommander(_event, _target) {
-    this.battleState.phase = "aftermath_commander";
-    this.render();
-}

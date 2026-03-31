@@ -57,22 +57,6 @@ export function getSupportBonusesAftermath(faction) {
     return { dice };
 }
 
-export function _computeDivineBloodPending() {
-    const pending = { allied: null, sydon: null };
-    for (const side of ["allied", "sydon"]) {
-        if (!this.hasTag(this.battleState[side], "divine blood")) continue;
-        const rec = this.battleState.recoveryResult?.[side];
-        const hope = this.battleState.hopeResult?.[side];
-        const salv = this.battleState.salvageResult?.[side];
-        const failed = {};
-        if (rec && !rec.success) failed.recovery = `${rec.rollTotal} vs DC ${rec.dc}`;
-        if (hope && !hope.success) failed.hope = `${hope.rollTotal} vs DC 12`;
-        if (salv && salv.benefitCount === 0) failed.salvage = true;
-        if (Object.keys(failed).length > 0) pending[side] = failed;
-    }
-    return pending;
-}
-
 export function _computeAdjacencyContext() {
     const adjacentIds = globalThis.MytrosRegionManager.getAdjacentSections(this.region.id);
     if (!adjacentIds.length) return { adjacentWarden: false, adjacentRallier: false };
@@ -99,11 +83,5 @@ export function _computeAdjacencyContext() {
 }
 
 export function _nextPhaseAfterSalvage() {
-    const pending = this._computeDivineBloodPending();
-    if (pending.allied || pending.sydon) {
-        this.battleState.divineBloodPending = pending;
-        this.battleState.divineBloodSalvageNeedChoice = { allied: 0, sydon: 0 };
-        return "aftermath_divine_blood";
-    }
     return "aftermath_commander";
 }
