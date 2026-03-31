@@ -166,7 +166,7 @@ When opposing legions meet in the same section, battle occurs. Each battle has t
 
 ## **Phase 1: The Maneuver (Wit)**
 
-Both sides roll 1d20 \+ Wit. The winner chooses one benefit for the rest of this battle:
+Both sides roll 1d20 + Wit. The Maneuver winner scores a counter point and chooses one benefit for the rest of this battle:
 
 | Maneuver Benefit    | Effect                                                                              |
 | :------------------ | :---------------------------------------------------------------------------------- |
