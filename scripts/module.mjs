@@ -227,7 +227,7 @@ Hooks.once("init", async function () {
         scope: "world",
         config: true,
         type: Number,
-        default: 50,
+        default: 30,
     });
 
     game.settings.register("battle-of-mytros", "deathMultObjective", {

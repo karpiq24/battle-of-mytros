@@ -25,13 +25,13 @@ SIM_DIR = os.path.dirname(__file__)
 
 def main():
     parser = argparse.ArgumentParser(description="Battle of Mytros — Mass Combat Simulator")
-    parser.add_argument("--rounds", type=int, default=32, help="Max rounds (default: 32)")
-    parser.add_argument("--seed", type=int, default=None)
+    parser.add_argument("--rounds", type=int, default=12, help="Max rounds (default: 12)")
+    parser.add_argument("--seed", type=int, default=42)
     parser.add_argument(
         "--no-display", action="store_true", default=True, help="Save figures instead of displaying"
     )
     parser.add_argument(
-        "--monte-carlo", type=int, default=1000, help="Run N Monte Carlo simulations"
+        "--monte-carlo", type=int, default=10000, help="Run N Monte Carlo simulations"
     )
     parser.add_argument("--legions", type=str, default="legions.csv")
     parser.add_argument("--commanders", type=str, default="commanders.csv")

@@ -310,7 +310,7 @@ def plot_battle_results(summaries, save_path=None):
             ax.text(
                 x * 2.2 + 0.95,
                 y * 1.6 + 0.2,
-                f"{b.counter_a}:{b.counter_b}",
+                f"{b.battle_score:+d}",
                 ha="center",
                 va="center",
                 fontsize=8,

@@ -36,6 +36,7 @@
     "MYTROS.DeployShield": "Shield Wounded (+1d8 Aftermath)",
     "MYTROS.DeployProtect": "Protect (No Casualty Check)",
     "MYTROS.DeployRest": "Rest (Short Rest, no deployment)",
+    "MYTROS.DeployRally": "Rally (Restore 1d4 Morale to any ally)",
 
     "MYTROS.AlliedMiracles": "Allied Miracles",
     "MYTROS.SydonMiracles": "Sydon Miracles",

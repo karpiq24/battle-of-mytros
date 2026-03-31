@@ -47,10 +47,6 @@ export async function runManeuver(_event, _target) {
     const aSupport = this.getSupportBonuses("allied", "maneuver");
     const sSupport = this.getSupportBonuses("sydon", "maneuver");
 
-    let alliedRoll, sydonRoll;
-    let tied = true;
-    let attempt = 1;
-
     const aModSummary = this._buildModSummary(
         alliedMods,
         aSupport.dice.map((d) => `Support: +${d}`)
@@ -64,63 +60,41 @@ export async function runManeuver(_event, _target) {
     if (aSupport.advantage) aModSummary.push("Support: Advantage");
     if (sSupport.advantage) sModSummary.push("Support: Advantage");
 
-    while (tied && attempt <= 4) {
-        alliedRoll = await globalThis.BattleRoller.executeRoll(
-            alliedStats.wit,
-            alliedMods.flatBonus,
-            alliedMods.advantage || aSupport.advantage,
-            alliedMods.disadvantage,
-            aVeteran,
-            aSupport.dice
-        );
-        sydonRoll = await globalThis.BattleRoller.executeRoll(
-            sydonStats.wit,
-            sydonMods.flatBonus,
-            sydonMods.advantage || sSupport.advantage,
-            sydonMods.disadvantage,
-            sVeteran,
-            sSupport.dice
-        );
+    const alliedRoll = await globalThis.BattleRoller.executeRoll(
+        alliedStats.wit,
+        alliedMods.flatBonus,
+        alliedMods.advantage || aSupport.advantage,
+        alliedMods.disadvantage,
+        aVeteran,
+        aSupport.dice
+    );
+    const sydonRoll = await globalThis.BattleRoller.executeRoll(
+        sydonStats.wit,
+        sydonMods.flatBonus,
+        sydonMods.advantage || sSupport.advantage,
+        sydonMods.disadvantage,
+        sVeteran,
+        sSupport.dice
+    );
 
-        this.battleState.log.push({
-            text: `Maneuver #${attempt} — Allied: ${alliedRoll.total} (Wit ${alliedStats.wit}), Sydon: ${sydonRoll.total} (Wit ${sydonStats.wit})`,
-            mods: { allied: aModSummary, sydon: sModSummary },
-        });
+    const diff = alliedRoll.total - sydonRoll.total;
+    this.battleState.log.push({
+        text: `Maneuver — Allied: ${alliedRoll.total} (Wit ${alliedStats.wit}), Sydon: ${sydonRoll.total} (Wit ${sydonStats.wit}) → differential: ${diff >= 0 ? "+" : ""}${diff}`,
+        mods: { allied: aModSummary, sydon: sModSummary },
+    });
 
-        if (alliedRoll.total !== sydonRoll.total) {
-            tied = false;
-        } else {
-            attempt++;
-            if (attempt <= 4) this.battleState.log.push({ text: "Maneuver is tied! Rerolling..." });
-        }
-    }
-
-    if (alliedRoll.total > sydonRoll.total) {
+    if (diff > 0) {
         this.battleState.log.push({ text: "Allied side won the Maneuver!", type: "allied-win" });
         this.battleState.maneuverWinner = "allied";
-    } else if (sydonRoll.total > alliedRoll.total) {
+    } else if (diff < 0) {
         this.battleState.log.push({ text: "Sydon side won the Maneuver!", type: "sydon-win" });
         this.battleState.maneuverWinner = "sydon";
     } else {
-        this.battleState.log.push({ text: "Maneuver remains tied after 4 attempts! No benefit.", type: "neutral" });
+        this.battleState.log.push({ text: "Maneuver tied — no benefit granted.", type: "neutral" });
         this.battleState.maneuverWinner = "tie";
     }
 
-    this.battleState.counter = { allied: 0, sydon: 0 };
-    if (this.battleState.maneuverWinner === "allied") {
-        this.battleState.counter.allied += 1;
-        this.battleState.counter.sydon -= 1;
-    }
-    if (this.battleState.maneuverWinner === "sydon") {
-        this.battleState.counter.sydon += 1;
-        this.battleState.counter.allied -= 1;
-    }
-
-    // Nat20 bonus / Nat1 penalty (consistent with Charge and Clash)
-    if (alliedRoll.isNat20 && alliedRoll.total > sydonRoll.total) this.battleState.counter.allied += 1;
-    if (sydonRoll.isNat20 && sydonRoll.total > alliedRoll.total) this.battleState.counter.sydon += 1;
-    if (alliedRoll.isNat1 && sydonRoll.total > alliedRoll.total) this.battleState.counter.allied -= 1;
-    if (sydonRoll.isNat1 && alliedRoll.total > sydonRoll.total) this.battleState.counter.sydon -= 1;
+    this.battleState.battleScore = diff;
 
     this.battleState.phase = this.battleState.maneuverWinner !== "tie" ? "maneuver_choice" : "charge";
     this.render();
@@ -180,10 +154,6 @@ export async function runCharge(_event, _target) {
     const aSupport = this.getSupportBonuses("allied", "charge");
     const sSupport = this.getSupportBonuses("sydon", "charge");
 
-    let aRoll, sRoll;
-    let tied = true;
-    let attempt = 1;
-
     const aFlankDice =
         this.battleState.maneuverWinner === "allied" && this.battleState.maneuverBenefit === "flanking" ? ["1d4"] : [];
     const sFlankDice =
@@ -204,56 +174,41 @@ export async function runCharge(_event, _target) {
     if (aFlankDice.length) aModSummary.push("Flanking: +1d4");
     if (sFlankDice.length) sModSummary.push("Flanking: +1d4");
 
-    while (tied && attempt <= 2) {
-        aRoll = await globalThis.BattleRoller.executeRoll(
-            aStats.morale,
-            alliedMods.flatBonus,
-            alliedMods.advantage || aSupport.advantage,
-            alliedMods.disadvantage,
-            aVeteran,
-            aSupport.dice.concat(aFlankDice)
-        );
-        sRoll = await globalThis.BattleRoller.executeRoll(
-            sStats.morale,
-            sydonMods.flatBonus,
-            sydonMods.advantage || sSupport.advantage,
-            sydonMods.disadvantage,
-            sVeteran,
-            sSupport.dice.concat(sFlankDice)
-        );
+    const aRoll = await globalThis.BattleRoller.executeRoll(
+        aStats.morale,
+        alliedMods.flatBonus,
+        alliedMods.advantage || aSupport.advantage,
+        alliedMods.disadvantage,
+        aVeteran,
+        aSupport.dice.concat(aFlankDice)
+    );
+    const sRoll = await globalThis.BattleRoller.executeRoll(
+        sStats.morale,
+        sydonMods.flatBonus,
+        sydonMods.advantage || sSupport.advantage,
+        sydonMods.disadvantage,
+        sVeteran,
+        sSupport.dice.concat(sFlankDice)
+    );
 
-        this.battleState.log.push({
-            text: `Charge #${attempt} — Allied: ${aRoll.total} (Morale ${aStats.morale}), Sydon: ${sRoll.total} (Morale ${sStats.morale})`,
-            mods: { allied: aModSummary, sydon: sModSummary },
-        });
+    const diff = aRoll.total - sRoll.total;
+    this.battleState.battleScore += diff;
 
-        if (aRoll.total !== sRoll.total) {
-            tied = false;
-        } else {
-            attempt++;
-            if (attempt <= 2) this.battleState.log.push({ text: "Charge is tied! Rerolling..." });
-        }
-    }
+    this.battleState.log.push({
+        text: `Charge — Allied: ${aRoll.total} (Morale ${aStats.morale}), Sydon: ${sRoll.total} (Morale ${sStats.morale}) → differential: ${diff >= 0 ? "+" : ""}${diff} | Battle Score: ${this.battleState.battleScore >= 0 ? "+" : ""}${this.battleState.battleScore}`,
+        mods: { allied: aModSummary, sydon: sModSummary },
+    });
 
-    if (aRoll.total > sRoll.total) {
+    if (diff > 0) {
         this.battleState.log.push({ text: "Allied won Charge! (+1 Clash)", type: "allied-win" });
-        this.battleState.counter.allied += 1;
-        this.battleState.counter.sydon -= 1;
         this.battleState.chargeWinner = "allied";
-    } else if (sRoll.total > aRoll.total) {
+    } else if (diff < 0) {
         this.battleState.log.push({ text: "Sydon won Charge! (+1 Clash)", type: "sydon-win" });
-        this.battleState.counter.sydon += 1;
-        this.battleState.counter.allied -= 1;
         this.battleState.chargeWinner = "sydon";
     } else {
-        this.battleState.log.push({ text: "Charge remains tied after 2 attempts!", type: "neutral" });
+        this.battleState.log.push({ text: "Charge tied — no cascade bonus.", type: "neutral" });
         this.battleState.chargeWinner = "tie";
     }
-
-    if (aRoll.isNat20 && aRoll.total > sRoll.total) this.battleState.counter.allied += 1;
-    if (sRoll.isNat20 && sRoll.total > aRoll.total) this.battleState.counter.sydon += 1;
-    if (aRoll.isNat1 && sRoll.total > aRoll.total) this.battleState.counter.allied -= 1;
-    if (sRoll.isNat1 && aRoll.total > sRoll.total) this.battleState.counter.sydon -= 1;
 
     this.battleState.phase = "clash";
     this.render();
@@ -354,35 +309,24 @@ export async function runClash(_event, _target) {
         (sMods.bonusDice || []).concat(sSupport.dice)
     );
 
+    const diff = aRoll.total - sRoll.total;
+    this.battleState.battleScore += diff;
+
     this.battleState.log.push({
-        text: `Clash — Allied: ${aRoll.total} (Vit ${aStats.vitality}), Sydon: ${sRoll.total} (Vit ${sStats.vitality})`,
+        text: `Clash — Allied: ${aRoll.total} (Vit ${aStats.vitality}), Sydon: ${sRoll.total} (Vit ${sStats.vitality}) → differential: ${diff >= 0 ? "+" : ""}${diff}`,
         mods: { allied: aModSummary, sydon: sModSummary },
     });
 
-    if (aRoll.total > sRoll.total) {
-        this.battleState.log.push({ text: "Allied won Clash!", type: "allied-win" });
-        this.battleState.counter.allied += 2;
-        this.battleState.counter.sydon -= 1;
-    } else if (sRoll.total > aRoll.total) {
-        this.battleState.log.push({ text: "Sydon won Clash!", type: "sydon-win" });
-        this.battleState.counter.sydon += 2;
-        this.battleState.counter.allied -= 1;
-    }
-
-    if (aRoll.isNat20 && aRoll.total > sRoll.total) this.battleState.counter.allied += 1;
-    if (sRoll.isNat20 && sRoll.total > aRoll.total) this.battleState.counter.sydon += 1;
-    if (aRoll.isNat1 && sRoll.total > aRoll.total) this.battleState.counter.allied -= 1;
-    if (sRoll.isNat1 && aRoll.total > sRoll.total) this.battleState.counter.sydon -= 1;
-
+    const score = this.battleState.battleScore;
     this.battleState.log.push({
-        text: `FINAL SCORE — Allied: ${this.battleState.counter.allied} | Sydon: ${this.battleState.counter.sydon}`,
+        text: `BATTLE SCORE: ${score >= 0 ? "+" : ""}${score}`,
         type: "score",
     });
 
-    if (this.battleState.counter.allied > this.battleState.counter.sydon) {
+    if (score > 0) {
         this.battleState.log.push({ text: "▶ ALLIED LEGION WINS THE BATTLE", type: "allied-win" });
         this.battleState.overallWinner = "allied";
-    } else if (this.battleState.counter.sydon > this.battleState.counter.allied) {
+    } else if (score < 0) {
         this.battleState.log.push({ text: "▶ SYDON LEGION WINS THE BATTLE", type: "sydon-win" });
         this.battleState.overallWinner = "sydon";
     } else {

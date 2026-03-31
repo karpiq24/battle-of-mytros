@@ -38,6 +38,7 @@
     "MYTROS.DeployShield": "Osłona rannych (+1k8 następstwa)",
     "MYTROS.DeployProtect": "Ochrona (brak rzutu na straty dowódcy)",
     "MYTROS.DeployRest": "Odpoczynek (krótki odpoczynek, brak wsparcia)",
+    "MYTROS.DeployRally": "Zryw (Przywróć 1k4 Morale dowolnemu sojusznikowi)",
 
     "MYTROS.AlliedMiracles": "Cuda sojuszników",
     "MYTROS.SydonMiracles": "Cuda Sydona",

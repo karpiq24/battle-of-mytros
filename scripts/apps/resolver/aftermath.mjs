@@ -58,13 +58,21 @@ export async function runRecovery(_event, _target) {
         if (!success && this.hasTag(legion, "divine blood") && !this.battleState.divineBloodUsed[side]) {
             this.battleState.divineBloodUsed[side] = true;
             const reroll = await globalThis.BattleRoller.executeRoll(
-                stats.vitality, mods.flatBonus, mods.advantage, mods.disadvantage, isVeteran, support.dice
+                stats.vitality,
+                mods.flatBonus,
+                mods.advantage,
+                mods.disadvantage,
+                isVeteran,
+                support.dice
             );
             const rerollSuccess = !reroll.isNat1 && reroll.total >= dc;
             let rerollInjuries = isWinner ? (rerollSuccess ? 0 : 1) : rerollSuccess ? 1 : 2;
             if (rerollSuccess && this.hasTag(legion, "medic")) rerollInjuries = -1;
             const improved = rerollInjuries < injuries;
-            if (improved) { success = rerollSuccess; injuries = rerollInjuries; }
+            if (improved) {
+                success = rerollSuccess;
+                injuries = rerollInjuries;
+            }
             this.battleState.log.push({
                 text: `Divine Blood (${side}): Recovery auto-reroll ${reroll.total} → ${improved ? "improved" : "original kept"} (${injuries >= 0 ? "+" : ""}${injuries} injuries).`,
             });
@@ -132,6 +140,11 @@ export async function runHope(_event, _target) {
         let success = rollResult.total >= hopeDC;
         let moraleDelta = isWinner ? (success ? 2 : 1) : success ? -1 : -2;
 
+        // Diminishing returns: winner gains reduced by 1 when current morale ≥ 7
+        if (isWinner && currentMorale >= 7) {
+            moraleDelta = Math.max(0, moraleDelta - 1);
+        }
+
         const modSummary = this._buildModSummary(
             mods,
             support.dice.map((d) => `Support: +${d}`)
@@ -147,11 +160,20 @@ export async function runHope(_event, _target) {
         if (!success && this.hasTag(legion, "divine blood") && !this.battleState.divineBloodUsed[side]) {
             this.battleState.divineBloodUsed[side] = true;
             const reroll = await globalThis.BattleRoller.executeRoll(
-                currentMorale, mods.flatBonus, mods.advantage, mods.disadvantage, isVeteran, support.dice
+                currentMorale,
+                mods.flatBonus,
+                mods.advantage,
+                mods.disadvantage,
+                isVeteran,
+                support.dice
             );
             const rerollSuccess = reroll.total >= hopeDC;
-            const rerollDelta = isWinner ? (rerollSuccess ? 2 : 1) : rerollSuccess ? -1 : -2;
-            if (rerollDelta > moraleDelta) { success = rerollSuccess; moraleDelta = rerollDelta; }
+            let rerollDelta = isWinner ? (rerollSuccess ? 2 : 1) : rerollSuccess ? -1 : -2;
+            if (isWinner && currentMorale >= 7) rerollDelta = Math.max(0, rerollDelta - 1);
+            if (rerollDelta > moraleDelta) {
+                success = rerollSuccess;
+                moraleDelta = rerollDelta;
+            }
             this.battleState.log.push({
                 text: `Divine Blood (${side}): Hope auto-reroll ${reroll.total} → ${moraleDelta >= 0 ? "+" : ""}${moraleDelta} Morale.`,
             });
@@ -208,11 +230,19 @@ export async function runSalvage(_event, _target) {
         if (!success && this.hasTag(legion, "divine blood") && !this.battleState.divineBloodUsed[side]) {
             this.battleState.divineBloodUsed[side] = true;
             const reroll = await globalThis.BattleRoller.executeRoll(
-                stats.wit, mods.flatBonus, mods.advantage, mods.disadvantage, isVeteran, support.dice
+                stats.wit,
+                mods.flatBonus,
+                mods.advantage,
+                mods.disadvantage,
+                isVeteran,
+                support.dice
             );
             const rerollSuccess = reroll.total >= salvageDC;
             const rerollBenefits = !rerollSuccess ? 0 : reroll.isNat20 ? 2 : 1;
-            if (rerollBenefits > benefitCount) { success = rerollSuccess; benefitCount = rerollBenefits; }
+            if (rerollBenefits > benefitCount) {
+                success = rerollSuccess;
+                benefitCount = rerollBenefits;
+            }
             this.battleState.log.push({
                 text: `Divine Blood (${side}): Salvage auto-reroll ${reroll.total} → ${benefitCount} benefit(s).`,
             });
@@ -268,7 +298,7 @@ export async function selectSalvageBenefit(_event, target) {
 export async function runCommanderCasualty(_event, _target) {
     this.battleState.log.push({ text: "COMMANDER CASUALTY CHECK", type: "phase-header" });
     const winner = this.battleState.overallWinner;
-    const counterDiff = Math.abs(this.battleState.counter.allied - this.battleState.counter.sydon);
+    const battleScoreMag = Math.abs(this.battleState.battleScore);
     const results = {};
 
     for (const side of ["allied", "sydon"]) {
@@ -298,7 +328,7 @@ export async function runCommanderCasualty(_event, _target) {
         const cmdrWin = game.settings.get("battle-of-mytros", "cmdrCasualtyWin") ?? 6;
         const cmdrLose = game.settings.get("battle-of-mytros", "cmdrCasualtyLose") ?? 12;
         const cmdrCrush = game.settings.get("battle-of-mytros", "cmdrCasualtyCrush") ?? 20;
-        let baseChance = isWinner ? cmdrWin : counterDiff >= 3 ? cmdrCrush : cmdrLose;
+        let baseChance = isWinner ? cmdrWin : battleScoreMag >= 15 ? cmdrCrush : cmdrLose;
         const enemySide = side === "allied" ? "sydon" : "allied";
 
         if (this.hasTag(this.battleState[enemySide], "headhunter")) baseChance += 5;
@@ -464,4 +494,3 @@ export async function commitAftermath(_event, _target) {
     this.battleState.phase = "complete";
     this.render();
 }
-

@@ -2,14 +2,10 @@ import random
 
 from .battle_log import BattleLog, PhaseResult
 from .config import (
-    BATTLE_COUNTER_CLASH_WIN,
-    BATTLE_COUNTER_NAT1_PENALTY,
-    BATTLE_COUNTER_NAT20_BONUS,
-    BATTLE_COUNTER_WIN,
     CHARGE_WIN_CLASH_BONUS,
     MANEUVER_BENEFITS,
 )
-from .dice import contested_roll, determine_phase_winner
+from .dice import contested_roll
 from .models import Faction, Legion, MiraclePool, PCDeployment
 from .tags import _has, enemy_penalties, fortification_bonus, legion_battle_bonuses
 
@@ -26,9 +22,8 @@ def simulate_battle(
     pool_a: MiraclePool = None,
     pool_b: MiraclePool = None,
 ):
-    """Resolve a 3-phase battle. Modifies log in-place."""
-    counter_a = 0
-    counter_b = 0
+    """Resolve a 3-phase battle using the margin/Battle Score system. Modifies log in-place."""
+    battle_score = 0  # positive = side A ahead, negative = side B ahead
     charge_bonus_a = 0
     charge_bonus_b = 0
     clash_bonus_a = 0
@@ -68,49 +63,36 @@ def simulate_battle(
     pc_bon_a, pc_adv_a = roll_pc(pc_a, "maneuver")
     pc_bon_b, pc_adv_b = roll_pc(pc_b, "maneuver")
 
-    pc_bon_a, pc_adv_a = roll_pc(pc_a, "maneuver")
-    pc_bon_b, pc_adv_b = roll_pc(pc_b, "maneuver")
-
     tot_a = la.wit_total + bon_a + pen_a + fort_a + rec_a + pc_bon_a
     tot_b = lb.wit_total + bon_b + pen_b + fort_b + rec_b + pc_bon_b
 
-    # Up to 3 rerolls on tie
-    winner = "tie"
-    for _ in range(4):
-        ra, rb, ta, tb, n20a, n20b, n1a, n1b = contested_roll(
-            tot_a,
-            tot_b,
-            adv_a=adv_a or pc_adv_a,
-            adv_b=adv_b or pc_adv_b,
-            disadv_a=dd_a,
-            disadv_b=dd_b,
-            vet_a=vet_a,
-            vet_b=vet_b,
-        )
-        winner = determine_phase_winner(ta, tb, n20a, n20b, n1a, n1b)
-        if winner != "tie":
-            break
-    # ... (rest of function unchanged, but using pool_a/b for Charge and Clash)
+    ra, rb, ta, tb, n20a, n20b, n1a, n1b = contested_roll(
+        tot_a,
+        tot_b,
+        adv_a=adv_a or pc_adv_a,
+        adv_b=adv_b or pc_adv_b,
+        disadv_a=dd_a,
+        disadv_b=dd_b,
+        vet_a=vet_a,
+        vet_b=vet_b,
+    )
 
-    da = db = 0
+    diff_man = ta - tb
+    battle_score += diff_man
+
+    # Winner picks a Maneuver benefit (tie = no benefit)
     seized_for_b = 0
     seized_for_a = 0
-    if winner in ("a", "b"):
-        winner_leg, loser_leg = (la, lb) if winner == "a" else (lb, la)
-        if winner == "a":
-            da = BATTLE_COUNTER_WIN + (BATTLE_COUNTER_NAT20_BONUS if n20a else 0)
-            db = -BATTLE_COUNTER_WIN - (BATTLE_COUNTER_NAT1_PENALTY if n1b else 0)
-        else:
-            db = BATTLE_COUNTER_WIN + (BATTLE_COUNTER_NAT20_BONUS if n20b else 0)
-            da = -BATTLE_COUNTER_WIN - (BATTLE_COUNTER_NAT1_PENALTY if n1a else 0)
-
+    if diff_man != 0:
+        winner_man = "a" if diff_man > 0 else "b"
+        winner_leg = la if winner_man == "a" else lb
         benefit = random.choice(MANEUVER_BENEFITS)
         log.maneuver_benefit = f"{winner_leg.name}: {benefit[0]}"
 
         def roll_extra(d):
             return random.randint(1, d)
 
-        if winner == "a":
+        if winner_man == "a":
             if "Flanking" in benefit[0]:
                 charge_bonus_a += roll_extra(4)
             elif "Defensive" in benefit[0]:
@@ -130,11 +112,11 @@ def simulate_battle(
                 clash_bonus_a -= 1
             elif "Seized" in benefit[0]:
                 seized_for_a = roll_extra(2)
+    else:
+        winner_man = "tie"
 
-    counter_a += da
-    counter_b += db
     log.phases.append(
-        PhaseResult("Maneuver (Wit)", ra, rb, ta, tb, n20a, n20b, n1a, n1b, winner, da, db)
+        PhaseResult("Maneuver (Wit)", ra, rb, ta, tb, n20a, n20b, n1a, n1b, winner_man, diff_man)
     )
 
     # ── Phase 2: Charge (Morale) ─────────────────────────────────────────
@@ -142,9 +124,6 @@ def simulate_battle(
     bon_b2, adv_b2, _ = legion_battle_bonuses(lb, "charge")
     pen_a2, dd_a2 = enemy_penalties(la, lb, "charge")
     pen_b2, dd_b2 = enemy_penalties(lb, la, "charge")
-
-    pc_bon_a2, pc_adv_a2 = roll_pc(pc_a, "charge")
-    pc_bon_b2, pc_adv_b2 = roll_pc(pc_b, "charge")
 
     pc_bon_a2, pc_adv_a2 = roll_pc(pc_a, "charge")
     pc_bon_b2, pc_adv_b2 = roll_pc(pc_b, "charge")
@@ -162,37 +141,22 @@ def simulate_battle(
         vet_a=vet_a,
         vet_b=vet_b,
     )
-    winner_c = determine_phase_winner(ta, tb, n20a, n20b, n1a, n1b)
 
-    # One reroll on tie
-    if winner_c == "tie":
-        ra, rb, ta, tb, n20a, n20b, n1a, n1b = contested_roll(
-            tot_a2,
-            tot_b2,
-            adv_a=adv_a2 or pc_adv_a2,
-            adv_b=adv_b2 or pc_adv_b2,
-            disadv_a=dd_a2,
-            disadv_b=dd_b2,
-            vet_a=vet_a,
-            vet_b=vet_b,
-        )
-        winner_c = determine_phase_winner(ta, tb, n20a, n20b, n1a, n1b)
-    # Still tied → neither gains Clash bonus, no counter points
+    diff_chg = ta - tb
+    battle_score += diff_chg
 
-    da = db = 0
-    if winner_c == "a":
-        da = BATTLE_COUNTER_WIN + (BATTLE_COUNTER_NAT20_BONUS if n20a else 0)
-        db = -BATTLE_COUNTER_WIN - (BATTLE_COUNTER_NAT1_PENALTY if n1b else 0)
+    # Charge cascade: winner gets +1 to Clash; tie = no bonus
+    if diff_chg > 0:
+        winner_c = "a"
         clash_bonus_a += CHARGE_WIN_CLASH_BONUS
-    elif winner_c == "b":
-        db = BATTLE_COUNTER_WIN + (BATTLE_COUNTER_NAT20_BONUS if n20b else 0)
-        da = -BATTLE_COUNTER_WIN - (BATTLE_COUNTER_NAT1_PENALTY if n1a else 0)
+    elif diff_chg < 0:
+        winner_c = "b"
         clash_bonus_b += CHARGE_WIN_CLASH_BONUS
+    else:
+        winner_c = "tie"
 
-    counter_a += da
-    counter_b += db
     log.phases.append(
-        PhaseResult("Charge (Morale)", ra, rb, ta, tb, n20a, n20b, n1a, n1b, winner_c, da, db)
+        PhaseResult("Charge (Morale)", ra, rb, ta, tb, n20a, n20b, n1a, n1b, winner_c, diff_chg)
     )
 
     # ── Phase 3: Clash (Vitality) ────────────────────────────────────────
@@ -200,9 +164,6 @@ def simulate_battle(
     bon_b3, adv_b3, _ = legion_battle_bonuses(lb, "clash")
     pen_a3, dd_a3 = enemy_penalties(la, lb, "clash")
     pen_b3, dd_b3 = enemy_penalties(lb, la, "clash")
-
-    pc_bon_a3, pc_adv_a3 = roll_pc(pc_a, "clash")
-    pc_bon_b3, pc_adv_b3 = roll_pc(pc_b, "clash")
 
     pc_bon_a3, pc_adv_a3 = roll_pc(pc_a, "clash")
     pc_bon_b3, pc_adv_b3 = roll_pc(pc_b, "clash")
@@ -220,38 +181,27 @@ def simulate_battle(
         vet_a=vet_a,
         vet_b=vet_b,
     )
-    winner_cl = determine_phase_winner(ta, tb, n20a, n20b, n1a, n1b)
-    # Tied Clash → no counter points for either (brutal and indecisive)
 
-    da = db = 0
-    if winner_cl == "a":
-        da = BATTLE_COUNTER_CLASH_WIN + (BATTLE_COUNTER_NAT20_BONUS if n20a else 0)
-        db = -BATTLE_COUNTER_WIN - (BATTLE_COUNTER_NAT1_PENALTY if n1b else 0)
-    elif winner_cl == "b":
-        db = BATTLE_COUNTER_CLASH_WIN + (BATTLE_COUNTER_NAT20_BONUS if n20b else 0)
-        da = -BATTLE_COUNTER_WIN - (BATTLE_COUNTER_NAT1_PENALTY if n1a else 0)
+    diff_cl = ta - tb
+    battle_score += diff_cl
+    winner_cl = "a" if diff_cl > 0 else ("b" if diff_cl < 0 else "tie")
 
-    counter_a += da
-    counter_b += db
     log.phases.append(
-        PhaseResult("Clash (Vitality)", ra, rb, ta, tb, n20a, n20b, n1a, n1b, winner_cl, da, db)
+        PhaseResult("Clash (Vitality)", ra, rb, ta, tb, n20a, n20b, n1a, n1b, winner_cl, diff_cl)
     )
 
-    # Final tie-breaker: sudden-death Vitality rerolls
-    while counter_a == counter_b:
-        ra2, rb2, ta2, tb2, n20a2, n20b2, n1a2, n1b2 = contested_roll(la.vit_total, lb.vit_total)
-        w = determine_phase_winner(ta2, tb2, n20a2, n20b2, n1a2, n1b2)
-        if w == "a":
-            counter_a += 1
-        elif w == "b":
-            counter_b += 1
+    # ── Tie-breaker: sudden-death contested Vitality if Battle Score == 0 ──
+    while battle_score == 0:
+        ra2, rb2, ta2, tb2, _, _, _, _ = contested_roll(la.vit_total, lb.vit_total)
+        if ta2 > tb2:
+            battle_score += 1
+        elif tb2 > ta2:
+            battle_score -= 1
 
-    log.counter_a = counter_a
-    log.counter_b = counter_b
-    log.winner = "a" if counter_a > counter_b else "b"
+    log.battle_score = battle_score
+    log.winner = "a" if battle_score > 0 else "b"
 
     # Seized Initiative: extra injuries go to the loser
-    # seized_for_b → injuries for lb if la wins; seized_for_a → injuries for la if lb wins
     log.seized_extra_for_b = seized_for_b if log.winner == "a" else 0
     log.seized_extra_for_a = seized_for_a if log.winner == "b" else 0
 

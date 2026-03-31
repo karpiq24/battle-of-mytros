@@ -1,6 +1,7 @@
 from .config import (
     CUNNING_BONUS,
     ENGINEER_PENALTY,
+    FANATIC_BONUS,
     INSPIRING_BONUS,
     IRONCLAD_BONUS,
     MAGE_PENALTY,
@@ -37,7 +38,7 @@ def legion_battle_bonuses(legion: Legion, phase: str):
         if _has(legion, "Inspiring"):
             bonus += INSPIRING_BONUS
         if _has(legion, "Fanatic"):
-            adv = True
+            bonus += FANATIC_BONUS
         if _has(legion, "Vanguard"):
             adv = True
 
@@ -47,7 +48,7 @@ def legion_battle_bonuses(legion: Legion, phase: str):
         if _has(legion, "Warden"):
             bonus += WARDEN_CLASH_BONUS
         if _has(legion, "Fanatic"):
-            adv = True
+            bonus += FANATIC_BONUS
 
     return bonus, adv, disadv
 

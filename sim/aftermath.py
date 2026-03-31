@@ -13,6 +13,7 @@ from .config import (
     HOPE_WINNER_PASS,
     INSPIRING_BONUS,
     IRONCLAD_BONUS,
+    MORALE_DIMINISHING_THRESHOLD,
     RALLIER_OWN_HOPE_BONUS,
     RECOVERY_BASE_DC,
     RECOVERY_LOSER_FAIL,
@@ -132,6 +133,10 @@ def run_aftermath(
         mor_chg = HOPE_WINNER_PASS if passed_h else HOPE_WINNER_FAIL
     else:
         mor_chg = HOPE_LOSER_PASS if passed_h else HOPE_LOSER_FAIL
+
+    # Diminishing returns: Morale gains reduced by 1 (min 0) when at/above threshold
+    if mor_chg > 0 and legion.mor_total >= MORALE_DIMINISHING_THRESHOLD:
+        mor_chg = max(0, mor_chg - 1)
 
     legion.morale_mod += mor_chg
     if legion.mor_total <= ROUT_THRESHOLD and not legion.destroyed:

@@ -15,8 +15,7 @@ class PhaseResult:
     nat1_a: bool
     nat1_b: bool
     winner: str
-    counter_a_delta: int = 0
-    counter_b_delta: int = 0
+    phase_diff: int = 0  # roll differential (total_a - total_b) for this phase
 
 
 @dataclass
@@ -24,8 +23,7 @@ class BattleLog:
     legion_a: str
     legion_b: str
     phases: list = field(default_factory=list)
-    counter_a: int = 0
-    counter_b: int = 0
+    battle_score: int = 0  # final Battle Score (positive = side A won, negative = side B won)
     winner: str = ""
     maneuver_benefit: str = ""
     aftermath_a: dict = field(default_factory=dict)

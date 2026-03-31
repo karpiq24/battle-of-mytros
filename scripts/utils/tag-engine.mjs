@@ -36,12 +36,12 @@ export class TagEngine {
             mods.descriptions.push("Tactician: Advantage");
         }
         if (tags.includes("fanatic") && (phase === "charge" || phase === "clash")) {
-            mods.advantage = true;
-            mods.descriptions.push("Fanatic: Advantage");
-        }
-        if (tags.includes("zealot") && stats.morale >= 6) {
             mods.flatBonus += 2;
-            mods.descriptions.push("Zealot (Morale ≥6): +2");
+            mods.descriptions.push("Fanatic: +2");
+        }
+        if (tags.includes("zealot") && stats.morale >= 7) {
+            mods.flatBonus += 2;
+            mods.descriptions.push("Zealot (Morale ≥7): +2");
         }
         if (phase === "clash" && tags.includes("ironclad")) {
             mods.flatBonus += 2;

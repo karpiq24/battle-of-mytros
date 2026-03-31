@@ -30,9 +30,15 @@ export function getSupportBonuses(faction, phase) {
 
     let dice = [];
     let advantage = false;
+    let combatCount = 0;
 
     for (const t of supportUnits) {
         const mode = t.getFlag("battle-of-mytros", "deploymentMode");
+        const isCombat = mode === "reinforce" || mode === "shock_assault" || mode?.startsWith("targeted_strike");
+        if (isCombat) {
+            if (combatCount >= 2) continue;
+            combatCount++;
+        }
         if (mode === "reinforce") dice.push("1d4");
         if (mode === "shock_assault" && ["maneuver", "charge", "clash"].includes(phase)) dice.push("1d6");
         if (mode === `targeted_strike_${phase}`) {

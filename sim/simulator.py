@@ -123,21 +123,41 @@ def simulate_round(
     battle_pools_e = [MiraclePool(0) for _ in range(num_battles)]
 
     # --- PC Deployment (Allied side only for sim) ---
-    # Randomly assign 3 PCs to allied battles
-    pc_types = ["Reinforce", "Shock Assault", "Targeted Strike", "Shield the Wounded", "Protect"]
+    # Randomly assign 3 PCs to allied battles (max 2 per battle; Rally applies separately)
+    pc_types = [
+        "Reinforce",
+        "Shock Assault",
+        "Targeted Strike",
+        "Shield the Wounded",
+        "Protect",
+        "Rally",
+    ]
     pc_deployments_by_battle = [[] for _ in range(num_battles)]
+    rally_morale_total = 0  # accumulated Rally Morale to distribute after battles
     if num_battles > 0:
         for i in range(3):  # 3 PCs
-            battle_idx = random.randrange(num_battles)
             ptype = random.choice(pc_types)
-            pphase = (
-                random.choice(["maneuver", "charge", "clash"])
-                if ptype == "Targeted Strike"
-                else None
-            )
-            pc_deployments_by_battle[battle_idx].append(
-                PCDeployment(name=f"PC{i + 1}", type=ptype, phase=pphase)
-            )
+            if ptype == "Rally":
+                # Rally: restore 1d4 Morale to a random allied legion (applied after battles)
+                rally_morale_total += random.randint(1, 4)
+            else:
+                # Find battles with fewer than 2 PCs already assigned
+                eligible = [
+                    idx for idx in range(num_battles) if len(pc_deployments_by_battle[idx]) < 2
+                ]
+                if not eligible:
+                    # All battles at cap — treat as Rally instead
+                    rally_morale_total += random.randint(1, 4)
+                    continue
+                battle_idx = random.choice(eligible)
+                pphase = (
+                    random.choice(["maneuver", "charge", "clash"])
+                    if ptype == "Targeted Strike"
+                    else None
+                )
+                pc_deployments_by_battle[battle_idx].append(
+                    PCDeployment(name=f"PC{i + 1}", type=ptype, phase=pphase)
+                )
 
     fought = set()
 
@@ -163,7 +183,7 @@ def simulate_round(
         )
 
         won_a = log.winner == "a"
-        cdiff_a = log.counter_a - log.counter_b
+        cdiff_a = log.battle_score  # positive = side A won by this margin
 
         # Cross-effects from opponent tags
         brutal_won_a = won_a and _has(la, "Brutal")
@@ -271,7 +291,7 @@ def simulate_round(
                         "legion": legion.name,
                         "round": round_num,
                         "won": won_a if legion is la else not won_a,
-                        "crushed": abs(cdiff_a) >= 3,
+                        "crushed": abs(cdiff_a) >= 15,
                         "protection": cas.get("protection", 0),
                         "roll": cas.get("roll", 0),
                         "dc": cas.get("dc", 0),
@@ -286,6 +306,13 @@ def simulate_round(
                             f"{legion.name}: {dead_name} → {replacement.name}"
                         )
         summary.battles.append(log)
+
+    # Apply Rally Morale to a random non-destroyed allied legion
+    if rally_morale_total > 0:
+        rally_targets = [legion for legion in allied if not legion.destroyed]
+        if rally_targets:
+            target = random.choice(rally_targets)
+            target.morale_mod += rally_morale_total  # mor_total property clamps to MORALE_CAP
 
     for obj_name, data in STRATEGIC_OBJECTIVES.items():
         if obj_name in summary.destroyed_objectives:
@@ -333,9 +360,9 @@ def simulate_round(
     summary.enemy_losses = sum(1 for legion in enemy if legion.destroyed)
     deaths = 0
     for log in summary.battles:
-        deaths += (random.randint(1, 4) * 10) if log.winner == "a" else (random.randint(1, 6) * 50)
+        deaths += (random.randint(1, 4) * 10) if log.winner == "a" else (random.randint(1, 6) * 30)
     for _ in range(max(0, len(active_enemy) - num_battles)):
-        deaths += random.randint(1, 6) * 50
+        deaths += random.randint(1, 6) * 30
     deaths += len(summary.destroyed_objectives) * random.randint(1, 4) * 10
     summary.civilian_deaths = deaths
     return summary
@@ -432,7 +459,7 @@ def run_simulation(
 
         for b in summary.battles:
             w = b.legion_a if b.winner == "a" else b.legion_b
-            print(f"      {b.legion_a} vs {b.legion_b}  →  {w} wins ({b.counter_a}:{b.counter_b})")
+            print(f"      {b.legion_a} vs {b.legion_b}  →  {w} wins (score: {b.battle_score:+d})")
         for name in summary.allied_commander_deaths:
             print(f"    ☠  ALLIED COMMANDER FALLEN: {name}")
         for name in summary.enemy_commander_deaths:

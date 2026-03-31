@@ -246,6 +246,59 @@ export async function advanceRound(_event, _target) {
         }
     }
 
+    // Process Rally deployments — each rally PC rolls 1d4 and restores Morale to a chosen allied legion
+    const alliedLegionsForRally = game.actors.filter(
+        (a) =>
+            globalThis.MytrosActorData.isLegion(a) &&
+            a.getFlag("battle-of-mytros", "faction") === "allied" &&
+            !a.getFlag("battle-of-mytros", "isDestroyed")
+    );
+    for (const section of activeSections) {
+        const supportTokens = globalThis.MytrosRegionManager.getSupportUnitsInSection(section);
+        for (const token of supportTokens) {
+            if (token.getFlag("battle-of-mytros", "deploymentMode") !== "rally") continue;
+
+            const rallyRoll = await new Roll("1d4").evaluate();
+            const legionOptions = alliedLegionsForRally
+                .map((l) => {
+                    const morale = l.getFlag("battle-of-mytros", "stats")?.morale ?? "?";
+                    return `<option value="${l.id}">${l.name} (Morale ${morale})</option>`;
+                })
+                .join("");
+
+            let targetId;
+            if (foundry.applications?.api?.DialogV2) {
+                targetId = await foundry.applications.api.DialogV2.prompt({
+                    window: { title: `${token.name} — Rally (rolled ${rallyRoll.total})` },
+                    content: `<form><div class="form-group"><label>Target legion</label><select name="target">${legionOptions}</select></div></form>`,
+                    ok: { label: "Apply", callback: (_e, btn) => btn.form.elements.target.value },
+                    rejectClose: false,
+                });
+            } else {
+                targetId = await new Promise((resolve) => {
+                    new Dialog({
+                        title: `${token.name} — Rally (rolled ${rallyRoll.total})`,
+                        content: `<form><div class="form-group"><label>Target legion</label><select name="target">${legionOptions}</select></div></form>`,
+                        buttons: {
+                            ok: { label: "Apply", callback: (html) => resolve(html.find('[name="target"]').val()) },
+                        },
+                        default: "ok",
+                        close: () => resolve(null),
+                    }).render(true);
+                });
+            }
+
+            if (targetId) {
+                const target = game.actors.get(targetId);
+                const rallyStats = { ...target.getFlag("battle-of-mytros", "stats") };
+                const maxMorale = game.settings.get("battle-of-mytros", "maxMorale") ?? 10;
+                rallyStats.morale = Math.min(maxMorale, (rallyStats.morale ?? 5) + rallyRoll.total);
+                await target.setFlag("battle-of-mytros", "stats", rallyStats);
+                ui.notifications.info(`${token.name} rallied ${target.name}: +${rallyRoll.total} Morale.`);
+            }
+        }
+    }
+
     // Objective destruction tracking and per-round death toll
     const destroyedObjectives = JSON.parse(game.settings.get("battle-of-mytros", "destroyedObjectives") || "[]");
     for (const objId of destroyedObjectives) {

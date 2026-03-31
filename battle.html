@@ -1156,7 +1156,7 @@
 
                     <div class="callout callout-blue">
                         <strong>Conditional Tags</strong>
-                        If a tag's condition cannot be met (e.g., Zealot requires Morale 6+, but the legion is at 5),
+                        If a tag's condition cannot be met (e.g., Zealot requires Morale 7+, but the legion is at 6),
                         the tag simply has no effect until the condition is satisfied again. A newly assigned
                         replacement commander arrives with their own tags, which take effect immediately.
                     </div>
@@ -1223,9 +1223,9 @@
                             </div>
                             <div class="tag-effect">
                                 This legion attacks with reckless fury, gaining
-                                <strong>Advantage on both Charge and Clash rolls</strong>. However, due to their
-                                disregard for survival, they suffer
-                                <strong>Disadvantage on their Recovery check</strong> after every battle.
+                                <strong>+2 to both Charge and Clash rolls</strong>. However, due to their disregard for
+                                survival, they suffer <strong>Disadvantage on their Recovery check</strong> after every
+                                battle.
                             </div>
                         </div>
 
@@ -1235,7 +1235,7 @@
                                 <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
                             </div>
                             <div class="tag-effect">
-                                While this legion's current Morale is <strong>6 or higher</strong>, it gains
+                                While this legion's current Morale is <strong>7 or higher</strong>, it gains
                                 <strong>+2 to all three battle rolls</strong> (Maneuver, Charge, Clash).
                             </div>
                         </div>
@@ -1307,8 +1307,8 @@
                             </div>
                             <div class="tag-effect">
                                 After each battle, this legion automatically
-                                <strong>re-rolls the first failed aftermath check</strong> (Recovery checked first, then Hope, then Salvage) and
-                                takes the better result. Additionally, this commander's
+                                <strong>re-rolls the first failed aftermath check</strong> (Recovery checked first, then
+                                Hope, then Salvage) and takes the better result. Additionally, this commander's
                                 <strong>base death chance is reduced by 5%</strong>.
                             </div>
                         </div>
@@ -1543,25 +1543,30 @@
 
                     <p>
                         When opposing legions meet in the same section, battle occurs in
-                        <strong>three sequential phases</strong>. Winning earlier phases feeds advantages into later
-                        ones — dominating from the start compounds your victory.
+                        <strong>three sequential phases</strong>. Each phase, both sides roll 1d20 + stat. Subtract the
+                        enemy's total from yours — the result (positive or negative) is added to a single running
+                        <strong>Battle Score</strong>. After all three phases, a positive score means you win; negative
+                        means the enemy wins; zero is a tie.
                     </p>
 
                     <div class="mermaid-wrap">
                         <div class="mermaid">
                             flowchart LR M["🧠 PHASE 1\nThe Maneuver\n1d20 + Wit\nWinner chooses 1 benefit"] C["🔥 PHASE
-                            2\nThe Charge\n1d20 + Morale\nWinner gains +1 to Clash\n+1 Counter Point"] CL["⚔ PHASE
-                            3\nThe Clash\n1d20 + Vitality\nWinner scores\n+2 Counter Points"] V["🏆 TALLY\nBattle
-                            Counter\nHighest wins\nTie → Vitality sudden death"] M -->|"+1d4 Charge bonus\nor other
-                            benefit"| C C -->|"+1 to Clash roll\nfor Charge winner"| CL CL --> V style M
-                            fill:#1a2a3a,stroke:#3a7ab5,color:#90c0e8 style C fill:#3a2a10,stroke:#b58030,color:#e8c070
-                            style CL fill:#3a1a1a,stroke:#b53030,color:#e87070 style V
-                            fill:#1a3a1a,stroke:#30a030,color:#70e870
+                            2\nThe Charge\n1d20 + Morale\nWinner gains +1 to Clash"] CL["⚔ PHASE 3\nThe Clash\n1d20 +
+                            Vitality"] V["🏆 TALLY\nBattle Score\nSum of differentials\nPositive = you win\nTie →
+                            Vitality sudden death"] M -->|"+1d4 Charge bonus\nor other benefit"| C C -->|"+1 to Clash
+                            roll\nfor Charge winner"| CL CL --> V style M fill:#1a2a3a,stroke:#3a7ab5,color:#90c0e8
+                            style C fill:#3a2a10,stroke:#b58030,color:#e8c070 style CL
+                            fill:#3a1a1a,stroke:#b53030,color:#e87070 style V fill:#1a3a1a,stroke:#30a030,color:#70e870
                         </div>
                     </div>
 
                     <h3>Phase 1: The Maneuver (Wit)</h3>
-                    <p>Both sides roll 1d20 + Wit. The winner chooses one benefit for the rest of this battle.</p>
+                    <p>
+                        Both sides roll 1d20 + Wit. The differential (your roll minus enemy roll) is added to the Battle
+                        Score. If your differential is positive, you win the phase and choose one benefit. If tied (0),
+                        no benefit is granted.
+                    </p>
                     <div class="benefit-grid">
                         <div class="benefit-card">
                             <div class="name">Flanking Position</div>
@@ -1583,59 +1588,28 @@
                             </div>
                         </div>
                     </div>
-                    <div class="callout callout-blue" style="margin-top: 0.8rem">
-                        <strong>Maneuver Tie-Breaker</strong>
-                        Both sides reroll (up to 3 times). If still tied after 3 rerolls, no benefit is granted and
-                        neither side scores a counter point for this phase.
-                    </div>
 
                     <h3>Phase 2: The Charge (Morale)</h3>
                     <p>
-                        Both sides roll 1d20 + Morale. The Charge winner gains +1 to their Clash roll and scores a
-                        counter point.
+                        Both sides roll 1d20 + Morale. The differential is added to the Battle Score. The Charge winner
+                        (positive differential) gains +1 to their Clash roll. If tied, no cascade bonus.
                     </p>
-                    <div class="callout callout-blue">
-                        <strong>Charge Tie-Breaker</strong>
-                        Both sides reroll once. If still tied, neither side gains the Clash bonus.
-                    </div>
 
                     <h3>Phase 3: The Clash (Vitality)</h3>
-                    <p>Both sides roll 1d20 + Vitality. The Clash winner scores <strong>two counter points</strong>.</p>
-                    <div class="callout callout-blue">
-                        <strong>Clash Tie-Breaker</strong>
-                        The melee was brutal and indecisive — no one gains counter points.
-                    </div>
+                    <p>Both sides roll 1d20 + Vitality. The differential is added to the Battle Score.</p>
 
-                    <h3>Battle Counter Scoring</h3>
-                    <div class="counter-visual">
-                        <div class="counter-item">
-                            <div class="counter-val pos">+1</div>
-                            <div class="counter-label">Win any phase<br /><small>(+2 for The Clash)</small></div>
-                        </div>
-                        <div class="counter-item">
-                            <div class="counter-val pos">+1</div>
-                            <div class="counter-label">
-                                <strong>Bonus</strong> counter point<br />on top when winning with
-                                <strong>natural 20</strong>
-                            </div>
-                        </div>
-                        <div class="counter-item">
-                            <div class="counter-val neg">−1</div>
-                            <div class="counter-label">Lose any phase</div>
-                        </div>
-                        <div class="counter-item">
-                            <div class="counter-val neg">−1</div>
-                            <div class="counter-label">
-                                <strong>Extra</strong> penalty<br />on top when losing with <strong>natural 1</strong>
-                            </div>
-                        </div>
-                    </div>
+                    <h3>Determining the Victor</h3>
+                    <p>
+                        The Battle Score is the sum of all three phase differentials. Positive means your side wins;
+                        negative means the enemy wins. The magnitude determines the severity of aftermath consequences
+                        (see Commander Casualty Check).
+                    </p>
 
                     <div class="callout callout-gold">
-                        <strong>Final Tie-Breaker</strong>
-                        If both sides have equal battle counters after all three phases, a
-                        <strong>sudden-death contested Vitality roll</strong> determines the victor. Reroll until one
-                        side wins.
+                        <strong>Tie-Breaker</strong>
+                        If the Battle Score is exactly 0, a
+                        <strong>sudden-death contested Vitality roll</strong> breaks the tie. If that also ties, reroll
+                        until one side wins.
                     </div>
 
                     <h3>Fortification</h3>
@@ -1716,6 +1690,11 @@
                             <p style="font-size: 0.8rem; color: var(--text-dim); margin-top: 0.7rem">
                                 Morale caps at <strong>10</strong>. Hitting 0 triggers a rout (see below).
                             </p>
+                            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.5rem">
+                                <strong>Diminishing Returns:</strong> When a legion's current Morale is
+                                <strong>7 or higher</strong>, reduce all Morale gains from Hope checks by 1 (minimum 0).
+                                This does not affect Morale losses.
+                            </p>
                         </div>
 
                         <div class="aftermath-card">
@@ -1768,7 +1747,7 @@
                                             <td><strong style="color: #e67e22">12%</strong></td>
                                         </tr>
                                         <tr>
-                                            <td>Lost by 3+ counter</td>
+                                            <td>Lost by 15+ on Battle Score</td>
                                             <td><strong style="color: var(--vitality-light)">20%</strong></td>
                                         </tr>
                                     </tbody>
@@ -1788,8 +1767,9 @@
                         12% − 5 Protection = <strong>7% Final Death Target</strong>. On a 1–7, the commander dies.
                     </div>
                     <div class="example-box">
-                        <strong>Example 2:</strong> A legion with <em>2 Morale</em> loses by 3+ on the counter. Base
-                        Death Chance 20% − 2 Protection = <strong>18% Final Death Target</strong>. Extremely dangerous.
+                        <strong>Example 2:</strong> A legion with <em>2 Morale</em> loses by 15+ on the Battle Score.
+                        Base Death Chance 20% − 2 Protection = <strong>18% Final Death Target</strong>. Extremely
+                        dangerous.
                     </div>
                     <div class="example-box">
                         <strong>Example 3:</strong> A legion with <em>8 Morale</em> wins the battle. Base Death Chance
@@ -1874,12 +1854,21 @@
                                 <strong>No Commander Casualty check</strong> is made for this legion this round.
                             </div>
                         </div>
+                        <div class="deploy-card">
+                            <div class="deploy-name">Rally</div>
+                            <div class="deploy-bonus">+1d4 Morale</div>
+                            <div class="deploy-note">
+                                Restores <strong>1d4 Morale</strong> to one allied legion (up to the cap of 10). The
+                                legion does not need to be in combat this round. The PC does
+                                <strong>not contribute to any battle</strong> this round.
+                            </div>
+                        </div>
                     </div>
 
                     <div class="callout callout-gold" style="margin-top: 1.5rem">
-                        <strong>Stacking &amp; Trade-offs</strong>
-                        Three PCs each choosing Reinforce gives +3d4 to all rolls — but leaves every other battle
-                        unsupported. You cannot be everywhere at once. This trade-off is always meaningful.
+                        <strong>Deployment Limit</strong>
+                        No more than <strong>2 PCs</strong> may deploy to the same battle in a single round. Remaining
+                        PCs must deploy elsewhere, Rally, or rest.
                     </div>
 
                     <h3>Resting</h3>
@@ -2039,11 +2028,11 @@
                             <div class="situation">Allied legion <strong>won</strong> the battle</div>
                         </div>
                         <div class="death-item">
-                            <div class="roll">1d6 × 50</div>
+                            <div class="roll">1d6 × 30</div>
                             <div class="situation">Allied legion <strong>lost</strong> the battle</div>
                         </div>
                         <div class="death-item">
-                            <div class="roll">1d6 × 50</div>
+                            <div class="roll">1d6 × 30</div>
                             <div class="situation">Sydon's legion was <strong>not engaged</strong> this round</div>
                         </div>
                         <div class="death-item">

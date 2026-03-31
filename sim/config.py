@@ -1,11 +1,5 @@
 # ─── Configuration ──────────────────────────────────────────────────────
 
-# ── Battle Counter ──
-BATTLE_COUNTER_WIN = 1  # Counter points for winning Maneuver or Charge
-BATTLE_COUNTER_CLASH_WIN = 2  # Counter points for winning the Clash
-BATTLE_COUNTER_NAT20_BONUS = 1  # Extra counter on a natural 20
-BATTLE_COUNTER_NAT1_PENALTY = 1  # Extra counter lost on a natural 1
-
 # ── Aftermath DCs ──
 RECOVERY_BASE_DC = 12  # Actual DC = this + current injuries
 HOPE_DC = 12
@@ -34,11 +28,11 @@ IDLE_INJURY_RECOVERY = 1
 
 # ── Commander Casualty ──
 CASUALTY_BASE_RISK = {"winner": 6, "loser": 12, "crushed": 20}
-CASUALTY_CRUSHED_THRESHOLD = -3  # Battle-counter diff at or below → "crushed"
+CASUALTY_CRUSHED_THRESHOLD = -15  # Battle Score diff at or below → "crushed" (lost by 15+)
 COMMANDER_DEATH_MORALE_LOSS = 1
 
 # ── Tag bonuses / thresholds ──
-ZEALOT_MORALE_THRESHOLD = 6
+ZEALOT_MORALE_THRESHOLD = 7  # Was 6; must reach 7+ Morale before bonus activates
 ZEALOT_BONUS = 2
 WARDEN_CLASH_BONUS = 2
 WARDEN_ADJ_RECOVERY = 2  # Adjacent allied legions get +2 Recovery
@@ -50,6 +44,8 @@ MAGE_PENALTY = -1  # Applied to all enemy battle rolls
 HEADHUNTER_DEATH_BONUS = 5  # +5% added to enemy commander's death chance
 DIVINE_BLOOD_DEATH_REDUC = 5  # -5% subtracted from own base death chance
 CHARGE_WIN_CLASH_BONUS = 1  # Clash bonus for winning the Charge phase
+FANATIC_BONUS = 2  # Flat bonus to Charge and Clash (was advantage on both)
+MORALE_DIMINISHING_THRESHOLD = 7  # Morale gains reduced by 1 when at or above this
 RALLIER_OWN_HOPE_BONUS = 2  # Rallier: +2 to own Hope check
 RALLIER_ADJ_HOPE_BONUS = 1  # Rallier: +1 to adjacent allied legions' Hope check
 
