@@ -30,10 +30,10 @@
                             <option value="sydon" {{#if (eq this.faction 'sydon')}}selected{{/if}}>{{localize "MYTROS.ControlSydon"}}</option>
                         </select>
                     </td>
-                    <td class="col-stat"><input type="number" value="{{this.vitality}}" data-action="updateLegionStat" data-legion-id="{{this.id}}" data-stat="vitality" min="0"></td>
-                    <td class="col-stat"><input type="number" value="{{this.morale}}" data-action="updateLegionStat" data-legion-id="{{this.id}}" data-stat="morale" min="0"></td>
-                    <td class="col-stat"><input type="number" value="{{this.wit}}" data-action="updateLegionStat" data-legion-id="{{this.id}}" data-stat="wit" min="0"></td>
-                    <td class="col-stat"><input type="number" value="{{this.injuries}}" data-action="updateLegionStat" data-legion-id="{{this.id}}" data-stat="injuries" min="0"></td>
+                    <td class="col-stat"><input type="number" value="{{this.vitality}}" data-legion-stat data-legion-id="{{this.id}}" data-stat="vitality" min="0"></td>
+                    <td class="col-stat"><input type="number" value="{{this.morale}}" data-legion-stat data-legion-id="{{this.id}}" data-stat="morale" min="0"></td>
+                    <td class="col-stat"><input type="number" value="{{this.wit}}" data-legion-stat data-legion-id="{{this.id}}" data-stat="wit" min="0"></td>
+                    <td class="col-stat"><input type="number" value="{{this.injuries}}" data-legion-stat data-legion-id="{{this.id}}" data-stat="injuries" min="0"></td>
                     <td class="col-commander">
                         <select data-action="assignCommander" data-legion-id="{{this.id}}">
                             <option value="">—</option>

@@ -114,6 +114,11 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
 
     _onRender(context, options) {
         super._onRender?.(context, options);
+        for (const input of this.element.querySelectorAll("[data-legion-stat]")) {
+            input.addEventListener("change", (event) => {
+                legionActions.updateLegionStat.call(this, event, event.currentTarget);
+            });
+        }
         if (this._savedFocus) {
             const el = this.element.querySelector(this._savedFocus.selector);
             if (el) {
