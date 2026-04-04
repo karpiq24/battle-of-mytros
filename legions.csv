@@ -1,22 +1,22 @@
 name,faction,vitality,morale,wit
-Estoria Centurions,Allied,5,4,3
-Estoria Dwarves,Allied,6,3,3
-Mithral Centaurs,Allied,3,5,5
-Mages of Academy,Allied,2,3,7
-Mytros Centurions I,Allied,4,4,4
-Mytros Centurions II,Allied,4,4,4
-Amazons,Allied,3,6,4
-Indigo Barbarians,Allied,4,6,2
-Lizardfolk,Allied,6,4,2
-Egida Mytros,Allied,7,3,2
-Order of Sydon I,Enemy,4,5,3
-Order of Sydon II,Enemy,4,5,3
-Order of Sydon III,Enemy,4,5,3
-Exiles,Enemy,3,3,6
-Bronze Automatons I,Enemy,7,2,2
-Bronze Automatons II,Enemy,7,2,2
-Cyclops,Enemy,8,3,2
-Gygans I,Enemy,6,4,3
+Estoria Centurions,Allied,4,5,5
+Estoria Dwarves,Allied,6,5,4
+Mithral Centaurs,Allied,3,6,5
+Mages of Academy,Allied,2,5,7
+Mytros Centurions I,Allied,4,5,5
+Mytros Centurions II,Allied,4,5,4
+Amazons,Allied,4,6,4
+Indigo Barbarians,Allied,6,6,3
+Lizardfolk,Allied,6,5,2
+Egida Mytros,Allied,8,5,1
+Order of Sydon I,Enemy,6,5,3
+Order of Sydon II,Enemy,4,6,4
+Order of Sydon III,Enemy,6,6,2
+Exiles,Enemy,3,4,6
+Bronze Automatons I,Enemy,8,5,1
+Bronze Automatons II,Enemy,8,4,2
+Cyclops,Enemy,9,3,2
+Gygans I,Enemy,6,4,4
 Gygans II,Enemy,6,4,3
-Merrows,Enemy,4,4,5
-Hired Yugoloths,Enemy,3,3,6
+Merrows,Enemy,5,4,6
+Hired Yugoloths,Enemy,5,5,6

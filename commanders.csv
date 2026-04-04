@@ -1,65 +1,59 @@
-name,faction,tags,legion
-Aesop,Allied,"Tactician,Veteran",Estoria Centurions
-Brax,Allied,"Rallier,Medic",Estoria Dwarves
-Hukar,Allied,"Vanguard,Inspiring",Mithral Centaurs
-Epikur,Allied,"Mage,Cunning",Mages of Academy
-Hileas,Allied,"Veteran,Ironclad",Mytros Centurions I
-Loreus,Allied,"Rallier,Inspiring,Unbreakable Pact",Mytros Centurions II
-Darien,Allied,"Inspiring,Brutal",Amazons
-Delg,Allied,"Tactician,Fanatic",Indigo Barbarians
-Vytha,Allied,"Brutal,Zealot",Lizardfolk
-Versi,Allied,"Rallier,Divine Blood,Unbreakable Pact",Egida Mytros
-Kaelen Burzowierny,Enemy,"Fanatic,Veteran",Order of Sydon I
-Krull Czarny Rog,Enemy,"Ironclad,Brutal",Order of Sydon II
-General Tyberiusz,Enemy,"Tactician,Veteran",Order of Sydon III
-Tyrone,Enemy,"Terrorizer,Rallier",Exiles
-Omadon Bezduszny,Enemy,"Ironclad,Bulwark",Bronze Automatons I
-Ptoris Kowal Zguby,Enemy,"Engineer,Brutal",Bronze Automatons II
-Vrakos,Enemy,"Brutal,Terrorizer",Cyclops
-Gorgoth,Enemy,"Veteran,Brutal",Gygans I
-Vor'gal Zwiastun,Enemy,"Fanatic,Brutal",Gygans II
-Thalassa Zguba,Enemy,"Mage,Terrorizer",Merrows
-Malakor Zlotousty,Enemy,"Tactician,Cunning",Hired Yugoloths
-Hippolyta,Allied,"Tactician,Veteran",
-Anora,Allied,"Medic,Cunning",
-Delfin,Allied,"Medic,Rallier",
-Loopywoopy,Allied,"Fanatic,Brutal",
-Nessa,Allied,"Vanguard,Medic",
-Pholon,Allied,"Vanguard,Brutal,Unbreakable Pact",
-Corinna,Allied,"Terrorizer,Medic,Unbreakable Pact",
-Quinn,Allied,"Rallier,Headhunter",
-Bront,Allied,"Terrorizer,Fanatic",
-Steros,Allied,"Tactician,Veteran",
-Dedal,Allied,"Cunning,Vanguard,Unbreakable Pact",
-Iolaah,Allied,"Medic,Cunning,Unbreakable Pact",
-Silenos,Allied,"Rallier,Medic",
-Thaddeus Sznukides,Allied,"Mage,Rallier",
-Apasia,Allied,"Fanatic,Brutal",
-Kalistor,Allied,"Divine Blood,Medic,Unbreakable Pact",
-Grimhilda,Allied,"Terrorizer,Headhunter",
-Falana,Allied,"Rallier,Medic",
-Egan,Allied,"Terrorizer,Veteran",
-Lyra,Allied,"Vanguard,Fanatic,Unbreakable Pact",
-Makhaila,Allied,"Cunning,Headhunter",
-Melania,Allied,"Mage,Medic,Unbreakable Pact",
-Astra,Allied,"Mage,Fanatic,Unbreakable Pact",
-Moxena,Allied,"Fanatic,Headhunter,Unbreakable Pact",
-Boreas,Allied,"Rallier,Inspiring",
-Darok,Allied,"Cunning,Veteran",
-Patrea,Allied,"Cunning,Headhunter",
-Baenor,Enemy,"Fanatic,Terrorizer",
-Nethis Kamienne Spojrzenie,Enemy,"Headhunter,Terrorizer",
-Icarion Utopiony,Enemy,"Medic,Fanatic",
-Zarketh Gruba Luska,Enemy,"Ironclad,Terrorizer",
-Drazhan Zwiastun Burzy,Enemy,"Vanguard,Mage",
-Kaelia Zlamane Ostrze,Enemy,"Headhunter,Veteran",
-Brax Niewolnik,Enemy,"Ironclad,Veteran",
-Ghal Zelazny Krok,Enemy,"Ironclad,Tactician",
-Syra Zgubny Glos,Enemy,"Rallier,Mage",
-Aethelgard Zdrajca,Enemy,"Engineer,Tactician",
-Xanthus Krwawy Kopyto,Enemy,"Vanguard,Fanatic",
-Jorges,Enemy,"Warden,Terrorizer",
-Hergeron,Enemy,"Tactician,Brutal,Divine Blood",
-Korteva,Enemy,"Tactician,Headhunter",
-Alexandros,Enemy,"Medic,Veteran",
-Tarchon,Enemy,"Veteran,Brutal",
+name,faction,tags
+Aesop,Allied,"Medic,Inspiring"
+Anora,Allied,"Divine Blood,Inspiring,Medic"
+Apasia,Allied,"Terrorizer,Vanguard"
+Astra,Allied,"Mage,Cunning,Unbreakable Pact"
+Boreas,Allied,"Inspiring,Relentless"
+Brax,Allied,"Rallier,Relentless,Bulwark"
+Bront,Allied,"Engineer,Warden"
+Corinna,Allied,"Headhunter,Zealot,Unbreakable Pact"
+Darien,Allied,"Inspiring,Ironclad"
+Darok,Allied,"Relentless,Veteran,Fanatic"
+Dedal,Allied,"Engineer,Siege Breaker,Unbreakable Pact"
+Delfin,Allied,"Cunning,Warden"
+Delg,Allied,"Brutal,Siege Breaker"
+Egan,Allied,"Warden,Ironclad"
+Epikur,Allied,"Tactician,Cunning"
+Falana,Allied,"Inspiring,Rallier"
+Grimhilda Stoneforge,Allied,"Veteran,Bulwark,Ironclad"
+Commander Hileas,Allied,"Tactician,Veteran,Rallier"
+Hippolyta,Allied,"Warden,Veteran"
+Hukar,Allied,"Vanguard,Relentless"
+Iolaah,Allied,"Mage,Medic,Unbreakable Pact"
+Kalistor,Allied,"Divine Blood,Ironclad,Veteran,Unbreakable Pact"
+Loopywoopy,Allied,"Brutal,Fanatic"
+Loreus,Allied,"Inspiring,Rallier,Unbreakable Pact"
+Lyra,Allied,"Fanatic,Zealot,Unbreakable Pact"
+Makhaila,Allied,"Tactician,Warden"
+Melania,Allied,"Medic,Warden,Unbreakable Pact"
+Moxena,Allied,"Cunning,Terrorizer,Unbreakable Pact"
+Nessa,Allied,"Vanguard,Rallier"
+Patrea,Allied,"Headhunter,Vanguard"
+Pholon,Allied,"Vanguard,Veteran,Unbreakable Pact"
+Quinn,Allied,"Bulwark,Cunning"
+Silenos,Allied,"Rallier,Medic,Relentless"
+Steros,Allied,"Engineer,Siege Breaker"
+Tars d’Lyrandar,Allied,"Mage,Veteran,Unbreakable Pact"
+Thaddeus Sznukides,Allied,"Mage,Tactician"
+Versi the Oracle,Allied,"Divine Blood,Cunning,Unbreakable Pact"
+Vytha,Allied,"Brutal,Headhunter"
+Agamemnon,Enemy,"Headhunter,Veteran"
+Baenor,Enemy,"Vanguard,Brutal"
+Bellerophon,Enemy,"Vanguard,Siege Breaker"
+Chryses,Enemy,"Zealot,Rallier"
+Drakon,Enemy,"Tactician,Ironclad"
+Euryale,Enemy,"Terrorizer,Brutal,Siege Breaker"
+Hergeron,Enemy,"Divine Blood,Tactician,Terrorizer"
+Jorges,Enemy,"Veteran,Bulwark,Ironclad"
+Kaelithos,Enemy,"Zealot,Terrorizer"
+Kalyka,Enemy,"Headhunter,Medic"
+Korteva,Enemy,"Headhunter,Brutal"
+Lysandros,Enemy,"Zealot,Fanatic"
+Myrrha,Enemy,"Mage,Terrorizer"
+Oktar,Enemy,"Engineer,Siege Breaker"
+Pelops,Enemy,"Engineer,Tactician"
+Phaedrus,Enemy,"Mage,Cunning"
+Theron,Enemy,"Terrorizer,Brutal,Fanatic"
+Tyrone,Enemy,"Bulwark,Cunning"
+Xerxomedes,Enemy,"Bulwark,Warden"
+Zelos,Enemy,"Headhunter,Cunning"
