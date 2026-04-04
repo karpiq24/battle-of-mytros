@@ -29,9 +29,10 @@ export async function deleteCommander(_event, target) {
     const commanderId = target.dataset.commanderId;
     const actor = game.actors.get(commanderId);
     if (!actor) return;
-    const confirmed = await Dialog.confirm({
-        title: game.i18n.localize("MYTROS.DeleteCommanderTitle"),
+    const confirmed = await foundry.applications.api.DialogV2.confirm({
+        window: { title: game.i18n.localize("MYTROS.DeleteCommanderTitle") },
         content: `<p>${game.i18n.localize("MYTROS.DeleteCommanderConfirm")} <strong>${actor.name}</strong>?</p>`,
+        rejectClose: false,
     });
     if (!confirmed) return;
     await actor.delete();
@@ -62,10 +63,14 @@ export async function addCommanderTag(_event, target) {
             </div>
         </form>
     `;
-    const result = await Dialog.prompt({
-        title: game.i18n.localize("MYTROS.AddTagTitle"),
+    const result = await foundry.applications.api.DialogV2.prompt({
+        window: { title: game.i18n.localize("MYTROS.AddTagTitle") },
         content,
-        callback: (html) => html.find('[name="tag"]').val(),
+        ok: {
+            label: "OK",
+            icon: "fas fa-check",
+            callback: (_event, button) => button.form.elements.tag.value,
+        },
         rejectClose: false,
     });
     if (!result) return;

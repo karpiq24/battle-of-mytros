@@ -36,6 +36,7 @@ Hooks.once("init", async function () {
         "modules/battle-of-mytros/templates/partials/tab-miracles.hbs",
         "modules/battle-of-mytros/templates/partials/tab-legions.hbs",
         "modules/battle-of-mytros/templates/partials/tab-commanders.hbs",
+        "modules/battle-of-mytros/templates/partials/tab-support-units.hbs",
         "modules/battle-of-mytros/templates/partials/tab-setup.hbs",
     ];
     loadTemplates(templatePaths);
