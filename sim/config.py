@@ -49,6 +49,19 @@ MORALE_DIMINISHING_THRESHOLD = 7  # Morale gains reduced by 1 when at or above t
 RALLIER_OWN_HOPE_BONUS = 2  # Rallier: +2 to own Hope check
 RALLIER_ADJ_HOPE_BONUS = 1  # Rallier: +1 to adjacent allied legions' Hope check
 
+# ── Civilian Death Toll ──
+# Rolled once per engagement per round, added to running total
+DEATH_ROLL_ALLIED_WIN_DICE = 4  # 1d4 × 5 when allied legion won
+DEATH_ROLL_ALLIED_WIN_MULT = 5
+DEATH_ROLL_ALLIED_LOSS_DICE = 6  # 1d6 × 25 when allied legion lost
+DEATH_ROLL_ALLIED_LOSS_MULT = 25
+DEATH_ROLL_SYDON_IDLE_DICE = 6  # 1d6 × 25 when Sydon's legion was unengaged
+DEATH_ROLL_SYDON_IDLE_MULT = 25
+DEATH_ROLL_OBJ_DESTROYED_DICE = 4  # 1d4 × 5 per destroyed objective still burning
+DEATH_ROLL_OBJ_DESTROYED_MULT = 5
+LUTHERIA_DEATH_TOLL_REDUCTION = 800  # Lutheria defeated: subtract this from running total
+SYDON_DEATH_TOLL_HALVED = True  # Sydon defeated: halve ongoing destroyed-objective deaths
+
 # ── Reconnaissance thresholds ──
 RECON_THRESHOLDS = [
     (10, "No intelligence"),
@@ -75,13 +88,12 @@ SALVAGE_BENEFITS = [
 
 STRATEGIC_OBJECTIVES = {
     "Temple of the Five": {"miracles": 2, "section": 1},
-    "Royal Palace": {"miracles": 2, "section": 2},
-    "The Dockyard": {"miracles": 1, "section": 3},
-    "Soldier's Gate": {"miracles": 1, "section": 4},
-    "The Agora": {"miracles": 1, "section": 5},
-    "The Academy": {"miracles": 2, "section": 6},
-    "The Gymnasium": {"miracles": 1, "section": 7},
-    "The Harp Bridge": {"miracles": 1, "section": 8},
-    "The Vineyards": {"miracles": 1, "section": 9},
-    "Fish Market": {"miracles": 1, "section": 10},
+    "The Great Palace": {"miracles": 2, "section": 2},
+    "The Academy": {"miracles": 2, "section": 3},
+    "The Dockyard": {"miracles": 1, "section": 4},
+    "Soldier's Gate": {"miracles": 1, "section": 5},
+    "The Agora": {"miracles": 1, "section": 6},
+    "The Vault of Thylea": {"miracles": 1, "section": 7},
+    "The Theater of the Gods": {"miracles": 1, "section": 8},
+    "The Vineyards of Mytros": {"miracles": 1, "section": 9},
 }

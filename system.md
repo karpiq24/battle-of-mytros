@@ -6,8 +6,6 @@ A Mass Combat System for Odyssey of the Dragonlords
 
 _Revamped rules for cinematic legion warfare where every stat matters, every commander counts, and your players shape the tide of battle._
 
-#
-
 # **Design Philosophy**
 
 This system turns the Battle of Mytros into a strategic war resolved over a single continuous engagement. There are no battle days or artificial pauses. Legions clash across the city, commanders rise and fall (sometimes permanently), and the player characters act as elite rapid-deployment assets that tip the balance at critical moments. The battle continues until one side has no legions remaining, or until all major story events have been resolved and the DM declares the battle concluded.
@@ -25,8 +23,6 @@ Commanders can die permanently in battle. The threat of losing a beloved ally or
 Divide Mytros into map sections. The recommended count is 2 times the number of allied legions, rounded up. Label each section for easy reference.
 
 A section can be fortified after being held for a full round. Fortification grants \+1 to all rolls for the defending side and is lost when the opposing side claims the section.
-
-#
 
 # **Legions**
 
@@ -231,8 +227,6 @@ _Diminishing Returns:_ When a legion's current Morale is 7 or higher, reduce all
 | Enemy Shaken      | The opposing legion suffers −1 Morale.                                  |
 | Quick Fortify     | Immediately fortify the section you hold (normally takes a full round). |
 
-##
-
 ## **Commander Casualty Check**
 
 After every battle, both commanders must make a survival check to endure the chaos. The battle’s outcome generates a Base Death Chance. The commander’s legion attempts to shield them, reducing this risk before a d100 is rolled.
@@ -267,18 +261,17 @@ Commander death should be a dramatic moment. For allied commanders, give the pla
 
 Sydon’s forces target symbols of mortal civilization. These objectives are marked openly on the map from the start; both sides know what’s at stake. If Sydon’s forces claim a section containing an objective and hold it for one additional round, the objective is destroyed. Consequences are permanent and cumulative.
 
-| Objective                   | Sydon Benefit if Destroyed |
-| :-------------------------- | :------------------------- |
-| Temple of the Five          | Gains \+3 Miracle Points   |
-| Royal Palace                | Gains \+2 Miracle Points   |
-| The Dockyard                | Gains \+2 Miracle Points   |
-| Soldier’s Gate              | Gains \+2 Miracle Points   |
-| The Agora                   | Gains \+2 Miracle Points   |
-| The Academy                 | Gains \+2 Miracle Points   |
-| The Gymnasium               | Gains \+2 Miracle Points   |
-| The Harp Bridge             | Gains \+2 Miracle Points   |
-| The Vineyards of Mytros     | Gains \+2 Miracle Points   |
-| Fish Market & Commerce Gate | Gains \+1 Miracle Points   |
+| Objective               | Sydon Benefit if Destroyed |
+| :---------------------- | :------------------------- |
+| Temple of the Five      | Gains \+2 Miracle Points   |
+| The Great Palace        | Gains \+2 Miracle Points   |
+| The Academy             | Gains \+2 Miracle Points   |
+| The Dockyard            | Gains \+1 Miracle Points   |
+| Soldier’s Gate          | Gains \+1 Miracle Points   |
+| The Agora               | Gains \+1 Miracle Points   |
+| The Vault of Thylea     | Gains \+1 Miracle Points   |
+| The Theater of the Gods | Gains \+1 Miracle Points   |
+| The Vineyards of Mytros | Gains \+1 Miracle Points   |
 
 # **Major Events**
 
@@ -298,8 +291,6 @@ At dramatic moments during the battle, the DM triggers a major event that pulls 
 
 **Kentimane Defeated** — The Hundred-Handed One falls, and the earth is still. **Reward:** \+2 to the allied Miracle pool. Death Toll accumulation stops entirely — the fighting is over. This is a battle-ending event.
 
-#
-
 # **Civilian Death Toll**
 
 The battle for Mytros is not just a military contest — every round of fighting costs the city its people. Track a running Death Toll alongside the battle map. At the end of each round’s Aftermath phase, add that round’s deaths to the cumulative total. This total determines how the city remembers the heroes when the dust settles.
@@ -308,10 +299,10 @@ After each battle resolves, roll once per engagement and once per destroyed obje
 
 | Situation                                      | Death Roll |
 | :--------------------------------------------- | :--------- |
-| Allied legion won the battle                   | 1d4 × 10   |
-| Allied legion lost the battle                  | 1d6 × 30   |
-| Sydon’s legion was not engaged this round      | 1d6 × 30   |
-| Each destroyed Strategic Objective (per round) | 1d4 × 10   |
+| Allied legion won the battle                   | 1d4 × 5    |
+| Allied legion lost the battle                  | 1d6 × 25   |
+| Sydon’s legion was not engaged this round      | 1d6 × 25   |
+| Each destroyed Strategic Objective (per round) | 1d4 × 5    |
 
 Add all results together to get the round’s death count, then add it to the running total.
 

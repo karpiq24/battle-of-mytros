@@ -8,6 +8,14 @@ from .aftermath import run_aftermath
 from .battle_log import BattleLog
 from .combat import simulate_battle
 from .config import (
+    DEATH_ROLL_ALLIED_LOSS_DICE,
+    DEATH_ROLL_ALLIED_LOSS_MULT,
+    DEATH_ROLL_ALLIED_WIN_DICE,
+    DEATH_ROLL_ALLIED_WIN_MULT,
+    DEATH_ROLL_OBJ_DESTROYED_DICE,
+    DEATH_ROLL_OBJ_DESTROYED_MULT,
+    DEATH_ROLL_SYDON_IDLE_DICE,
+    DEATH_ROLL_SYDON_IDLE_MULT,
     HEADHUNTER_DEATH_BONUS,
     IDLE_INJURY_RECOVERY,
     IDLE_MORALE_RECOVERY,
@@ -360,10 +368,14 @@ def simulate_round(
     summary.enemy_losses = sum(1 for legion in enemy if legion.destroyed)
     deaths = 0
     for log in summary.battles:
-        deaths += (random.randint(1, 4) * 10) if log.winner == "a" else (random.randint(1, 6) * 30)
+        if log.winner == "a":
+            deaths += random.randint(1, DEATH_ROLL_ALLIED_WIN_DICE) * DEATH_ROLL_ALLIED_WIN_MULT
+        else:
+            deaths += random.randint(1, DEATH_ROLL_ALLIED_LOSS_DICE) * DEATH_ROLL_ALLIED_LOSS_MULT
     for _ in range(max(0, len(active_enemy) - num_battles)):
-        deaths += random.randint(1, 6) * 30
-    deaths += len(summary.destroyed_objectives) * random.randint(1, 4) * 10
+        deaths += random.randint(1, DEATH_ROLL_SYDON_IDLE_DICE) * DEATH_ROLL_SYDON_IDLE_MULT
+    for _ in summary.destroyed_objectives:
+        deaths += random.randint(1, DEATH_ROLL_OBJ_DESTROYED_DICE) * DEATH_ROLL_OBJ_DESTROYED_MULT
     summary.civilian_deaths = deaths
     return summary
 

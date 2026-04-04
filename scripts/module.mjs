@@ -219,7 +219,7 @@ Hooks.once("init", async function () {
         scope: "world",
         config: true,
         type: Number,
-        default: 10,
+        default: 5,
     });
 
     game.settings.register("battle-of-mytros", "deathMultSydon", {
@@ -228,7 +228,7 @@ Hooks.once("init", async function () {
         scope: "world",
         config: true,
         type: Number,
-        default: 30,
+        default: 25,
     });
 
     game.settings.register("battle-of-mytros", "deathMultObjective", {
@@ -237,7 +237,7 @@ Hooks.once("init", async function () {
         scope: "world",
         config: true,
         type: Number,
-        default: 10,
+        default: 5,
     });
 
     game.settings.register("battle-of-mytros", "cmdrCasualtyWin", {

@@ -482,8 +482,8 @@ export async function commitAftermath(_event, _target) {
     const alliedWon = this.battleState.overallWinner === "allied";
     const deathDie = await new Roll(alliedWon ? "1d4" : "1d6").evaluate();
     const deathMult = alliedWon
-        ? game.settings.get("battle-of-mytros", "deathMultAllied") ?? 10
-        : game.settings.get("battle-of-mytros", "deathMultSydon") ?? 50;
+        ? game.settings.get("battle-of-mytros", "deathMultAllied") ?? 5
+        : game.settings.get("battle-of-mytros", "deathMultSydon") ?? 25;
     const deathsThisBattle = deathDie.total * deathMult;
     const currentToll = game.settings.get("battle-of-mytros", "deathToll");
     await game.settings.set("battle-of-mytros", "deathToll", currentToll + deathsThisBattle);

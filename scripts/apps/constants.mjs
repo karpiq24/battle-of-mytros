@@ -7,15 +7,14 @@
 /** Default strategic objectives with miracle point rewards for Sydon. */
 export const STRATEGIC_OBJECTIVES = [
     { id: "temple", name: "Temple of the Five", reward: 2 },
-    { id: "palace", name: "Royal Palace", reward: 2 },
+    { id: "palace", name: "The Great Palace", reward: 2 },
+    { id: "academy", name: "The Academy", reward: 2 },
     { id: "dockyard", name: "The Dockyard", reward: 1 },
     { id: "soldier", name: "Soldier's Gate", reward: 1 },
     { id: "agora", name: "The Agora", reward: 1 },
-    { id: "academy", name: "The Academy", reward: 2 },
-    { id: "gymnasium", name: "The Gymnasium", reward: 1 },
-    { id: "bridge", name: "The Harp Bridge", reward: 1 },
+    { id: "vault", name: "The Vault of Thylea", reward: 1 },
+    { id: "theater", name: "The Theater of the Gods", reward: 1 },
     { id: "vineyards", name: "The Vineyards of Mytros", reward: 1 },
-    { id: "market", name: "Fish Market & Commerce Gate", reward: 1 },
 ];
 
 /** Default major events that grant allied miracle points when resolved. */

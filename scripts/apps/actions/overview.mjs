@@ -159,7 +159,7 @@ export async function disbandRoutedLegions(_event, target) {
     const sectionName = region.name.replace(globalThis.MytrosRegionManager.SECTION_PREFIX, "").trim();
 
     const deathRoll = await new Roll(`${routedLegions.length}d6`).evaluate();
-    const deathMultSydon = game.settings.get("battle-of-mytros", "deathMultSydon") ?? 50;
+    const deathMultSydon = game.settings.get("battle-of-mytros", "deathMultSydon") ?? 25;
     const deaths = deathRoll.total * deathMultSydon;
     if (!game.settings.get("battle-of-mytros", "deathTollFrozen")) {
         const current = game.settings.get("battle-of-mytros", "deathToll");
@@ -225,7 +225,7 @@ export async function advanceRound(_event, _target) {
 
             if (faction === "sydon" && !deathTollFrozen && activeLegionIds.has(legion.id)) {
                 const r = await new Roll("1d6").evaluate();
-                const pillMult = game.settings.get("battle-of-mytros", "deathMultSydon") ?? 50;
+                const pillMult = game.settings.get("battle-of-mytros", "deathMultSydon") ?? 25;
                 const deaths = r.total * pillMult;
                 totalDeaths += deaths;
                 sydonPillageDeaths += deaths;
@@ -304,7 +304,7 @@ export async function advanceRound(_event, _target) {
     for (const objId of destroyedObjectives) {
         if (!deathTollFrozen) {
             const r = await new Roll("1d4").evaluate();
-            const objMult = game.settings.get("battle-of-mytros", "deathMultObjective") ?? 10;
+            const objMult = game.settings.get("battle-of-mytros", "deathMultObjective") ?? 5;
             let deaths = r.total * objMult;
             deaths = sydonObjectiveHalved ? Math.floor(deaths / 2) : deaths;
             totalDeaths += deaths;
