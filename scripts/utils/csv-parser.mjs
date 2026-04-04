@@ -60,6 +60,7 @@ export class MytrosCSVParser {
 
             if (isNew) {
                 const actorType = type === "legion" ? "group" : "npc";
+                const artPath = type === "legion" ? `modules/battle-of-mytros/assets/${data.name}.webp` : null;
                 const prototypeToken =
                     type === "legion"
                         ? {
@@ -71,17 +72,26 @@ export class MytrosCSVParser {
                                       : CONST.TOKEN_DISPOSITIONS.HOSTILE,
                               bar1: { attribute: "flags.battle-of-mytros.stats.morale" },
                               bar2: { attribute: "flags.battle-of-mytros.stats.injuries" },
+                              texture: { src: artPath },
                           }
                         : {};
                 actor = await Actor.create({
                     name: data.name,
                     type: actorType,
                     folder: subFolder.id,
+                    img: artPath ?? undefined,
                     prototypeToken: prototypeToken,
                 });
                 created++;
             } else {
                 updated++;
+                if (type === "legion") {
+                    const artPath = `modules/battle-of-mytros/assets/${data.name}.webp`;
+                    await actor.update({
+                        img: artPath,
+                        "prototypeToken.texture.src": artPath,
+                    });
+                }
             }
 
             if (type === "legion") {
