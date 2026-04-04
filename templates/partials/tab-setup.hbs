@@ -2,7 +2,7 @@
     <h3><i class="fas fa-map"></i> {{localize "MYTROS.SetupSectionScene"}}</h3>
     <div class="form-group">
         <label>{{localize "MYTROS.SetupBattleScene"}}</label>
-        <select data-action="updateSetting" data-setting="battleSceneId">
+        <select data-setting-input data-setting="battleSceneId">
             <option value="">— {{localize "MYTROS.SetupBattleSceneNone"}} —</option>
             {{#each scenes}}
             <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.name}}</option>
@@ -94,7 +94,7 @@
 
     <hr>
     <div class="form-group">
-        <button type="button" class="advance-round-btn" data-action="advanceRound"><i class="fas fa-forward"></i> {{localize "MYTROS.AdvanceRound"}} {{round}} + 1</button>
+        <button type="button" class="advance-round-btn" data-action="advanceRound"><i class="fas fa-forward"></i> {{localize "MYTROS.AdvanceRound"}} {{add round 1}}</button>
     </div>
 
     <hr>

@@ -198,9 +198,10 @@ export async function resetObjectivesAndEvents(_event, _target) {
 export async function resetBattle(_event, _target) {
     if (!game.user.isGM) return;
 
-    const confirmed = await Dialog.confirm({
-        title: game.i18n.localize("MYTROS.ResetBattle"),
+    const confirmed = await foundry.applications.api.DialogV2.confirm({
+        window: { title: game.i18n.localize("MYTROS.ResetBattle") },
         content: `<p>${game.i18n.localize("MYTROS.ResetBattleConfirm")}</p>`,
+        rejectClose: false,
     });
     if (!confirmed) return;
 

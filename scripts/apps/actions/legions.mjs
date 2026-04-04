@@ -68,9 +68,10 @@ export async function deleteLegion(_event, target) {
     const legionId = target.dataset.legionId;
     const actor = game.actors.get(legionId);
     if (!actor) return;
-    const confirmed = await Dialog.confirm({
-        title: game.i18n.localize("MYTROS.DeleteLegionTitle"),
+    const confirmed = await foundry.applications.api.DialogV2.confirm({
+        window: { title: game.i18n.localize("MYTROS.DeleteLegionTitle") },
         content: `<p>${game.i18n.localize("MYTROS.DeleteLegionConfirm")} <strong>${actor.name}</strong>?</p>`,
+        rejectClose: false,
     });
     if (!confirmed) return;
     await actor.delete();

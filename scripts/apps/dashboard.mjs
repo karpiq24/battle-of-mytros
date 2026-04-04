@@ -108,6 +108,7 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
 
     render(options = {}) {
         this._savedFocus = this._captureFocus();
+        this._savedScroll = this.element?.querySelector(".dashboard-body")?.scrollTop ?? null;
         console.log("[Mytros] render() called", new Error().stack.split("\n").slice(1, 4).join(" | ").trim());
         return super.render(options);
     }
@@ -118,6 +119,16 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
             input.addEventListener("change", (event) => {
                 legionActions.updateLegionStat.call(this, event, event.currentTarget);
             });
+        }
+        for (const input of this.element.querySelectorAll("[data-setting-input]")) {
+            input.addEventListener("change", (event) => {
+                dataIoActions.updateSetting.call(this, event, event.currentTarget);
+            });
+        }
+        if (this._savedScroll !== null) {
+            const body = this.element.querySelector(".dashboard-body");
+            if (body) body.scrollTop = this._savedScroll;
+            this._savedScroll = null;
         }
         if (this._savedFocus) {
             const el = this.element.querySelector(this._savedFocus.selector);

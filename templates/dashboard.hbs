@@ -33,7 +33,7 @@
             <span class="phase-current-label">{{phaseName}}</span>
             {{#if (eq phase 5)}}
             <button type="button" class="phase-btn phase-btn-advance" data-action="advanceRound" title="{{localize "MYTROS.AdvanceRoundTooltip"}}">
-                {{localize "MYTROS.AdvanceRound"}} {{round}} + 1 <i class="fas fa-forward"></i>
+                {{localize "MYTROS.AdvanceRound"}} {{add round 1}} <i class="fas fa-forward"></i>
             </button>
             {{else}}
             <button type="button" class="phase-btn phase-btn-next" data-action="nextPhase" title="{{localize "MYTROS.NextPhase"}}"><i class="fas fa-chevron-right"></i></button>
