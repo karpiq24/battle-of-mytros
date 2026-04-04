@@ -35,11 +35,6 @@ export async function updateSetting(event, target) {
     else if (target.type === "checkbox") value = target.checked;
     else value = target.value;
 
-    // Save focus state so _onRender can restore it after the hook-triggered re-render
-    this._focusedSetting = settingName;
-    this._focusedSelectionStart = target.selectionStart;
-    this._focusedSelectionEnd = target.selectionEnd;
-
     this._pendingOps++;
     try {
         await game.settings.set("battle-of-mytros", settingName, value);

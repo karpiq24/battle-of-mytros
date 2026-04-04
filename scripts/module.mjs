@@ -363,13 +363,13 @@ Hooks.on("regionEvent", (region, event) => {
         // Re-render dashboard; routedContested sections will show a DM-confirmation button.
         // No auto-disbanding here — tokenEnter fires for every region a token passes through
         // during a drag, not just the destination.
-        foundry.applications.instances.get("mytros-battle-dashboard")?.render({ force: true });
+        foundry.applications.instances.get("mytros-battle-dashboard")?.debouncedRender();
     }
 });
 
 Hooks.on("updateRegion", (region, changes, options, userId) => {
     if (changes.flags && changes.flags["battle-of-mytros"]) {
-        foundry.applications.instances.get("mytros-battle-dashboard")?.render({ force: true });
+        foundry.applications.instances.get("mytros-battle-dashboard")?.debouncedRender();
     }
 });
 
@@ -378,25 +378,25 @@ Hooks.on("updateActor", (actor, changes, options, userId) => {
     if (isRelevant) {
         const dashboard = foundry.applications.instances.get("mytros-battle-dashboard");
         if (dashboard && dashboard._pendingOps > 0) return;
-        dashboard?.render({ force: true });
+        dashboard?.debouncedRender();
     }
 });
 
 Hooks.on("updateItem", (item, changes, options, userId) => {
     if (item.parent && globalThis.MytrosActorData.isCommander(item.parent)) {
-        foundry.applications.instances.get("mytros-battle-dashboard")?.render({ force: true });
+        foundry.applications.instances.get("mytros-battle-dashboard")?.debouncedRender();
     }
 });
 
 Hooks.on("createItem", (item, options, userId) => {
     if (item.parent && globalThis.MytrosActorData.isCommander(item.parent)) {
-        foundry.applications.instances.get("mytros-battle-dashboard")?.render({ force: true });
+        foundry.applications.instances.get("mytros-battle-dashboard")?.debouncedRender();
     }
 });
 
 Hooks.on("deleteItem", (item, options, userId) => {
     if (item.parent && globalThis.MytrosActorData.isCommander(item.parent)) {
-        foundry.applications.instances.get("mytros-battle-dashboard")?.render({ force: true });
+        foundry.applications.instances.get("mytros-battle-dashboard")?.debouncedRender();
     }
 });
 
@@ -404,7 +404,7 @@ Hooks.on("updateSetting", (setting, changes, options, userId) => {
     if (setting.key.startsWith("battle-of-mytros.")) {
         const dashboard = foundry.applications.instances.get("mytros-battle-dashboard");
         if (dashboard && dashboard._pendingOps > 0) return;
-        dashboard?.render({ force: true });
+        dashboard?.debouncedRender();
 
         // Redraw adjacency overlay when pairs change
         if (setting.key === "battle-of-mytros.adjacencyPairs" && AdjacencyOverlay._visible) {

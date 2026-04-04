@@ -76,9 +76,11 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
 
     tab = "overview";
     _pendingOps = 0;
-    _focusedSetting = null;
-    _focusedSelectionStart = null;
-    _focusedSelectionEnd = null;
+
+    constructor(options = {}) {
+        super(options);
+        this.debouncedRender = foundry.utils.debounce(() => this.render({ force: true }), 150);
+    }
 
     static PARTS = {
         form: {
@@ -86,21 +88,41 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
         },
     };
 
+    _captureFocus() {
+        const active = document.activeElement;
+        if (!active || !this.element?.contains(active)) return null;
+        const attrs = [...active.attributes]
+            .filter((a) => a.name.startsWith("data-") && a.name !== "data-action")
+            .map((a) => `[${a.name}="${CSS.escape(a.value)}"]`)
+            .join("");
+        if (!attrs) return null;
+        return {
+            selector: attrs,
+            selectionStart: active.selectionStart ?? null,
+            selectionEnd: active.selectionEnd ?? null,
+        };
+    }
+
+    render(options = {}) {
+        this._savedFocus = this._captureFocus();
+        return super.render(options);
+    }
+
     _onRender(context, options) {
         super._onRender?.(context, options);
-        if (this._focusedSetting) {
-            const input = this.element.querySelector(`[data-setting="${this._focusedSetting}"]`);
-            if (input) {
-                input.focus();
-                if (this._focusedSelectionStart != null && input.setSelectionRange) {
+        if (this._savedFocus) {
+            const el = this.element.querySelector(this._savedFocus.selector);
+            if (el) {
+                el.focus();
+                if (this._savedFocus.selectionStart != null && el.setSelectionRange) {
                     try {
-                        input.setSelectionRange(this._focusedSelectionStart, this._focusedSelectionEnd);
+                        el.setSelectionRange(this._savedFocus.selectionStart, this._savedFocus.selectionEnd);
                     } catch {
-                        // setSelectionRange throws on some input types (checkbox)
+                        // setSelectionRange throws on some input types (checkbox, select)
                     }
                 }
             }
-            this._focusedSetting = null;
+            this._savedFocus = null;
         }
     }
 
