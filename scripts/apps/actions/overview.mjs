@@ -358,7 +358,9 @@ export async function setDeploymentMode(event, target) {
     const tokenId = target.dataset.tokenId;
     const mode = target.value;
     const token = canvas.scene.tokens.get(tokenId);
-    if (token) await token.setFlag("battle-of-mytros", "deploymentMode", mode);
+    if (!token) return;
+    if ((token.getFlag("battle-of-mytros", "deploymentMode") ?? "reinforce") === mode) return;
+    await token.setFlag("battle-of-mytros", "deploymentMode", mode);
 }
 
 export async function openResolver(event, target) {

@@ -17,7 +17,7 @@ export async function setSectionControl(event, target) {
     const control = target.value;
     const region = canvas.scene.regions.get(regionId);
     if (!region) return;
-
+    if ((region.getFlag("battle-of-mytros", "control") ?? "neutral") === control) return;
     await region.setFlag("battle-of-mytros", "control", control);
 }
 

@@ -35,6 +35,8 @@ export async function updateSetting(event, target) {
     else if (target.type === "checkbox") value = target.checked;
     else value = target.value;
 
+    if (game.settings.get("battle-of-mytros", settingName) === value) return;
+
     this._pendingOps++;
     try {
         await game.settings.set("battle-of-mytros", settingName, value);

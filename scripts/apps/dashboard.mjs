@@ -79,7 +79,10 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
 
     constructor(options = {}) {
         super(options);
-        this.debouncedRender = foundry.utils.debounce(() => this.render({ force: true }), 150);
+        this.debouncedRender = foundry.utils.debounce(() => {
+            console.log("[Mytros] debouncedRender fired", new Error().stack.split("\n")[2]?.trim());
+            this.render({ force: true });
+        }, 150);
     }
 
     static PARTS = {
@@ -105,6 +108,7 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
 
     render(options = {}) {
         this._savedFocus = this._captureFocus();
+        console.log("[Mytros] render() called", new Error().stack.split("\n").slice(1, 4).join(" | ").trim());
         return super.render(options);
     }
 

@@ -63,6 +63,7 @@ export async function updateFastResponseFaction(_event, target) {
     const faction = target.value;
     const actor = game.actors.get(actorId);
     if (!actor) return;
+    if ((actor.getFlag("battle-of-mytros", "faction") || "allied") === faction) return;
     await actor.setFlag("battle-of-mytros", "faction", faction);
     this.render();
 }

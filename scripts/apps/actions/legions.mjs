@@ -42,6 +42,7 @@ export async function updateLegionStat(_event, target) {
     const actor = game.actors.get(legionId);
     if (!actor) return;
     const stats = { ...actor.getFlag("battle-of-mytros", "stats") };
+    if (stats[stat] === value) return;
     stats[stat] = value;
     this._pendingOps++;
     try {
@@ -58,6 +59,7 @@ export async function updateLegionFaction(_event, target) {
     const faction = target.value;
     const actor = game.actors.get(legionId);
     if (!actor) return;
+    if ((actor.getFlag("battle-of-mytros", "faction") || "allied") === faction) return;
     await actor.setFlag("battle-of-mytros", "faction", faction);
     this.render();
 }
@@ -102,5 +104,6 @@ export async function assignCommander(event, target) {
     const commanderId = target.value || null;
     const legion = game.actors.get(legionId);
     if (!legion) return;
+    if ((legion.getFlag("battle-of-mytros", "commanderId") ?? null) === commanderId) return;
     await legion.setFlag("battle-of-mytros", "commanderId", commanderId);
 }
