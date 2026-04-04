@@ -78,6 +78,7 @@ export async function runManeuver(_event, _target) {
     );
 
     const diff = alliedRoll.total - sydonRoll.total;
+    this.battleState.counter = { allied: alliedRoll.total, sydon: sydonRoll.total };
     this.battleState.log.push({
         text: `Maneuver — Allied: ${alliedRoll.total} (Wit ${alliedStats.wit}), Sydon: ${sydonRoll.total} (Wit ${sydonStats.wit}) → differential: ${diff >= 0 ? "+" : ""}${diff}`,
         mods: { allied: aModSummary, sydon: sModSummary },
@@ -193,6 +194,8 @@ export async function runCharge(_event, _target) {
 
     const diff = aRoll.total - sRoll.total;
     this.battleState.battleScore += diff;
+    this.battleState.counter.allied += aRoll.total;
+    this.battleState.counter.sydon += sRoll.total;
 
     this.battleState.log.push({
         text: `Charge — Allied: ${aRoll.total} (Morale ${aStats.morale}), Sydon: ${sRoll.total} (Morale ${sStats.morale}) → differential: ${diff >= 0 ? "+" : ""}${diff} | Battle Score: ${this.battleState.battleScore >= 0 ? "+" : ""}${this.battleState.battleScore}`,
@@ -311,6 +314,8 @@ export async function runClash(_event, _target) {
 
     const diff = aRoll.total - sRoll.total;
     this.battleState.battleScore += diff;
+    this.battleState.counter.allied += aRoll.total;
+    this.battleState.counter.sydon += sRoll.total;
 
     this.battleState.log.push({
         text: `Clash — Allied: ${aRoll.total} (Vit ${aStats.vitality}), Sydon: ${sRoll.total} (Vit ${sStats.vitality}) → differential: ${diff >= 0 ? "+" : ""}${diff}`,
