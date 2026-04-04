@@ -38,7 +38,9 @@
                         <select data-action="assignCommander" data-legion-id="{{this.id}}">
                             <option value="">—</option>
                             {{#each @root.commanders}}
-                                <option value="{{this.id}}" {{#if (eq this.id ../commanderId)}}selected{{/if}}>{{this.name}}</option>
+                                {{#if (eq this.faction ../faction)}}
+                                    <option value="{{this.id}}" {{#if (eq this.id ../commanderId)}}selected{{/if}}>{{this.name}}</option>
+                                {{/if}}
                             {{/each}}
                         </select>
                     </td>

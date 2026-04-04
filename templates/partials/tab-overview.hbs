@@ -63,7 +63,9 @@
                                     <select data-action="assignCommander" data-legion-id="{{this.id}}">
                                         <option value="">{{localize "MYTROS.NoCommander"}}</option>
                                         {{#each @root.commanders}}
-                                            <option value="{{this.id}}" {{#if (eq this.id ../commanderId)}}selected{{/if}}>{{this.name}}</option>
+                                            {{#if (eq this.faction ../faction)}}
+                                                <option value="{{this.id}}" {{#if (eq this.id ../commanderId)}}selected{{/if}}>{{this.name}}</option>
+                                            {{/if}}
                                         {{/each}}
                                     </select>
                                 {{else}}
@@ -84,22 +86,27 @@
                     <h4><i class="fas fa-users"></i> {{localize "MYTROS.Support"}}</h4>
                     {{#each this.supportUnits}}
                     <div class="support-item faction-row-{{this.faction}}">
-                        <span class="support-item-name">{{this.name}}</span>
-                        <span class="faction-badge faction-badge-{{this.faction}}">{{this.faction}}</span>
+                        <div class="support-item-header">
+                            <span class="support-item-name">{{this.name}}</span>
+                            <span class="faction-badge faction-badge-{{this.faction}}">{{this.faction}}</span>
+                        </div>
                         {{#if (eq @root.phase 3)}}
                             {{#if @root.isGM}}
-                            <select data-action="setDeploymentMode" data-token-id="{{this.id}}">
-                                <option value="none">{{localize "MYTROS.DeployNone"}}</option>
-                                <option value="reinforce" {{#if (eq this.deploymentMode 'reinforce')}}selected{{/if}}>{{localize "MYTROS.DeployReinforce"}}</option>
-                                <option value="shock_assault" {{#if (eq this.deploymentMode 'shock_assault')}}selected{{/if}}>{{localize "MYTROS.DeployShockAssault"}}</option>
-                                <option value="targeted_strike_maneuver" {{#if (eq this.deploymentMode 'targeted_strike_maneuver')}}selected{{/if}}>{{localize "MYTROS.DeployTargetedManeuver"}}</option>
-                                <option value="targeted_strike_charge" {{#if (eq this.deploymentMode 'targeted_strike_charge')}}selected{{/if}}>{{localize "MYTROS.DeployTargetedCharge"}}</option>
-                                <option value="targeted_strike_clash" {{#if (eq this.deploymentMode 'targeted_strike_clash')}}selected{{/if}}>{{localize "MYTROS.DeployTargetedClash"}}</option>
-                                <option value="shield_the_wounded" {{#if (eq this.deploymentMode 'shield_the_wounded')}}selected{{/if}}>{{localize "MYTROS.DeployShield"}}</option>
-                                <option value="protect" {{#if (eq this.deploymentMode 'protect')}}selected{{/if}}>{{localize "MYTROS.DeployProtect"}}</option>
-                                <option value="rest" {{#if (eq this.deploymentMode 'rest')}}selected{{/if}}>{{localize "MYTROS.DeployRest"}}</option>
-                                <option value="rally" {{#if (eq this.deploymentMode 'rally')}}selected{{/if}}>{{localize "MYTROS.DeployRally"}}</option>
-                            </select>
+                            <div class="support-item-deploy">
+                                <label>{{localize "MYTROS.DeploySelect"}}</label>
+                                <select data-action="setDeploymentMode" data-token-id="{{this.id}}">
+                                    <option value="none">{{localize "MYTROS.DeployNone"}}</option>
+                                    <option value="reinforce" {{#if (eq this.deploymentMode 'reinforce')}}selected{{/if}}>{{localize "MYTROS.DeployReinforce"}}</option>
+                                    <option value="shock_assault" {{#if (eq this.deploymentMode 'shock_assault')}}selected{{/if}}>{{localize "MYTROS.DeployShockAssault"}}</option>
+                                    <option value="targeted_strike_maneuver" {{#if (eq this.deploymentMode 'targeted_strike_maneuver')}}selected{{/if}}>{{localize "MYTROS.DeployTargetedManeuver"}}</option>
+                                    <option value="targeted_strike_charge" {{#if (eq this.deploymentMode 'targeted_strike_charge')}}selected{{/if}}>{{localize "MYTROS.DeployTargetedCharge"}}</option>
+                                    <option value="targeted_strike_clash" {{#if (eq this.deploymentMode 'targeted_strike_clash')}}selected{{/if}}>{{localize "MYTROS.DeployTargetedClash"}}</option>
+                                    <option value="shield_the_wounded" {{#if (eq this.deploymentMode 'shield_the_wounded')}}selected{{/if}}>{{localize "MYTROS.DeployShield"}}</option>
+                                    <option value="protect" {{#if (eq this.deploymentMode 'protect')}}selected{{/if}}>{{localize "MYTROS.DeployProtect"}}</option>
+                                    <option value="rest" {{#if (eq this.deploymentMode 'rest')}}selected{{/if}}>{{localize "MYTROS.DeployRest"}}</option>
+                                    <option value="rally" {{#if (eq this.deploymentMode 'rally')}}selected{{/if}}>{{localize "MYTROS.DeployRally"}}</option>
+                                </select>
+                            </div>
                             {{/if}}
                         {{else}}
                             {{#if (ne this.deploymentMode 'none')}}

@@ -28,6 +28,7 @@
     "MYTROS.FortifiedLabel": "Fortified",
     "MYTROS.VanguardLabel": "Vanguard: Moved 3 sections this round",
 
+    "MYTROS.DeploySelect": "Deployment Mode",
     "MYTROS.DeployNone": "-- Select Mode --",
     "MYTROS.DeployReinforce": "Reinforce (+1d4 All)",
     "MYTROS.DeployShockAssault": "Shock Assault (+1d6 Battle)",
@@ -128,6 +129,7 @@
     "MYTROS.CommitTitle": "Commit Results",
     "MYTROS.CommitHint": "All rolls complete. Write injuries, morale, and commander changes to the actor sheets.",
     "MYTROS.CommitButton": "Commit Changes to Actors",
+    "MYTROS.BattleScore": "Battle Score",
     "MYTROS.BattleComplete": "Battle Complete",
     "MYTROS.BattleCompleteHint": "All changes have been saved. Close this window when ready.",
 

@@ -128,6 +128,7 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
             .map((a) => ({
                 id: a.id,
                 name: a.name,
+                faction: a.getFlag("battle-of-mytros", "faction") || "allied",
             }));
 
         const battleSceneId = game.settings.get("battle-of-mytros", "battleSceneId");

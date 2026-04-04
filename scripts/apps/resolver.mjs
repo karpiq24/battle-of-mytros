@@ -68,6 +68,16 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
         context.state = this.battleState;
         context.alliedName = this.battleState.allied?.name || "None";
         context.sydonName = this.battleState.sydon?.name || "None";
+        const score = this.battleState.battleScore;
+        context.battleScoreDisplay = score === undefined || score === null ? "—" : `${score >= 0 ? "+" : ""}${score}`;
+        context.battleScoreClass =
+            score === undefined || score === null
+                ? ""
+                : score > 0
+                  ? "score-allied"
+                  : score < 0
+                    ? "score-sydon"
+                    : "score-tie";
         return context;
     }
 

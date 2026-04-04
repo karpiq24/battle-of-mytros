@@ -30,6 +30,7 @@
     "MYTROS.ObjectiveDestroyedLabel": "Cel zniszczony",
     "MYTROS.VanguardLabel": "Straż przednia: przesunięto 3 sekcje w tej rundzie",
 
+    "MYTROS.DeploySelect": "Tryb Rozmieszczenia",
     "MYTROS.DeployNone": "-- Wybierz tryb --",
     "MYTROS.DeployReinforce": "Wzmocnienie (+1k4 wszystkie)",
     "MYTROS.DeployShockAssault": "Szturm (+1k6 walka)",
@@ -125,6 +126,7 @@
     "MYTROS.CommitTitle": "Zatwierdź wyniki",
     "MYTROS.CommitHint": "Wszystkie rzuty wykonane. Zapisz rany, morale i zmiany dowódców na kartach postaci.",
     "MYTROS.CommitButton": "Zatwierdź zmiany",
+    "MYTROS.BattleScore": "Wynik Bitwy",
     "MYTROS.BattleComplete": "Bitwa zakończona",
     "MYTROS.BattleCompleteHint": "Wszystkie zmiany zostały zapisane. Zamknij okno, gdy będziesz gotowy.",
 

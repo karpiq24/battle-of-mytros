@@ -1,35 +1,40 @@
-import { promptInput } from "./data-io.mjs";
-
 /**
  * Support unit (fast response) management action handlers.
  */
 
 export async function createFastResponse(_event, _target) {
     if (!game.user.isGM) return;
-    const name = await promptInput(
-        game.i18n.localize("MYTROS.CreateSupportTitle"),
-        game.i18n.localize("MYTROS.CreateSupportHint")
-    );
-    if (!name) return;
 
-    const factionOptions = `
-        <option value="allied">${game.i18n.localize("MYTROS.ControlAllied")}</option>
-        <option value="sydon">${game.i18n.localize("MYTROS.ControlSydon")}</option>
-    `;
-    const faction = await Dialog.prompt({
-        title: game.i18n.localize("MYTROS.CreateSupportTitle"),
+    const title = game.i18n.localize("MYTROS.CreateSupportTitle");
+    const result = await foundry.applications.api.DialogV2.prompt({
+        window: { title, icon: "fas fa-users" },
         content: `
             <form>
                 <div class="form-group">
+                    <label>${game.i18n.localize("MYTROS.CreateSupportHint")}</label>
+                    <input type="text" name="name" autofocus>
+                </div>
+                <div class="form-group">
                     <label>${game.i18n.localize("MYTROS.ColFaction")}</label>
-                    <select name="faction">${factionOptions}</select>
+                    <select name="faction">
+                        <option value="allied">${game.i18n.localize("MYTROS.ControlAllied")}</option>
+                        <option value="sydon">${game.i18n.localize("MYTROS.ControlSydon")}</option>
+                    </select>
                 </div>
             </form>
         `,
-        callback: (html) => html.find('[name="faction"]').val(),
+        ok: {
+            label: game.i18n.localize("MYTROS.Confirm") || "OK",
+            icon: "fas fa-check",
+            callback: (_event, button) => ({
+                name: button.form.elements.name.value.trim(),
+                faction: button.form.elements.faction.value,
+            }),
+        },
         rejectClose: false,
     });
-    if (!faction) return;
+    if (!result?.name) return;
+    const { name, faction } = result;
 
     let actor = game.actors.getName(name);
     if (actor) {

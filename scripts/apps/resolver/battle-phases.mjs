@@ -161,11 +161,11 @@ export async function runCharge(_event, _target) {
 
     const aModSummary = this._buildModSummary(
         alliedMods,
-        aSupport.dice.concat(aFlankDice).map((d) => `Support: +${d}`)
+        aSupport.dice.map((d) => `Support: +${d}`)
     );
     const sModSummary = this._buildModSummary(
         sydonMods,
-        sSupport.dice.concat(sFlankDice).map((d) => `Support: +${d}`)
+        sSupport.dice.map((d) => `Support: +${d}`)
     );
     if (aVeteran) aModSummary.push("Veteran: floor 5");
     if (sVeteran) sModSummary.push("Veteran: floor 5");
@@ -279,14 +279,14 @@ export async function runClash(_event, _target) {
     const aSupport = this.getSupportBonuses("allied", "clash");
     const sSupport = this.getSupportBonuses("sydon", "clash");
 
-    const aModSummary = this._buildModSummary(
-        aMods,
-        (aMods.bonusDice || []).concat(aSupport.dice).map((d) => `+${d}`)
-    );
-    const sModSummary = this._buildModSummary(
-        sMods,
-        (sMods.bonusDice || []).concat(sSupport.dice).map((d) => `+${d}`)
-    );
+    const aModSummary = this._buildModSummary(aMods, [
+        ...(aMods.bonusDice || []).map((d) => `Def. Footing: +${d}`),
+        ...aSupport.dice.map((d) => `Support: +${d}`),
+    ]);
+    const sModSummary = this._buildModSummary(sMods, [
+        ...(sMods.bonusDice || []).map((d) => `Def. Footing: +${d}`),
+        ...sSupport.dice.map((d) => `Support: +${d}`),
+    ]);
     if (aVeteran) aModSummary.push("Veteran: floor 5");
     if (sVeteran) sModSummary.push("Veteran: floor 5");
     if (aSupport.advantage) aModSummary.push("Support: Advantage");
