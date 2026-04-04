@@ -20,7 +20,7 @@
             </div>
             <div class="commander-tags">
                 {{#each this.tags}}
-                <span class="tag-chip">
+                <span class="tag-chip" title="{{this.description}}">
                     {{this.name}}
                     <button type="button" class="tag-remove" data-action="removeCommanderTag" data-commander-id="{{../id}}" data-item-id="{{this.id}}" title="{{localize "MYTROS.RemoveTag"}}"><i class="fas fa-times"></i></button>
                 </span>

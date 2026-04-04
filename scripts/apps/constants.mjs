@@ -29,6 +29,30 @@ export const MAJOR_EVENTS = [
 ];
 
 /** All known commander tags used in the TagEngine. */
+export const TAG_DESCRIPTIONS = {
+    Tactician: "MYTROS.TagDesc.Tactician",
+    Fanatic: "MYTROS.TagDesc.Fanatic",
+    Zealot: "MYTROS.TagDesc.Zealot",
+    Ironclad: "MYTROS.TagDesc.Ironclad",
+    Inspiring: "MYTROS.TagDesc.Inspiring",
+    Cunning: "MYTROS.TagDesc.Cunning",
+    Warden: "MYTROS.TagDesc.Warden",
+    Vanguard: "MYTROS.TagDesc.Vanguard",
+    Headhunter: "MYTROS.TagDesc.Headhunter",
+    Mage: "MYTROS.TagDesc.Mage",
+    Engineer: "MYTROS.TagDesc.Engineer",
+    "Siege Breaker": "MYTROS.TagDesc.SiegeBreaker",
+    Medic: "MYTROS.TagDesc.Medic",
+    Rallier: "MYTROS.TagDesc.Rallier",
+    Terrorizer: "MYTROS.TagDesc.Terrorizer",
+    Brutal: "MYTROS.TagDesc.Brutal",
+    Veteran: "MYTROS.TagDesc.Veteran",
+    Bulwark: "MYTROS.TagDesc.Bulwark",
+    "Divine Blood": "MYTROS.TagDesc.DivineBlood",
+    "Unbreakable Pact": "MYTROS.TagDesc.UnbreakablePact",
+    Relentless: "MYTROS.TagDesc.Relentless",
+};
+
 export const KNOWN_TAGS = [
     "Tactician",
     "Fanatic",

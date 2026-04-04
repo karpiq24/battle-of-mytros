@@ -88,10 +88,7 @@ export class TagEngine {
         }
 
         // --- Maneuver Benefits ---
-        if (phase === "clash" && context.maneuverBenefit === "defensive") {
-            mods.flatBonus += 1;
-            mods.descriptions.push("Defensive Footing: +1");
-        }
+        // Defensive Footing clash bonus is a die roll (1d4) applied in battle-phases.mjs, not here.
         if (context.enemyManeuverBenefit === "disrupted" && (phase === "charge" || phase === "clash")) {
             mods.flatBonus -= 1;
             mods.descriptions.push("Disrupted (enemy): −1");
@@ -150,12 +147,12 @@ export class TagEngine {
 
         if (phase === "hope") {
             if (tags.includes("rallier")) {
-                mods.flatBonus += 2;
-                mods.descriptions.push("Rallier: +2");
+                mods.flatBonus += 3;
+                mods.descriptions.push("Rallier: +3");
             }
             if (context.adjacentRallier) {
-                mods.flatBonus += 1;
-                mods.descriptions.push("Rallier (adjacent): +1");
+                mods.flatBonus += 2;
+                mods.descriptions.push("Rallier (adjacent): +2");
             }
             if (tags.includes("inspiring")) {
                 mods.flatBonus += 2;

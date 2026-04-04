@@ -2,7 +2,6 @@ import random
 
 from .battle_log import BattleLog, PhaseResult
 from .config import (
-    CHARGE_WIN_CLASH_BONUS,
     MANEUVER_BENEFITS,
 )
 from .dice import contested_roll
@@ -96,7 +95,7 @@ def simulate_battle(
             if "Flanking" in benefit[0]:
                 charge_bonus_a += roll_extra(4)
             elif "Defensive" in benefit[0]:
-                clash_bonus_a += roll_extra(2)
+                clash_bonus_a += roll_extra(4)
             elif "Disrupted" in benefit[0]:
                 charge_bonus_b -= 1
                 clash_bonus_b -= 1
@@ -106,7 +105,7 @@ def simulate_battle(
             if "Flanking" in benefit[0]:
                 charge_bonus_b += roll_extra(4)
             elif "Defensive" in benefit[0]:
-                clash_bonus_b += roll_extra(2)
+                clash_bonus_b += roll_extra(4)
             elif "Disrupted" in benefit[0]:
                 charge_bonus_a -= 1
                 clash_bonus_a -= 1
@@ -145,13 +144,13 @@ def simulate_battle(
     diff_chg = ta - tb
     battle_score += diff_chg
 
-    # Charge cascade: winner gets +1 to Clash; tie = no bonus
+    # Charge cascade: winner gets +1d2 to Clash; tie = no bonus
     if diff_chg > 0:
         winner_c = "a"
-        clash_bonus_a += CHARGE_WIN_CLASH_BONUS
+        clash_bonus_a += random.randint(1, 2)
     elif diff_chg < 0:
         winner_c = "b"
-        clash_bonus_b += CHARGE_WIN_CLASH_BONUS
+        clash_bonus_b += random.randint(1, 2)
     else:
         winner_c = "tie"
 
@@ -190,13 +189,20 @@ def simulate_battle(
         PhaseResult("Clash (Vitality)", ra, rb, ta, tb, n20a, n20b, n1a, n1b, winner_cl, diff_cl)
     )
 
-    # ── Tie-breaker: sudden-death contested Vitality if Battle Score == 0 ──
-    while battle_score == 0:
-        ra2, rb2, ta2, tb2, _, _, _, _ = contested_roll(la.vit_total, lb.vit_total)
-        if ta2 > tb2:
-            battle_score += 1
-        elif tb2 > ta2:
-            battle_score -= 1
+    # ── Tie-breaker: if Battle Score == 0,
+    # clash winner decides; if clash also tied, sudden-death Vitality ──
+    if battle_score == 0:
+        if diff_cl > 0:
+            battle_score = 1
+        elif diff_cl < 0:
+            battle_score = -1
+        else:
+            while battle_score == 0:
+                ra2, rb2, ta2, tb2, _, _, _, _ = contested_roll(la.vit_total, lb.vit_total)
+                if ta2 > tb2:
+                    battle_score += 1
+                elif tb2 > ta2:
+                    battle_score -= 1
 
     log.battle_score = battle_score
     log.winner = "a" if battle_score > 0 else "b"

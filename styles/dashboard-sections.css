@@ -190,6 +190,21 @@
     border-radius: 3px;
     margin-top: 3px;
 }
+.mytros-dashboard .commander-tags-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    margin-top: 3px;
+}
+.mytros-dashboard .commander-tag-pill {
+    font-size: 0.72em;
+    color: var(--mytros-text-muted);
+    background: var(--mytros-chip-bg);
+    border: 1px solid var(--mytros-btn-secondary-border);
+    padding: 1px 5px;
+    border-radius: 3px;
+    white-space: nowrap;
+}
 .mytros-dashboard .empty-state {
     font-style: italic;
     color: var(--mytros-text-muted-alt);

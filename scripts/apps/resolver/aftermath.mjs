@@ -22,6 +22,10 @@ export async function runRecovery(_event, _target) {
             isWinner,
             adjacentWarden: side === "allied" ? adjacency.adjacentWarden : false,
         });
+        if (this.battleState.maneuverWinner === side && this.battleState.maneuverBenefit === "defensive") {
+            mods.flatBonus += 2;
+            mods.descriptions.push("Defensive Footing: +2");
+        }
         const support = this.getSupportBonusesAftermath(side);
         const isVeteran = this.hasTag(legion, "veteran");
 
@@ -393,8 +397,11 @@ export async function commitAftermath(_event, _target) {
                 this.battleState.log.push({ text: `${side} Captured Supplies: removed 1 injury.` });
             }
             if (benefit === "enemy_shaken") {
-                statsCopy[enemySide].morale = (statsCopy[enemySide].morale ?? 5) - 1;
-                this.battleState.log.push({ text: `${side} Enemy Shaken: ${enemySide} loses 1 Morale.` });
+                const shakenRoll = await new Roll("1d2").evaluate();
+                statsCopy[enemySide].morale = (statsCopy[enemySide].morale ?? 5) - shakenRoll.total;
+                this.battleState.log.push({
+                    text: `${side} Enemy Shaken: ${enemySide} loses ${shakenRoll.total} Morale.`,
+                });
             }
             if (benefit === "tactical_insight") {
                 const tacRoll = await new Roll("1d2").evaluate();
@@ -402,11 +409,6 @@ export async function commitAftermath(_event, _target) {
                 this.battleState.log.push({
                     text: `${side} Tactical Insight: +${tacRoll.total} to Wit rolls next round.`,
                 });
-            }
-            if (benefit === "quick_fortify") {
-                await this.region.setFlag("battle-of-mytros", "fortified", true);
-                await this.region.setFlag("battle-of-mytros", "control", side);
-                this.battleState.log.push({ text: `${side} Quick Fortify: section is now fortified.` });
             }
         }
     }

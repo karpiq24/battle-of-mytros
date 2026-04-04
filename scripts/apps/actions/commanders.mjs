@@ -1,4 +1,4 @@
-import { KNOWN_TAGS } from "../constants.mjs";
+import { KNOWN_TAGS, TAG_DESCRIPTIONS } from "../constants.mjs";
 import { promptInput } from "./data-io.mjs";
 
 /**
@@ -54,13 +54,20 @@ export async function addCommanderTag(_event, target) {
         return;
     }
 
-    const options = available.map((t) => `<option value="${t}">${t}</option>`).join("");
+    const options = available
+        .map((t) => {
+            const desc = game.i18n.localize(TAG_DESCRIPTIONS[t] ?? "");
+            return `<option value="${t}" title="${desc}">${t}</option>`;
+        })
+        .join("");
+    const firstDesc = game.i18n.localize(TAG_DESCRIPTIONS[available[0]] ?? "");
     const content = `
         <form>
             <div class="form-group">
                 <label>${game.i18n.localize("MYTROS.SelectTag")}</label>
-                <select name="tag">${options}</select>
+                <select name="tag" onchange="this.closest('form').querySelector('.tag-desc-preview').textContent = this.options[this.selectedIndex].title">${options}</select>
             </div>
+            <p class="tag-desc-preview" style="font-size:0.85em;color:var(--color-text-dark-secondary,#555);margin:4px 0 0;min-height:2.5em">${firstDesc}</p>
         </form>
     `;
     const result = await foundry.applications.api.DialogV2.prompt({

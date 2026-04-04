@@ -203,10 +203,10 @@ export async function runCharge(_event, _target) {
     });
 
     if (diff > 0) {
-        this.battleState.log.push({ text: "Allied won Charge! (+1 Clash)", type: "allied-win" });
+        this.battleState.log.push({ text: "Allied won Charge! (+1d2 Clash)", type: "allied-win" });
         this.battleState.chargeWinner = "allied";
     } else if (diff < 0) {
-        this.battleState.log.push({ text: "Sydon won Charge! (+1 Clash)", type: "sydon-win" });
+        this.battleState.log.push({ text: "Sydon won Charge! (+1d2 Clash)", type: "sydon-win" });
         this.battleState.chargeWinner = "sydon";
     } else {
         this.battleState.log.push({ text: "Charge tied — no cascade bonus.", type: "neutral" });
@@ -255,22 +255,22 @@ export async function runClash(_event, _target) {
     );
 
     if (this.battleState.chargeWinner === "allied") {
-        aMods.flatBonus += 1;
-        aMods.descriptions.push("Charge Victor: +1");
+        const chargeVictorRoll = await new Roll("1d2").evaluate();
+        aMods.flatBonus += chargeVictorRoll.total;
+        aMods.descriptions.push(`Charge Victor: +${chargeVictorRoll.total}`);
     }
     if (this.battleState.chargeWinner === "sydon") {
-        sMods.flatBonus += 1;
-        sMods.descriptions.push("Charge Victor: +1");
+        const chargeVictorRoll = await new Roll("1d2").evaluate();
+        sMods.flatBonus += chargeVictorRoll.total;
+        sMods.descriptions.push(`Charge Victor: +${chargeVictorRoll.total}`);
     }
 
-    // Apply Maneuver bonus dice if selected (Defensive Footing: +1d2 to Clash)
-    if (this.battleState.maneuverWinner === "allied") {
-        if (this.battleState.maneuverBenefit === "defensive") aMods.flatBonus -= 1; // Remove flat average, use die instead
-        if (this.battleState.maneuverBenefit === "defensive") aMods.bonusDice = (aMods.bonusDice || []).concat("1d2");
+    // Apply Maneuver bonus dice if selected (Defensive Footing: +1d4 to Clash)
+    if (this.battleState.maneuverWinner === "allied" && this.battleState.maneuverBenefit === "defensive") {
+        aMods.bonusDice = (aMods.bonusDice || []).concat("1d4");
     }
-    if (this.battleState.maneuverWinner === "sydon") {
-        if (this.battleState.maneuverBenefit === "defensive") sMods.flatBonus -= 1;
-        if (this.battleState.maneuverBenefit === "defensive") sMods.bonusDice = (sMods.bonusDice || []).concat("1d2");
+    if (this.battleState.maneuverWinner === "sydon" && this.battleState.maneuverBenefit === "defensive") {
+        sMods.bonusDice = (sMods.bonusDice || []).concat("1d4");
     }
 
     const aStats = this.battleState.allied.getFlag("battle-of-mytros", "stats");
@@ -333,6 +333,12 @@ export async function runClash(_event, _target) {
         this.battleState.overallWinner = "allied";
     } else if (score < 0) {
         this.battleState.log.push({ text: "▶ SYDON LEGION WINS THE BATTLE", type: "sydon-win" });
+        this.battleState.overallWinner = "sydon";
+    } else if (diff > 0) {
+        this.battleState.log.push({ text: "BATTLE SCORE TIED — Allied wins by Clash phase", type: "allied-win" });
+        this.battleState.overallWinner = "allied";
+    } else if (diff < 0) {
+        this.battleState.log.push({ text: "BATTLE SCORE TIED — Sydon wins by Clash phase", type: "sydon-win" });
         this.battleState.overallWinner = "sydon";
     } else {
         this.battleState.log.push({ text: "BATTLE TIED — Sudden Death Required", type: "neutral" });

@@ -44,6 +44,7 @@ def run_aftermath(
     fort_bonus: int = 0,
     pc_deployments: list[PCDeployment] = None,
     pool: MiraclePool = None,
+    defensive_footing: bool = False,
 ) -> dict:
     results = {}
     vet = _has(legion, "Veteran")
@@ -64,6 +65,8 @@ def run_aftermath(
     adv_rec = _has(legion, "Medic")  # Medic: advantage on Recovery
     disadv_rec = disadv_recovery or _has(legion, "Fanatic")  # Fanatic: disadvantage
     rec_bonus = warden_recovery_bonus + fort_bonus + roll_pc_aft("recovery")
+    if defensive_footing:
+        rec_bonus += 2
     if _has(legion, "Ironclad"):
         rec_bonus += IRONCLAD_BONUS
 
@@ -236,5 +239,3 @@ def _apply_salvage(legion: Legion, benefit: str):
         legion.injuries = max(0, legion.injuries - 1)
     elif "Insight" in benefit:
         legion.wit_temp_bonus += 2
-    elif "Fortify" in benefit and legion.section != -1:
-        legion.fortified_section = legion.section

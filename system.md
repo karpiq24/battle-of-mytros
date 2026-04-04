@@ -63,7 +63,7 @@ A newly assigned replacement commander arrives with their own tags, which take e
 | **Tactician**        | Advantage on Maneuver rolls.                                                                                                                                                                                                             |
 | **Headhunter**       | When this legion engages an enemy, the enemy suffers Disadvantage on their Clash roll. Furthermore, if the enemy commander must make a Commander Casualty Check, add 5% to their Base Death Chance.                                      |
 | **Engineer**         | Enemy legions engaging this legion in fortified sections suffer −2 to all battle rolls (Maneuver, Charge, Clash)                                                                                                                         |
-| **Rallier**          | This legion gains \+2 to Hope checks. Allied legions in adjacent sections gain \+1 to Hope checks.                                                                                                                                       |
+| **Rallier**          | This legion gains \+3 to Hope checks. Allied legions in adjacent sections gain \+2 to Hope checks.                                                                                                                                       |
 | **Terrorizer**       | Enemy legions that fight this legion suffer Disadvantage on their Hope checks after the battle.                                                                                                                                          |
 | **Fanatic**          | This legion attacks with reckless fury, gaining +2 to both Charge and Clash rolls. However, due to their disregard for their own survival, they suffer Disadvantage on their Recovery check after every battle.                          |
 | **Zealot**           | While this legion’s current Morale is 7 or higher, it gains \+2 to all three battle rolls (Maneuver, Charge, Clash).                                                                                                                     |
@@ -167,16 +167,16 @@ When opposing legions meet in the same section, battle occurs. Each battle has t
 
 Both sides roll 1d20 + Wit. The differential (your roll minus enemy roll) is added to the Battle Score. If your differential is positive, you win the phase and choose one benefit for the rest of this battle. If tied (differential is 0), no benefit is granted.
 
-| Maneuver Benefit    | Effect                                                                              |
-| :------------------ | :---------------------------------------------------------------------------------- |
-| Flanking Position   | \+1d4 to your Charge roll (Phase 2).                                                |
-| Defensive Footing   | \+1d2 to your Clash roll (Phase 3).                                                 |
-| Disrupted Formation | Enemy suffers −1 to both Charge and Clash rolls.                                    |
-| Seized Initiative   | If you win the overall battle, the enemy takes \+1d2 extra injury in the aftermath. |
+| Maneuver Benefit    | Effect                                                                                               |
+| :------------------ | :--------------------------------------------------------------------------------------------------- |
+| Flanking Position   | \+1d4 to your Charge roll (Phase 2).                                                                 |
+| Defensive Footing   | \+1d4 to your Clash roll (Phase 3). This legion also gains \+2 to their Recovery check in Aftermath. |
+| Disrupted Formation | Enemy suffers −1 to both Charge and Clash rolls.                                                     |
+| Seized Initiative   | If you win the overall battle, the enemy takes \+1d2 extra injury in the aftermath.                  |
 
 ## **Phase 2: The Charge (Morale)**
 
-Both sides roll 1d20 \+ Morale. The shock of first contact. The differential is added to the Battle Score. The Charge winner (positive differential) gains \+1 to their Clash roll. If tied, no cascade bonus.
+Both sides roll 1d20 \+ Morale. The shock of first contact. The differential is added to the Battle Score. The Charge winner (positive differential) gains \+1d2 to their Clash roll. If tied, no cascade bonus.
 
 ## **Phase 3: The Clash (Vitality)**
 
@@ -186,7 +186,7 @@ Both sides roll 1d20 \+ Vitality. The grinding melee that decides the battle. Th
 
 The Battle Score is the sum of all three phase differentials. Positive means your side wins; negative means the enemy wins. The magnitude determines the severity of aftermath consequences (see Commander Casualty Check).
 
-**Tie-breaker:** If the Battle Score is exactly 0, a sudden-death contested Vitality roll breaks the tie. If that also ties, reroll until one side wins.
+**Tie-breaker:** If the Battle Score is exactly 0, the winner of the Clash phase wins the battle. If the Clash was also tied, a sudden-death contested Vitality roll breaks the tie — reroll until one side wins.
 
 # **Aftermath**
 
@@ -220,12 +220,11 @@ _Diminishing Returns:_ When a legion's current Morale is 7 or higher, reduce all
 
 **Roll:** Both winner and loser roll 1d20 \+ Wit vs DC 12\. On success, choose one benefit. On a natural 20, choose two.
 
-| Salvage Benefit   | Effect                                                                  |
-| :---------------- | :---------------------------------------------------------------------- |
-| Captured Supplies | Remove 1 injury from this legion.                                       |
-| Tactical Insight  | \+1d2 to this legion’s Wit rolls next round.                            |
-| Enemy Shaken      | The opposing legion suffers −1 Morale.                                  |
-| Quick Fortify     | Immediately fortify the section you hold (normally takes a full round). |
+| Salvage Benefit   | Effect                                       |
+| :---------------- | :------------------------------------------- |
+| Captured Supplies | Remove 1 injury from this legion.            |
+| Tactical Insight  | \+1d2 to this legion’s Wit rolls next round. |
+| Enemy Shaken      | The opposing legion suffers −1d2 Morale.     |
 
 ## **Commander Casualty Check**
 

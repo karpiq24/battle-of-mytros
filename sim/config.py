@@ -43,11 +43,11 @@ ENGINEER_PENALTY = -2  # Applied to all enemy battle rolls in fortified section
 MAGE_PENALTY = -1  # Applied to all enemy battle rolls
 HEADHUNTER_DEATH_BONUS = 5  # +5% added to enemy commander's death chance
 DIVINE_BLOOD_DEATH_REDUC = 5  # -5% subtracted from own base death chance
-CHARGE_WIN_CLASH_BONUS = 1  # Clash bonus for winning the Charge phase
+CHARGE_WIN_CLASH_BONUS = 2  # Clash bonus for winning the Charge phase (1d2)
 FANATIC_BONUS = 2  # Flat bonus to Charge and Clash (was advantage on both)
 MORALE_DIMINISHING_THRESHOLD = 7  # Morale gains reduced by 1 when at or above this
-RALLIER_OWN_HOPE_BONUS = 2  # Rallier: +2 to own Hope check
-RALLIER_ADJ_HOPE_BONUS = 1  # Rallier: +1 to adjacent allied legions' Hope check
+RALLIER_OWN_HOPE_BONUS = 3  # Rallier: +3 to own Hope check
+RALLIER_ADJ_HOPE_BONUS = 2  # Rallier: +2 to adjacent allied legions' Hope check
 
 # ── Civilian Death Toll ──
 # Rolled once per engagement per round, added to running total
@@ -74,7 +74,7 @@ RECON_MANEUVER_BONUS_TIER = 23  # Roll >= this → +1 to all allied Maneuver rol
 
 MANEUVER_BENEFITS = [
     ("Flanking Position", "+1d4 to Charge"),
-    ("Defensive Footing", "+1d2 to Clash"),
+    ("Defensive Footing", "+1d4 to own Clash, +2 to own Recovery"),
     ("Disrupted Formation", "-1 to enemy Charge and Clash"),
     ("Seized Initiative", "+1d2 extra injury to enemy if won"),
 ]
@@ -82,8 +82,7 @@ MANEUVER_BENEFITS = [
 SALVAGE_BENEFITS = [
     "Captured Supplies (-1 injury)",
     "Tactical Insight (+2 Wit next round)",
-    "Enemy Shaken (-1 enemy Morale)",
-    "Quick Fortify",
+    "Enemy Shaken (-1d2 enemy Morale)",
 ]
 
 STRATEGIC_OBJECTIVES = {

@@ -1,4 +1,4 @@
-import { MAJOR_EVENTS, KNOWN_TAGS, STRATEGIC_OBJECTIVES } from "./constants.mjs";
+import { MAJOR_EVENTS, KNOWN_TAGS, STRATEGIC_OBJECTIVES, TAG_DESCRIPTIONS } from "./constants.mjs";
 // STRATEGIC_OBJECTIVES and MAJOR_EVENTS kept as static defaults for reset functionality
 import * as overviewActions from "./actions/overview.mjs";
 import * as sectionActions from "./actions/sections.mjs";
@@ -172,11 +172,16 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
                     const commanderId = t.actor.getFlag("battle-of-mytros", "commanderId");
                     let commanderName = "None";
                     let hasVanguard = false;
+                    let commanderTags = [];
                     if (commanderId) {
                         const actorCmdr = game.actors.get(commanderId);
                         if (actorCmdr) {
                             commanderName = actorCmdr.name;
                             hasVanguard = actorCmdr.items.some((i) => i.name.toLowerCase() === "vanguard");
+                            commanderTags = actorCmdr.items.map((i) => ({
+                                name: i.name,
+                                description: game.i18n.localize(TAG_DESCRIPTIONS[i.name] ?? ""),
+                            }));
                         }
                     }
 
@@ -186,6 +191,7 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
                         faction: t.actor.getFlag("battle-of-mytros", "faction"),
                         commanderId: commanderId,
                         commanderName: commanderName,
+                        commanderTags: commanderTags,
                         hasVanguard: hasVanguard,
                         injuries: stats.injuries ?? 0,
                         morale: stats.morale ?? "?",
@@ -280,7 +286,11 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
         const allCommanders = game.actors.filter((a) => globalThis.MytrosActorData.isCommander(a));
         context.allCommanders = allCommanders
             .map((a) => {
-                const tags = a.items.map((i) => ({ id: i.id, name: i.name }));
+                const tags = a.items.map((i) => ({
+                    id: i.id,
+                    name: i.name,
+                    description: game.i18n.localize(TAG_DESCRIPTIONS[i.name] ?? ""),
+                }));
                 // Use the context.allLegions objects we just built
                 const assignedLegion = context.allLegions.find((l) => l.commanderId === a.id);
                 const rawFaction = a.getFlag("battle-of-mytros", "faction") || "allied";

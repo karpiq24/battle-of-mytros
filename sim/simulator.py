@@ -192,6 +192,9 @@ def simulate_round(
 
         won_a = log.winner == "a"
         cdiff_a = log.battle_score  # positive = side A won by this margin
+        maneuver_winner = log.phases[0].winner if log.phases else "tie"
+        defensive_footing_a = maneuver_winner == "a" and "Defensive" in log.maneuver_benefit
+        defensive_footing_b = maneuver_winner == "b" and "Defensive" in log.maneuver_benefit
 
         # Cross-effects from opponent tags
         brutal_won_a = won_a and _has(la, "Brutal")
@@ -234,6 +237,7 @@ def simulate_round(
             fort_bonus=fort_a,
             pc_deployments=pcs_a,
             pool=pool_a,
+            defensive_footing=defensive_footing_a,
         )
 
         aftermath_b = run_aftermath(
@@ -248,6 +252,7 @@ def simulate_round(
             headhunter_death_penalty=hh_vs_b,
             fort_bonus=fort_b,
             pool=pool_e,
+            defensive_footing=defensive_footing_b,
         )
 
         if brutal_won_a and le.injuries >= 4 and not le.destroyed:
@@ -265,7 +270,7 @@ def simulate_round(
         ]:
             for b in benefits_list:
                 if "Shaken" in b:
-                    target.morale_mod -= 1
+                    target.morale_mod -= random.randint(1, 2)
 
         log.aftermath_a = aftermath_a
         log.aftermath_b = aftermath_b

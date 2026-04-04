@@ -1200,8 +1200,8 @@
                                 <div class="tag-action"><span class="badge badge-passive">Passive</span></div>
                             </div>
                             <div class="tag-effect">
-                                This legion gains <strong>+2 to Hope checks</strong>. Allied legions in adjacent
-                                sections gain <strong>+1 to Hope checks</strong>.
+                                This legion gains <strong>+3 to Hope checks</strong>. Allied legions in adjacent
+                                sections gain <strong>+2 to Hope checks</strong>.
                             </div>
                         </div>
 
@@ -1558,9 +1558,9 @@ flowchart LR
     M["🧠 PHASE 1\nThe Maneuver\n1d20 + Wit\nWinner chooses 1 benefit"]
     C["🔥 PHASE 2\nThe Charge\n1d20 + Morale\nWinner gains +1 to Clash"]
     CL["⚔ PHASE 3\nThe Clash\n1d20 + Vitality"]
-    V["🏆 TALLY\nBattle Score\nSum of differentials\nPositive = you win\nTie - Vitality sudden death"]
+    V["🏆 TALLY\nBattle Score\nSum of differentials\nPositive = you win\nTie - Clash winner wins\nor Vitality sudden death"]
     M -->|"+1d4 Charge bonus\nor other benefit"| C
-    C -->|"+1 to Clash roll\nfor Charge winner"| CL
+    C -->|"+1d2 to Clash roll\nfor Charge winner"| CL
     CL --> V
     style M fill:#1a2a3a,stroke:#3a7ab5,color:#90c0e8
     style C fill:#3a2a10,stroke:#b58030,color:#e8c070
@@ -1582,7 +1582,10 @@ flowchart LR
                         </div>
                         <div class="benefit-card">
                             <div class="name">Defensive Footing</div>
-                            <div class="desc"><strong>+1d2</strong> to your Clash roll (Phase 3)</div>
+                            <div class="desc">
+                                <strong>+1d4</strong> to your Clash roll (Phase 3) and <strong>+2</strong> to this
+                                legion's Recovery check
+                            </div>
                         </div>
                         <div class="benefit-card">
                             <div class="name">Disrupted Formation</div>
@@ -1600,7 +1603,7 @@ flowchart LR
                     <h3>Phase 2: The Charge (Morale)</h3>
                     <p>
                         Both sides roll 1d20 + Morale. The differential is added to the Battle Score. The Charge winner
-                        (positive differential) gains +1 to their Clash roll. If tied, no cascade bonus.
+                        (positive differential) gains +1d2 to their Clash roll. If tied, no cascade bonus.
                     </p>
 
                     <h3>Phase 3: The Clash (Vitality)</h3>
@@ -1615,9 +1618,10 @@ flowchart LR
 
                     <div class="callout callout-gold">
                         <strong>Tie-Breaker</strong>
-                        If the Battle Score is exactly 0, a
-                        <strong>sudden-death contested Vitality roll</strong> breaks the tie. If that also ties, reroll
-                        until one side wins.
+                        If the Battle Score is exactly 0, the <strong>winner of the Clash phase</strong> wins the
+                        battle. If the Clash was also tied, a
+                        <strong>sudden-death contested Vitality roll</strong> breaks the tie — reroll until one side
+                        wins.
                     </div>
 
                     <h3>Fortification</h3>
@@ -1728,10 +1732,7 @@ flowchart TD
                                     🔹 <strong>Tactical Insight</strong> — +1d2 to Wit rolls next round
                                 </div>
                                 <div style="font-size: 0.82rem; color: var(--text-secondary)">
-                                    🔹 <strong>Enemy Shaken</strong> — Opposing legion −1 Morale
-                                </div>
-                                <div style="font-size: 0.82rem; color: var(--text-secondary)">
-                                    🔹 <strong>Quick Fortify</strong> — Immediately fortify held section
+                                    🔹 <strong>Enemy Shaken</strong> — Opposing legion −1d2 Morale
                                 </div>
                             </div>
                         </div>

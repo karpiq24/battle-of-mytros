@@ -73,6 +73,13 @@
                                         <span class="commander-tag"><i class="fas fa-user-crown"></i> {{this.commanderName}}</span>
                                     {{/if}}
                                 {{/if}}
+                                {{#if this.commanderTags.length}}
+                                <div class="commander-tags-row">
+                                    {{#each this.commanderTags}}
+                                        <span class="commander-tag-pill" title="{{this.description}}">{{this.name}}</span>
+                                    {{/each}}
+                                </div>
+                                {{/if}}
                             </li>
                         {{/each}}
                         </ul>
