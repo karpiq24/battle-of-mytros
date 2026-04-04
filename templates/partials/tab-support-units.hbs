@@ -20,11 +20,7 @@
                 <tr class="support-row faction-row-{{this.faction}}">
                     <td class="col-name">{{this.name}}</td>
                     <td class="col-type">
-                        {{#if this.isAutoIncluded}}
-                        <span class="type-badge type-badge-pc">{{localize "MYTROS.SupportTypePC"}}</span>
-                        {{else}}
                         <span class="type-badge type-badge-unit">{{localize "MYTROS.SupportTypeUnit"}}</span>
-                        {{/if}}
                     </td>
                     <td class="col-faction">
                         <select data-action="updateFastResponseFaction" data-actor-id="{{this.id}}">
@@ -33,9 +29,7 @@
                         </select>
                     </td>
                     <td class="col-actions">
-                        {{#unless this.isAutoIncluded}}
                         <button type="button" class="btn-delete" data-action="removeFastResponse" data-actor-id="{{this.id}}" title="{{localize "MYTROS.RemoveSupport"}}"><i class="fas fa-times"></i></button>
-                        {{/unless}}
                     </td>
                 </tr>
                 {{/each}}

@@ -220,10 +220,12 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
                         if (actorCmdr) {
                             commanderName = actorCmdr.name;
                             hasVanguard = actorCmdr.items.some((i) => i.name.toLowerCase() === "vanguard");
-                            commanderTags = actorCmdr.items.map((i) => ({
-                                name: i.name,
-                                description: game.i18n.localize(TAG_DESCRIPTIONS[i.name] ?? ""),
-                            }));
+                            commanderTags = actorCmdr.items
+                                .filter((i) => KNOWN_TAGS.includes(i.name))
+                                .map((i) => ({
+                                    name: i.name,
+                                    description: game.i18n.localize(TAG_DESCRIPTIONS[i.name] ?? ""),
+                                }));
                         }
                     }
 
@@ -328,11 +330,13 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
         const allCommanders = game.actors.filter((a) => globalThis.MytrosActorData.isCommander(a));
         context.allCommanders = allCommanders
             .map((a) => {
-                const tags = a.items.map((i) => ({
-                    id: i.id,
-                    name: i.name,
-                    description: game.i18n.localize(TAG_DESCRIPTIONS[i.name] ?? ""),
-                }));
+                const tags = a.items
+                    .filter((i) => KNOWN_TAGS.includes(i.name))
+                    .map((i) => ({
+                        id: i.id,
+                        name: i.name,
+                        description: game.i18n.localize(TAG_DESCRIPTIONS[i.name] ?? ""),
+                    }));
                 // Use the context.allLegions objects we just built
                 const assignedLegion = context.allLegions.find((l) => l.commanderId === a.id);
                 const rawFaction = a.getFlag("battle-of-mytros", "faction") || "allied";
@@ -358,7 +362,6 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
                 id: a.id,
                 name: a.name,
                 faction: a.getFlag("battle-of-mytros", "faction") || "allied",
-                isAutoIncluded: a.hasPlayerOwner === true && a.getFlag("battle-of-mytros", "isFastResponse") !== true,
             }))
             .sort((a, b) => {
                 if (a.faction !== b.faction) return a.faction === "allied" ? -1 : 1;

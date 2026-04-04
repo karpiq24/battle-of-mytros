@@ -10,7 +10,7 @@ export class MytrosActorData {
     }
 
     static isFastResponse(actor) {
-        return actor.hasPlayerOwner === true || actor.getFlag(this.MODULE_ID, "isFastResponse") === true;
+        return actor.getFlag(this.MODULE_ID, "isFastResponse") === true;
     }
 
     static async initFastResponse(actor, faction = "allied") {
