@@ -42,7 +42,6 @@ export async function updateLegionStat(_event, target) {
     const actor = game.actors.get(legionId);
     if (!actor) return;
     const stats = { ...actor.getFlag("battle-of-mytros", "stats") };
-    if (stats[stat] === value) return;
     stats[stat] = value;
     this._pendingOps++;
     try {
