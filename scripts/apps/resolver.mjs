@@ -98,6 +98,7 @@ export class BattleResolverApp extends HandlebarsApplicationMixin(ApplicationV2)
             alliedName: this.battleState.allied?.name ?? "None",
             sydonName: this.battleState.sydon?.name ?? "None",
             phase: this.battleState.phase,
+            battleScore: this.battleState.battleScore,
         });
     }
 

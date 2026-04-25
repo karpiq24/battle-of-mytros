@@ -222,7 +222,8 @@
 }
 
 /* ── Battle Score Banner ───────────────────────────────────────────────── */
-.mytros-resolver .battle-score-banner {
+.mytros-resolver .battle-score-banner,
+.mytros-log-viewer .battle-score-banner {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -233,25 +234,30 @@
     background: var(--mytros-surface-card);
     flex-shrink: 0;
 }
-.mytros-resolver .score-label {
+.mytros-resolver .score-label,
+.mytros-log-viewer .score-label {
     font-size: 0.78em;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--mytros-text-muted-alt);
 }
-.mytros-resolver .score-value {
+.mytros-resolver .score-value,
+.mytros-log-viewer .score-value {
     font-size: 1.4em;
     font-weight: 800;
     color: var(--mytros-text);
 }
-.mytros-resolver .battle-score-banner.score-allied .score-value {
+.mytros-resolver .battle-score-banner.score-allied .score-value,
+.mytros-log-viewer .battle-score-banner.score-allied .score-value {
     color: var(--mytros-allied);
 }
-.mytros-resolver .battle-score-banner.score-sydon .score-value {
+.mytros-resolver .battle-score-banner.score-sydon .score-value,
+.mytros-log-viewer .battle-score-banner.score-sydon .score-value {
     color: var(--mytros-sydon);
 }
-.mytros-resolver .battle-score-banner.score-tie .score-value {
+.mytros-resolver .battle-score-banner.score-tie .score-value,
+.mytros-log-viewer .battle-score-banner.score-tie .score-value {
     color: var(--mytros-accent);
 }
 

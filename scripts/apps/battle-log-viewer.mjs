@@ -25,6 +25,7 @@ export class BattleLogViewerApp extends HandlebarsApplicationMixin(ApplicationV2
             alliedName: data.alliedName ?? "",
             sydonName: data.sydonName ?? "",
             phase: data.phase ?? "",
+            battleScore: data.battleScore,
         };
         const existing = foundry.applications.instances.get("mytros-battle-log-viewer");
         if (existing) {
@@ -48,6 +49,18 @@ export class BattleLogViewerApp extends HandlebarsApplicationMixin(ApplicationV2
         context.log = BattleLogViewerApp._log;
         context.meta = BattleLogViewerApp._meta;
         context.isLive = BattleLogViewerApp._meta.phase !== "complete";
+
+        const score = context.meta.battleScore;
+        context.battleScoreDisplay = score === undefined || score === null ? "—" : `${score >= 0 ? "+" : ""}${score}`;
+        context.battleScoreClass =
+            score === undefined || score === null
+                ? ""
+                : score > 0
+                  ? "score-allied"
+                  : score < 0
+                    ? "score-sydon"
+                    : "score-tie";
+
         return context;
     }
 
