@@ -1,0 +1,34 @@
+<div class="mytros-battle-card">
+    <div class="card-header"><i class="fas fa-skull"></i> {{title}}</div>
+    <div class="card-result">
+        <p>{{intro}}</p>
+    </div>
+    <table class="card-table">
+        <thead>
+            <tr>
+                <th>{{sourceLabel}}</th>
+                <th>{{deathsLabel}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#if pillageDeaths}}
+            <tr>
+                <td>{{pillageLabel}}</td>
+                <td class="text-bad" style="color:var(--mytros-danger);font-weight:bold;">+{{pillageDeaths}}</td>
+            </tr>
+            {{/if}}
+            {{#if objectiveDeaths}}
+            <tr>
+                <td>{{objectiveLabel}}</td>
+                <td class="text-bad" style="color:var(--mytros-danger);font-weight:bold;">+{{objectiveDeaths}}</td>
+            </tr>
+            {{/if}}
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>{{totalAddedLabel}}</th>
+                <th class="text-bad" style="color:var(--mytros-danger);font-weight:bold;">+{{totalDeaths}}</th>
+            </tr>
+        </tfoot>
+    </table>
+</div>

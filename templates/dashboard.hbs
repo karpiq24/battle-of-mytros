@@ -2,9 +2,9 @@
     <nav class="tabs">
         <a class="item {{#if (eq tab 'overview')}}active{{/if}}" data-action="changeTab" data-tab="overview"><i class="fas fa-map-marked-alt"></i> {{localize "MYTROS.TabOverview"}}</a>
         <a class="item {{#if (eq tab 'miracles')}}active{{/if}}" data-action="changeTab" data-tab="miracles"><i class="fas fa-sun"></i> {{localize "MYTROS.TabMiracles"}}</a>
-        {{#if isGM}}
         <a class="item {{#if (eq tab 'legions')}}active{{/if}}" data-action="changeTab" data-tab="legions"><i class="fas fa-shield-alt"></i> {{localize "MYTROS.TabLegions"}}</a>
         <a class="item {{#if (eq tab 'commanders')}}active{{/if}}" data-action="changeTab" data-tab="commanders"><i class="fas fa-user-crown"></i> {{localize "MYTROS.TabCommanders"}}</a>
+        {{#if isGM}}
         <a class="item {{#if (eq tab 'support')}}active{{/if}}" data-action="changeTab" data-tab="support"><i class="fas fa-users"></i> {{localize "MYTROS.TabSupport"}}</a>
         <a class="item {{#if (eq tab 'setup')}}active{{/if}}" data-action="changeTab" data-tab="setup"><i class="fas fa-cog"></i> {{localize "MYTROS.TabSetup"}}</a>
         {{/if}}

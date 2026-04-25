@@ -68,6 +68,11 @@ export async function runManeuver(_event, _target) {
         aVeteran,
         aSupport.dice
     );
+    await alliedRoll.roll.toMessage({
+        flavor: `Maneuver — ${this.battleState.allied.name} (Wit ${alliedStats.wit})`,
+        rollMode: CONST.DICE_ROLL_MODES.PUBLIC,
+        speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
+    });
     const sydonRoll = await globalThis.BattleRoller.executeRoll(
         sydonStats.wit,
         sydonMods.flatBonus,
@@ -76,6 +81,11 @@ export async function runManeuver(_event, _target) {
         sVeteran,
         sSupport.dice
     );
+    await sydonRoll.roll.toMessage({
+        flavor: `Maneuver — ${this.battleState.sydon.name} (Wit ${sydonStats.wit})`,
+        rollMode: CONST.DICE_ROLL_MODES.PUBLIC,
+        speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
+    });
 
     const diff = alliedRoll.total - sydonRoll.total;
     this.battleState.counter = { allied: alliedRoll.total, sydon: sydonRoll.total };
@@ -183,6 +193,11 @@ export async function runCharge(_event, _target) {
         aVeteran,
         aSupport.dice.concat(aFlankDice)
     );
+    await aRoll.roll.toMessage({
+        flavor: `Charge — ${this.battleState.allied.name} (Morale ${aStats.morale})`,
+        rollMode: CONST.DICE_ROLL_MODES.PUBLIC,
+        speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
+    });
     const sRoll = await globalThis.BattleRoller.executeRoll(
         sStats.morale,
         sydonMods.flatBonus,
@@ -191,6 +206,11 @@ export async function runCharge(_event, _target) {
         sVeteran,
         sSupport.dice.concat(sFlankDice)
     );
+    await sRoll.roll.toMessage({
+        flavor: `Charge — ${this.battleState.sydon.name} (Morale ${sStats.morale})`,
+        rollMode: CONST.DICE_ROLL_MODES.PUBLIC,
+        speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
+    });
 
     const diff = aRoll.total - sRoll.total;
     this.battleState.battleScore += diff;
@@ -256,11 +276,21 @@ export async function runClash(_event, _target) {
 
     if (this.battleState.chargeWinner === "allied") {
         const chargeVictorRoll = await new Roll("1d2").evaluate();
+        await chargeVictorRoll.toMessage({
+            flavor: `Clash Charge Bonus — ${this.battleState.allied.name} (1d2)`,
+            rollMode: CONST.DICE_ROLL_MODES.PUBLIC,
+            speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
+        });
         aMods.flatBonus += chargeVictorRoll.total;
         aMods.descriptions.push(`Charge Victor: +${chargeVictorRoll.total}`);
     }
     if (this.battleState.chargeWinner === "sydon") {
         const chargeVictorRoll = await new Roll("1d2").evaluate();
+        await chargeVictorRoll.toMessage({
+            flavor: `Clash Charge Bonus — ${this.battleState.sydon.name} (1d2)`,
+            rollMode: CONST.DICE_ROLL_MODES.PUBLIC,
+            speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
+        });
         sMods.flatBonus += chargeVictorRoll.total;
         sMods.descriptions.push(`Charge Victor: +${chargeVictorRoll.total}`);
     }
@@ -303,6 +333,11 @@ export async function runClash(_event, _target) {
         aVeteran,
         (aMods.bonusDice || []).concat(aSupport.dice)
     );
+    await aRoll.roll.toMessage({
+        flavor: `Clash — ${this.battleState.allied.name} (Vitality ${aStats.vitality})`,
+        rollMode: CONST.DICE_ROLL_MODES.PUBLIC,
+        speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
+    });
     const sRoll = await globalThis.BattleRoller.executeRoll(
         sStats.vitality,
         sMods.flatBonus,
@@ -311,6 +346,11 @@ export async function runClash(_event, _target) {
         sVeteran,
         (sMods.bonusDice || []).concat(sSupport.dice)
     );
+    await sRoll.roll.toMessage({
+        flavor: `Clash — ${this.battleState.sydon.name} (Vitality ${sStats.vitality})`,
+        rollMode: CONST.DICE_ROLL_MODES.PUBLIC,
+        speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
+    });
 
     const diff = aRoll.total - sRoll.total;
     this.battleState.battleScore += diff;
@@ -363,6 +403,11 @@ export async function runTiebreaker(_event, _target) {
         this.hasTag(this.battleState.allied, "veteran"),
         []
     );
+    await aRoll.roll.toMessage({
+        flavor: `Tiebreaker — ${this.battleState.allied.name} (Vitality ${aStats.vitality})`,
+        rollMode: CONST.DICE_ROLL_MODES.PUBLIC,
+        speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
+    });
     const sRoll = await globalThis.BattleRoller.executeRoll(
         sStats.vitality,
         0,
@@ -371,6 +416,11 @@ export async function runTiebreaker(_event, _target) {
         this.hasTag(this.battleState.sydon, "veteran"),
         []
     );
+    await sRoll.roll.toMessage({
+        flavor: `Tiebreaker — ${this.battleState.sydon.name} (Vitality ${sStats.vitality})`,
+        rollMode: CONST.DICE_ROLL_MODES.PUBLIC,
+        speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
+    });
 
     this.battleState.log.push({ text: `Tiebreaker — Allied Vit: ${aRoll.total} | Sydon Vit: ${sRoll.total}` });
 

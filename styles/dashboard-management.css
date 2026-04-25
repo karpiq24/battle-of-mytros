@@ -295,3 +295,99 @@
     color: var(--mytros-text-muted-alt);
     font-style: italic;
 }
+
+/* ── Readonly Badges (player view of legions/commanders) ───────────────── */
+.mytros-dashboard .faction-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 0.78em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-radius: var(--mytros-radius);
+    border: 1px solid transparent;
+}
+.mytros-dashboard .faction-badge.faction-allied {
+    color: var(--mytros-allied);
+    border-color: var(--mytros-allied);
+    background: rgba(46, 134, 193, 0.08);
+}
+.mytros-dashboard .faction-badge.faction-sydon {
+    color: var(--mytros-sydon);
+    border-color: var(--mytros-sydon);
+    background: rgba(192, 57, 43, 0.08);
+}
+.mytros-dashboard .status-badges {
+    display: flex;
+    gap: 3px;
+}
+.mytros-dashboard .status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px 6px;
+    font-size: 0.82em;
+    border-radius: 3px;
+    border: 1px solid transparent;
+}
+.mytros-dashboard .status-badge.status-routed {
+    color: var(--mytros-warning);
+    border-color: var(--mytros-warning);
+    background: rgba(230, 126, 34, 0.1);
+}
+.mytros-dashboard .status-badge.status-destroyed {
+    color: var(--mytros-danger);
+    border-color: var(--mytros-danger);
+    background: rgba(192, 57, 43, 0.1);
+}
+
+/* ── Tag Reference Legend ─────────────────────────────────────────────── */
+.mytros-dashboard .tag-legend {
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    border: 1px solid var(--mytros-divider);
+    border-radius: var(--mytros-radius);
+    background: var(--mytros-surface-card);
+}
+.mytros-dashboard .tag-legend > summary {
+    cursor: pointer;
+    font-size: 0.88em;
+    font-weight: 600;
+    color: var(--mytros-accent);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    list-style: none;
+}
+.mytros-dashboard .tag-legend > summary::-webkit-details-marker {
+    display: none;
+}
+.mytros-dashboard .tag-legend > summary::before {
+    content: "▶";
+    font-size: 0.75em;
+    transition: transform var(--mytros-transition);
+}
+.mytros-dashboard .tag-legend[open] > summary::before {
+    transform: rotate(90deg);
+}
+.mytros-dashboard .tag-legend-hint {
+    margin: 8px 0 6px;
+    font-size: 0.82em;
+    color: var(--mytros-text-muted);
+    font-style: italic;
+}
+.mytros-dashboard .tag-legend-list {
+    margin: 0;
+    padding: 0 0 0 4px;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 6px 14px;
+    font-size: 0.85em;
+}
+.mytros-dashboard .tag-legend-list li {
+    line-height: 1.4;
+}
+.mytros-dashboard .tag-legend-list strong {
+    color: var(--mytros-accent);
+}

@@ -173,6 +173,11 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
                 faction: a.getFlag("battle-of-mytros", "faction") || "allied",
             }));
 
+        context.tagLegend = KNOWN_TAGS.map((name) => ({
+            name,
+            description: game.i18n.localize(TAG_DESCRIPTIONS[name]),
+        }));
+
         const battleSceneId = game.settings.get("battle-of-mytros", "battleSceneId");
         context.scenes = game.scenes.map((s) => ({ id: s.id, name: s.name, selected: s.id === battleSceneId }));
 

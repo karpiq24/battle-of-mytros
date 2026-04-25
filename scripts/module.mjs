@@ -354,17 +354,18 @@ Hooks.on("getSceneControlButtons", (controls) => {
 });
 
 Hooks.on("regionEvent", (region, event) => {
-    if (!game.user.isGM) return;
     const battleSceneId = game.settings.get("battle-of-mytros", "battleSceneId");
     if (canvas.scene?.id !== battleSceneId) return;
     if (!region.name.startsWith(MytrosRegionManager.SECTION_PREFIX)) return;
 
     if (event.name === "tokenEnter" || event.name === "tokenExit") {
-        // Re-render dashboard; routedContested sections will show a DM-confirmation button.
-        // No auto-disbanding here — tokenEnter fires for every region a token passes through
-        // during a drag, not just the destination.
         foundry.applications.instances.get("mytros-battle-dashboard")?.debouncedRender();
     }
+});
+
+Hooks.on("updateToken", (token, changes, options, userId) => {
+    if (!("x" in changes || "y" in changes)) return;
+    foundry.applications.instances.get("mytros-battle-dashboard")?.debouncedRender();
 });
 
 Hooks.on("updateRegion", (region, changes, options, userId) => {

@@ -72,5 +72,5 @@ export async function _postChatCard(statsCopy, statusData, deathsThisBattle) {
         "modules/battle-of-mytros/templates/chat-card.hbs",
         cardData
     );
-    await ChatMessage.create({ content: html, speaker: { alias: "Battle of Mytros" } });
+    await ChatMessage.create({ content: html, speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") } });
 }

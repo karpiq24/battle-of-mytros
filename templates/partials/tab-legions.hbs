@@ -1,7 +1,9 @@
 <div class="management-panel">
     <div class="management-header">
         <h3><i class="fas fa-shield-alt"></i> {{localize "MYTROS.LegionsManageTitle"}}</h3>
+        {{#if isGM}}
         <button type="button" class="btn-create" data-action="createLegion"><i class="fas fa-plus"></i> {{localize "MYTROS.CreateLegion"}}</button>
+        {{/if}}
     </div>
 
     {{#if allLegions.length}}
@@ -17,7 +19,7 @@
                     <th class="col-stat">{{localize "MYTROS.ColInj"}}</th>
                     <th class="col-commander">{{localize "MYTROS.ColCommander"}}</th>
                     <th class="col-status">{{localize "MYTROS.ColStatus"}}</th>
-                    <th class="col-actions"></th>
+                    {{#if isGM}}<th class="col-actions"></th>{{/if}}
                 </tr>
             </thead>
             <tbody>
@@ -25,16 +27,45 @@
                 <tr class="legion-row faction-row-{{this.faction}}{{#if this.isDestroyed}} row-destroyed{{/if}}{{#if this.isRouted}} row-routed{{/if}}">
                     <td class="col-name">{{this.name}}</td>
                     <td class="col-faction">
+                        {{#if @root.isGM}}
                         <select data-action="updateLegionFaction" data-legion-id="{{this.id}}">
                             <option value="allied" {{#if (eq this.faction 'allied')}}selected{{/if}}>{{localize "MYTROS.ControlAllied"}}</option>
                             <option value="sydon" {{#if (eq this.faction 'sydon')}}selected{{/if}}>{{localize "MYTROS.ControlSydon"}}</option>
                         </select>
+                        {{else}}
+                        <span class="faction-badge faction-{{this.faction}}">{{this.faction}}</span>
+                        {{/if}}
                     </td>
-                    <td class="col-stat"><input type="number" value="{{this.vitality}}" data-legion-stat data-legion-id="{{this.id}}" data-stat="vitality" min="0"></td>
-                    <td class="col-stat"><input type="number" value="{{this.morale}}" data-legion-stat data-legion-id="{{this.id}}" data-stat="morale" min="0"></td>
-                    <td class="col-stat"><input type="number" value="{{this.wit}}" data-legion-stat data-legion-id="{{this.id}}" data-stat="wit" min="0"></td>
-                    <td class="col-stat"><input type="number" value="{{this.injuries}}" data-legion-stat data-legion-id="{{this.id}}" data-stat="injuries" min="0"></td>
+                    <td class="col-stat">
+                        {{#if @root.isGM}}
+                        <input type="number" value="{{this.vitality}}" data-legion-stat data-legion-id="{{this.id}}" data-stat="vitality" min="0">
+                        {{else}}
+                        <span>{{this.vitality}}</span>
+                        {{/if}}
+                    </td>
+                    <td class="col-stat">
+                        {{#if @root.isGM}}
+                        <input type="number" value="{{this.morale}}" data-legion-stat data-legion-id="{{this.id}}" data-stat="morale" min="0">
+                        {{else}}
+                        <span>{{this.morale}}</span>
+                        {{/if}}
+                    </td>
+                    <td class="col-stat">
+                        {{#if @root.isGM}}
+                        <input type="number" value="{{this.wit}}" data-legion-stat data-legion-id="{{this.id}}" data-stat="wit" min="0">
+                        {{else}}
+                        <span>{{this.wit}}</span>
+                        {{/if}}
+                    </td>
+                    <td class="col-stat">
+                        {{#if @root.isGM}}
+                        <input type="number" value="{{this.injuries}}" data-legion-stat data-legion-id="{{this.id}}" data-stat="injuries" min="0">
+                        {{else}}
+                        <span>{{this.injuries}}</span>
+                        {{/if}}
+                    </td>
                     <td class="col-commander">
+                        {{#if @root.isGM}}
                         <select data-action="assignCommander" data-legion-id="{{this.id}}">
                             <option value="">—</option>
                             {{#each @root.commanders}}
@@ -43,16 +74,28 @@
                                 {{/if}}
                             {{/each}}
                         </select>
+                        {{else}}
+                        <span>{{#if this.commanderName}}{{this.commanderName}}{{else}}—{{/if}}</span>
+                        {{/if}}
                     </td>
                     <td class="col-status">
+                        {{#if @root.isGM}}
                         <div class="status-toggles">
                             <button type="button" class="status-toggle {{#if this.isRouted}}active-routed{{/if}}" data-action="toggleLegionRouted" data-legion-id="{{this.id}}" title="{{localize "MYTROS.Routed"}}"><i class="fas fa-flag"></i></button>
                             <button type="button" class="status-toggle {{#if this.isDestroyed}}active-destroyed{{/if}}" data-action="toggleLegionDestroyed" data-legion-id="{{this.id}}" title="{{localize "MYTROS.Destroyed"}}"><i class="fas fa-skull"></i></button>
                         </div>
+                        {{else}}
+                        <div class="status-badges">
+                            {{#if this.isRouted}}<span class="status-badge status-routed" title="{{localize "MYTROS.Routed"}}"><i class="fas fa-flag"></i></span>{{/if}}
+                            {{#if this.isDestroyed}}<span class="status-badge status-destroyed" title="{{localize "MYTROS.Destroyed"}}"><i class="fas fa-skull"></i></span>{{/if}}
+                        </div>
+                        {{/if}}
                     </td>
+                    {{#if @root.isGM}}
                     <td class="col-actions">
                         <button type="button" class="btn-delete" data-action="deleteLegion" data-legion-id="{{this.id}}" title="{{localize "MYTROS.Delete"}}"><i class="fas fa-trash"></i></button>
                     </td>
+                    {{/if}}
                 </tr>
                 {{/each}}
             </tbody>

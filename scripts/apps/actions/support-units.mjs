@@ -39,10 +39,10 @@ export async function createFastResponse(_event, _target) {
     let actor = game.actors.getName(name);
     if (actor) {
         await globalThis.MytrosActorData.initFastResponse(actor, faction);
-        ui.notifications.info(`Existing actor "${name}" designated as a Support Unit.`);
+        ui.notifications.info(game.i18n.format("MYTROS.SupportExisting", { name }));
     } else {
         await globalThis.MytrosActorData.createFastResponseActor(name, faction);
-        ui.notifications.info(`Support Unit "${name}" created.`);
+        ui.notifications.info(game.i18n.format("MYTROS.SupportCreated", { name }));
     }
     this.render();
 }
@@ -53,7 +53,7 @@ export async function removeFastResponse(_event, target) {
     const actor = game.actors.get(actorId);
     if (!actor) return;
     await actor.unsetFlag("battle-of-mytros", "isFastResponse");
-    ui.notifications.info(`"${actor.name}" removed from Support Units.`);
+    ui.notifications.info(game.i18n.format("MYTROS.SupportRemoved", { name: actor.name }));
     this.render();
 }
 

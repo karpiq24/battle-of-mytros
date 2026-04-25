@@ -21,28 +21,34 @@ export async function rollRecon(_event, _target) {
     const roll = await new Roll("1d20").evaluate();
     const total = roll.total + highestWit;
 
-    let intel, bonus;
+    let intelKey, bonus;
     if (total <= 10) {
-        intel = "No enemy movements revealed.";
+        intelKey = "MYTROS.ReconIntelNone";
         bonus = 0;
     } else if (total <= 14) {
-        intel = "Learn the destination of 2 enemy legions.";
+        intelKey = "MYTROS.ReconIntelTwo";
         bonus = 0;
     } else if (total <= 18) {
-        intel = "Learn the destinations of up to half the enemy legions (rounded up).";
+        intelKey = "MYTROS.ReconIntelHalf";
         bonus = 0;
     } else if (total <= 22) {
-        intel = "Learn all enemy legion destinations.";
+        intelKey = "MYTROS.ReconIntelAll";
         bonus = 0;
     } else {
-        intel = "Learn all enemy destinations. +1 to all allied Maneuver rolls this round!";
+        intelKey = "MYTROS.ReconIntelBonus";
         bonus = 1;
     }
 
-    const resultText = `1d20 (${roll.total}) + Wit ${highestWit} = ${total} — ${intel}`;
+    const intel = game.i18n.localize(intelKey);
+    const resultText = game.i18n.format("MYTROS.ReconResultText", { d20: roll.total, wit: highestWit, total, intel });
     await game.settings.set("battle-of-mytros", "reconResult", resultText);
     await game.settings.set("battle-of-mytros", "reconBonus", bonus);
-    ui.notifications.info(`Recon: ${total} — ${intel}`);
+    await roll.toMessage({
+        flavor: game.i18n.format("MYTROS.ReconFlavor", { wit: highestWit, total, intel }),
+        rollMode: CONST.DICE_ROLL_MODES.PUBLIC,
+        speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
+    });
+    ui.notifications.info(game.i18n.format("MYTROS.ReconNotification", { total, intel }));
     this.render();
 }
 
@@ -55,7 +61,8 @@ export async function spendMiracle(_event, target) {
     const current = game.settings.get("battle-of-mytros", settingKey);
 
     if (current < cost) {
-        ui.notifications.warn(`Not enough ${faction} Miracle Points!`);
+        const factionLabel = game.i18n.localize(faction === "allied" ? "MYTROS.ControlAllied" : "MYTROS.ControlSydon");
+        ui.notifications.warn(game.i18n.format("MYTROS.MiracleNotEnough", { faction: factionLabel }));
         return;
     }
 
@@ -64,32 +71,32 @@ export async function spendMiracle(_event, target) {
         const select = document.getElementById(selectId);
         const legionId = select?.value;
         if (!legionId) {
-            ui.notifications.warn("No legion selected!");
+            ui.notifications.warn(game.i18n.localize("MYTROS.MiracleNoLegion"));
             return;
         }
 
         const legion = game.actors.get(legionId);
         if (!legion) {
-            ui.notifications.error("Selected legion not found!");
+            ui.notifications.error(game.i18n.localize("MYTROS.MiracleLegionNotFound"));
             return;
         }
 
         const stats = { ...(legion.getFlag("battle-of-mytros", "stats") || {}) };
         if (type === "healing") {
             if ((stats.injuries ?? 0) <= 0) {
-                ui.notifications.warn(`${legion.name} has no injuries to heal.`);
+                ui.notifications.warn(game.i18n.format("MYTROS.MiracleNoInjuries", { name: legion.name }));
                 return;
             }
             stats.injuries = Math.max(0, (stats.injuries ?? 0) - 1);
-            ui.notifications.info(`Divine Healing: ${legion.name} healed 1 injury.`);
+            ui.notifications.info(game.i18n.format("MYTROS.MiracleHealing", { name: legion.name }));
         } else if (type === "morale") {
             const maxMorale = game.settings.get("battle-of-mytros", "maxMorale") ?? 10;
             if ((stats.morale ?? 0) >= maxMorale) {
-                ui.notifications.warn(`${legion.name} is already at maximum morale.`);
+                ui.notifications.warn(game.i18n.format("MYTROS.MiracleMaxMorale", { name: legion.name }));
                 return;
             }
             stats.morale = Math.min(maxMorale, (stats.morale ?? 0) + 1);
-            ui.notifications.info(`Divine Inspiration: ${legion.name} gained 1 morale.`);
+            ui.notifications.info(game.i18n.format("MYTROS.MiracleInspiration", { name: legion.name }));
         }
 
         await legion.setFlag("battle-of-mytros", "stats", stats);
@@ -114,7 +121,9 @@ export async function triggerMajorEvent(_event, target) {
     const current = game.settings.get("battle-of-mytros", "alliedMiracles");
     await game.settings.set("battle-of-mytros", "alliedMiracles", current + event.reward);
 
-    ui.notifications.info(`Major Event: ${event.name}! Allied Miracles +${event.reward}.`);
+    ui.notifications.info(
+        game.i18n.format("MYTROS.MajorEventNotification", { name: event.name, reward: event.reward })
+    );
     this.render();
 }
 
@@ -134,7 +143,9 @@ export async function triggerObjectiveDestroyed(_event, target) {
     const currentSydon = game.settings.get("battle-of-mytros", "sydonMiracles");
     await game.settings.set("battle-of-mytros", "sydonMiracles", currentSydon + obj.reward);
 
-    ui.notifications.warn(`Objective Destroyed: ${obj.name}! Sydon Miracles +${obj.reward}.`);
+    ui.notifications.warn(
+        game.i18n.format("MYTROS.ObjectiveDestroyedNotification", { name: obj.name, reward: obj.reward })
+    );
     this.render();
 }
 
@@ -158,20 +169,36 @@ export async function disbandRoutedLegions(_event, target) {
     const names = routedLegions.map((t) => t.actor.name).join(", ");
     const sectionName = region.name.replace(globalThis.MytrosRegionManager.SECTION_PREFIX, "").trim();
 
-    const deathRoll = await new Roll(`${routedLegions.length}d6`).evaluate();
     const deathMultSydon = game.settings.get("battle-of-mytros", "deathMultSydon") ?? 25;
+    const deathRoll = await new Roll(`${routedLegions.length}d6`).evaluate();
+    await deathRoll.toMessage({
+        flavor: game.i18n.format("MYTROS.RoutedFlavor", { dice: `${routedLegions.length}d6`, mult: deathMultSydon }),
+        rollMode: CONST.DICE_ROLL_MODES.PUBLIC,
+        speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
+    });
     const deaths = deathRoll.total * deathMultSydon;
     if (!game.settings.get("battle-of-mytros", "deathTollFrozen")) {
         const current = game.settings.get("battle-of-mytros", "deathToll");
         await game.settings.set("battle-of-mytros", "deathToll", current + deaths);
     }
 
+    const bodyKey = routedLegions.length === 1 ? "MYTROS.RoutedOverrunBodyOne" : "MYTROS.RoutedOverrunBodyMany";
+    const cardData = {
+        title: game.i18n.localize("MYTROS.RoutedOverrunTitle"),
+        sectionName,
+        body: game.i18n.format(bodyKey, { names }),
+        deathsLabel: game.i18n.format("MYTROS.CivilianDeaths", { n: deaths }),
+    };
+    const html = await foundry.applications.handlebars.renderTemplate(
+        "modules/battle-of-mytros/templates/chat-routed-overrun.hbs",
+        cardData
+    );
     await ChatMessage.create({
-        content: `<div class="battle-chat-card"><h3>⚠ Routed Legion Overrun</h3><p><strong>${sectionName}</strong></p><p>${names} ${routedLegions.length === 1 ? "was" : "were"} disbanded — overrun while routed.</p><p>Civilian deaths: ${deaths}</p></div>`,
-        speaker: { alias: "Battle of Mytros" },
+        content: html,
+        speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
     });
 
-    ui.notifications.warn(`${names} disbanded in ${sectionName}.`);
+    ui.notifications.warn(game.i18n.format("MYTROS.RoutedDisbanded", { names, section: sectionName }));
     this.render();
 }
 
@@ -225,6 +252,11 @@ export async function advanceRound(_event, _target) {
 
             if (faction === "sydon" && !deathTollFrozen && activeLegionIds.has(legion.id)) {
                 const r = await new Roll("1d6").evaluate();
+                await r.toMessage({
+                    flavor: game.i18n.format("MYTROS.PillageFlavor", { legion: legion.name }),
+                    rollMode: CONST.DICE_ROLL_MODES.PUBLIC,
+                    speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
+                });
                 const pillMult = game.settings.get("battle-of-mytros", "deathMultSydon") ?? 25;
                 const deaths = r.total * pillMult;
                 totalDeaths += deaths;
@@ -259,6 +291,11 @@ export async function advanceRound(_event, _target) {
             if (token.getFlag("battle-of-mytros", "deploymentMode") !== "rally") continue;
 
             const rallyRoll = await new Roll("1d4").evaluate();
+            await rallyRoll.toMessage({
+                flavor: game.i18n.format("MYTROS.RallyFlavor", { token: token.name }),
+                rollMode: CONST.DICE_ROLL_MODES.PUBLIC,
+                speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
+            });
             const legionOptions = alliedLegionsForRally
                 .map((l) => {
                     const morale = l.getFlag("battle-of-mytros", "stats")?.morale ?? "?";
@@ -266,21 +303,27 @@ export async function advanceRound(_event, _target) {
                 })
                 .join("");
 
+            const dialogTitle = game.i18n.format("MYTROS.RallyDialogTitle", {
+                token: token.name,
+                roll: rallyRoll.total,
+            });
+            const targetLabel = game.i18n.localize("MYTROS.RallyDialogTarget");
+            const applyLabel = game.i18n.localize("MYTROS.RallyDialogApply");
             let targetId;
             if (foundry.applications?.api?.DialogV2) {
                 targetId = await foundry.applications.api.DialogV2.prompt({
-                    window: { title: `${token.name} — Rally (rolled ${rallyRoll.total})` },
-                    content: `<form><div class="form-group"><label>Target legion</label><select name="target">${legionOptions}</select></div></form>`,
-                    ok: { label: "Apply", callback: (_e, btn) => btn.form.elements.target.value },
+                    window: { title: dialogTitle },
+                    content: `<form><div class="form-group"><label>${targetLabel}</label><select name="target">${legionOptions}</select></div></form>`,
+                    ok: { label: applyLabel, callback: (_e, btn) => btn.form.elements.target.value },
                     rejectClose: false,
                 });
             } else {
                 targetId = await new Promise((resolve) => {
                     new Dialog({
-                        title: `${token.name} — Rally (rolled ${rallyRoll.total})`,
-                        content: `<form><div class="form-group"><label>Target legion</label><select name="target">${legionOptions}</select></div></form>`,
+                        title: dialogTitle,
+                        content: `<form><div class="form-group"><label>${targetLabel}</label><select name="target">${legionOptions}</select></div></form>`,
                         buttons: {
-                            ok: { label: "Apply", callback: (html) => resolve(html.find('[name="target"]').val()) },
+                            ok: { label: applyLabel, callback: (html) => resolve(html.find('[name="target"]').val()) },
                         },
                         default: "ok",
                         close: () => resolve(null),
@@ -294,7 +337,13 @@ export async function advanceRound(_event, _target) {
                 const maxMorale = game.settings.get("battle-of-mytros", "maxMorale") ?? 10;
                 rallyStats.morale = Math.min(maxMorale, (rallyStats.morale ?? 5) + rallyRoll.total);
                 await target.setFlag("battle-of-mytros", "stats", rallyStats);
-                ui.notifications.info(`${token.name} rallied ${target.name}: +${rallyRoll.total} Morale.`);
+                ui.notifications.info(
+                    game.i18n.format("MYTROS.RallyNotification", {
+                        token: token.name,
+                        target: target.name,
+                        roll: rallyRoll.total,
+                    })
+                );
             }
         }
     }
@@ -304,6 +353,11 @@ export async function advanceRound(_event, _target) {
     for (const objId of destroyedObjectives) {
         if (!deathTollFrozen) {
             const r = await new Roll("1d4").evaluate();
+            await r.toMessage({
+                flavor: game.i18n.localize("MYTROS.ObjectiveFlavor"),
+                rollMode: CONST.DICE_ROLL_MODES.PUBLIC,
+                speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
+            });
             const objMult = game.settings.get("battle-of-mytros", "deathMultObjective") ?? 5;
             let deaths = r.total * objMult;
             deaths = sydonObjectiveHalved ? Math.floor(deaths / 2) : deaths;
@@ -325,20 +379,25 @@ export async function advanceRound(_event, _target) {
         const currentToll = Number(game.settings.get("battle-of-mytros", "deathToll")) || 0;
         await game.settings.set("battle-of-mytros", "deathToll", currentToll + totalDeaths);
 
-        let chatHtml = `<div class="mytros-battle-card"><div class="card-header"><i class="fas fa-skull"></i> Civilian Casualties Overview</div>`;
-        chatHtml += `<div class="card-result"><p>The war takes its toll across the city...</p></div>`;
-        chatHtml += `<table class="card-table"><thead><tr><th>Source</th><th>Deaths</th></tr></thead><tbody>`;
-        if (sydonPillageLegions > 0) {
-            chatHtml += `<tr><td>${sydonPillageLegions} Unengaged Sydon Legion(s) Pillaging</td><td class="text-bad" style="color:var(--mytros-danger);font-weight:bold;">+${sydonPillageDeaths}</td></tr>`;
-        }
-        if (objectiveDeaths > 0) {
-            chatHtml += `<tr><td>Destroyed Strategic Objectives under Sydon Control</td><td class="text-bad" style="color:var(--mytros-danger);font-weight:bold;">+${objectiveDeaths}</td></tr>`;
-        }
-        chatHtml += `</tbody><tfoot><tr><th>Total Added</th><th class="text-bad" style="color:var(--mytros-danger);font-weight:bold;">+${totalDeaths}</th></tr></tfoot></table></div>`;
-
+        const cardData = {
+            title: game.i18n.localize("MYTROS.CasualtiesTitle"),
+            intro: game.i18n.localize("MYTROS.CasualtiesIntro"),
+            sourceLabel: game.i18n.localize("MYTROS.CasualtiesSource"),
+            deathsLabel: game.i18n.localize("MYTROS.CasualtiesDeaths"),
+            pillageLabel: game.i18n.format("MYTROS.CasualtiesPillage", { n: sydonPillageLegions }),
+            pillageDeaths: sydonPillageLegions > 0 ? sydonPillageDeaths : 0,
+            objectiveLabel: game.i18n.localize("MYTROS.CasualtiesObjective"),
+            objectiveDeaths: objectiveDeaths > 0 ? objectiveDeaths : 0,
+            totalAddedLabel: game.i18n.localize("MYTROS.CasualtiesTotalAdded"),
+            totalDeaths,
+        };
+        const html = await foundry.applications.handlebars.renderTemplate(
+            "modules/battle-of-mytros/templates/chat-civilian-casualties.hbs",
+            cardData
+        );
         await ChatMessage.create({
-            content: chatHtml,
-            speaker: { alias: "Battle of Mytros" },
+            content: html,
+            speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
         });
     }
 
@@ -350,7 +409,9 @@ export async function advanceRound(_event, _target) {
     await game.settings.set("battle-of-mytros", "reconResult", "");
     await game.settings.set("battle-of-mytros", "reconBonus", 0);
 
-    ui.notifications.info(`Round ${round + 1} begins. ${totalDeaths} civilian deaths this past round.`);
+    ui.notifications.info(
+        game.i18n.format("MYTROS.RoundAdvanceNotification", { round: round + 1, deaths: totalDeaths })
+    );
     this.render();
 }
 
@@ -376,7 +437,7 @@ export async function openResolver(event, target) {
 export async function resetCompletedEvents(_event, _target) {
     if (!game.user.isGM) return;
     await game.settings.set("battle-of-mytros", "completedEvents", "[]");
-    ui.notifications.info("Major events reset.");
+    ui.notifications.info(game.i18n.localize("MYTROS.MajorEventsReset"));
     this.render();
 }
 

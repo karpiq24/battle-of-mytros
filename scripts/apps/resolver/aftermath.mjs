@@ -37,6 +37,11 @@ export async function runRecovery(_event, _target) {
             isVeteran,
             support.dice
         );
+        await rollResult.roll.toMessage({
+            flavor: `Recovery — ${legion.name} (Vitality ${stats.vitality}) vs DC ${dc}`,
+            rollMode: CONST.DICE_ROLL_MODES.PUBLIC,
+            speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
+        });
 
         let success = !rollResult.isNat1 && rollResult.total >= dc;
         let injuries;
@@ -69,6 +74,11 @@ export async function runRecovery(_event, _target) {
                 isVeteran,
                 support.dice
             );
+            await reroll.roll.toMessage({
+                flavor: `Divine Blood Reroll — ${legion.name} (Recovery)`,
+                rollMode: CONST.DICE_ROLL_MODES.PUBLIC,
+                speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
+            });
             const rerollSuccess = !reroll.isNat1 && reroll.total >= dc;
             let rerollInjuries = isWinner ? (rerollSuccess ? 0 : 1) : rerollSuccess ? 1 : 2;
             if (rerollSuccess && this.hasTag(legion, "medic")) rerollInjuries = -1;
@@ -88,6 +98,11 @@ export async function runRecovery(_event, _target) {
     // Seized Initiative: maneuver winner = overall winner AND chose seized_initiative
     if (this.battleState.maneuverWinner === winner && this.battleState.maneuverBenefit === "seized_initiative") {
         const seizedRoll = await new Roll("1d2").evaluate();
+        await seizedRoll.toMessage({
+            flavor: `Seized Initiative — ${loser} extra injuries (1d2)`,
+            rollMode: CONST.DICE_ROLL_MODES.PUBLIC,
+            speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
+        });
         results[loser].injuries += seizedRoll.total;
         this.battleState.log.push({
             text: `Seized Initiative! ${loser} takes +${seizedRoll.total} extra injuries.`,
@@ -139,8 +154,12 @@ export async function runHope(_event, _target) {
             isVeteran,
             support.dice
         );
-
         const hopeDC = game.settings.get("battle-of-mytros", "hopeDC") ?? 12;
+        await rollResult.roll.toMessage({
+            flavor: `Hope — ${legion.name} (Morale ${currentMorale}) vs DC ${hopeDC}`,
+            rollMode: CONST.DICE_ROLL_MODES.PUBLIC,
+            speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
+        });
         let success = rollResult.total >= hopeDC;
         let moraleDelta = isWinner ? (success ? 2 : 1) : success ? -1 : -2;
 
@@ -171,6 +190,11 @@ export async function runHope(_event, _target) {
                 isVeteran,
                 support.dice
             );
+            await reroll.roll.toMessage({
+                flavor: `Divine Blood Reroll — ${legion.name} (Hope)`,
+                rollMode: CONST.DICE_ROLL_MODES.PUBLIC,
+                speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
+            });
             const rerollSuccess = reroll.total >= hopeDC;
             let rerollDelta = isWinner ? (rerollSuccess ? 2 : 1) : rerollSuccess ? -1 : -2;
             if (isWinner && currentMorale >= 7) rerollDelta = Math.max(0, rerollDelta - 1);
@@ -215,8 +239,12 @@ export async function runSalvage(_event, _target) {
             isVeteran,
             support.dice
         );
-
         const salvageDC = game.settings.get("battle-of-mytros", "salvageDC") ?? 12;
+        await rollResult.roll.toMessage({
+            flavor: `Salvage — ${legion.name} (Wit ${stats.wit}) vs DC ${salvageDC}`,
+            rollMode: CONST.DICE_ROLL_MODES.PUBLIC,
+            speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
+        });
         let success = rollResult.total >= salvageDC;
         let benefitCount = !success ? 0 : rollResult.isNat20 ? 2 : 1;
 
@@ -241,6 +269,11 @@ export async function runSalvage(_event, _target) {
                 isVeteran,
                 support.dice
             );
+            await reroll.roll.toMessage({
+                flavor: `Divine Blood Reroll — ${legion.name} (Salvage)`,
+                rollMode: CONST.DICE_ROLL_MODES.PUBLIC,
+                speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
+            });
             const rerollSuccess = reroll.total >= salvageDC;
             const rerollBenefits = !rerollSuccess ? 0 : reroll.isNat20 ? 2 : 1;
             if (rerollBenefits > benefitCount) {
@@ -342,10 +375,20 @@ export async function runCommanderCasualty(_event, _target) {
         const finalTarget = Math.max(1, baseChance - currentMorale);
 
         const roll1 = await new Roll("1d100").evaluate();
+        await roll1.toMessage({
+            flavor: `Commander Casualty — ${commander.name} (1d100 vs ${finalTarget}%)`,
+            rollMode: CONST.DICE_ROLL_MODES.PUBLIC,
+            speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
+        });
         let finalRoll = roll1.total;
 
         if (this.hasTag(legion, "unbreakable pact")) {
             const roll2 = await new Roll("1d100").evaluate();
+            await roll2.toMessage({
+                flavor: `Unbreakable Pact — ${commander.name} (1d100, second roll)`,
+                rollMode: CONST.DICE_ROLL_MODES.PUBLIC,
+                speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
+            });
             this.battleState.log.push({ text: `${side} Unbreakable Pact: rolled ${roll1.total} & ${roll2.total}` });
             finalRoll = Math.min(roll1.total, roll2.total);
         }
@@ -398,6 +441,11 @@ export async function commitAftermath(_event, _target) {
             }
             if (benefit === "enemy_shaken") {
                 const shakenRoll = await new Roll("1d2").evaluate();
+                await shakenRoll.toMessage({
+                    flavor: `Enemy Shaken — ${side} (1d2 Morale loss to ${enemySide})`,
+                    rollMode: CONST.DICE_ROLL_MODES.PUBLIC,
+                    speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
+                });
                 statsCopy[enemySide].morale = (statsCopy[enemySide].morale ?? 5) - shakenRoll.total;
                 this.battleState.log.push({
                     text: `${side} Enemy Shaken: ${enemySide} loses ${shakenRoll.total} Morale.`,
@@ -405,6 +453,11 @@ export async function commitAftermath(_event, _target) {
             }
             if (benefit === "tactical_insight") {
                 const tacRoll = await new Roll("1d2").evaluate();
+                await tacRoll.toMessage({
+                    flavor: `Tactical Insight — ${side} (1d2 Wit bonus next round)`,
+                    rollMode: CONST.DICE_ROLL_MODES.PUBLIC,
+                    speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
+                });
                 await this.battleState[side].setFlag("battle-of-mytros", "tacInsightBonus", tacRoll.total);
                 this.battleState.log.push({
                     text: `${side} Tactical Insight: +${tacRoll.total} to Wit rolls next round.`,
@@ -483,6 +536,11 @@ export async function commitAftermath(_event, _target) {
     // Roll death toll for this engagement and add to running total
     const alliedWon = this.battleState.overallWinner === "allied";
     const deathDie = await new Roll(alliedWon ? "1d4" : "1d6").evaluate();
+    await deathDie.toMessage({
+        flavor: `Battle Death Toll (${alliedWon ? "1d4" : "1d6"})`,
+        rollMode: CONST.DICE_ROLL_MODES.PUBLIC,
+        speaker: { alias: game.i18n.localize("MYTROS.SpeakerAlias") },
+    });
     const deathMult = alliedWon
         ? game.settings.get("battle-of-mytros", "deathMultAllied") ?? 5
         : game.settings.get("battle-of-mytros", "deathMultSydon") ?? 25;
