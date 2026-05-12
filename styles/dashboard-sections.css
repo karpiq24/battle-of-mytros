@@ -144,12 +144,61 @@
     flex-wrap: wrap;
 }
 .mytros-dashboard .legion-stats {
-    font-size: 0.8em;
-    color: var(--mytros-text-muted);
-    font-weight: 400;
-    background: var(--mytros-chip-bg);
+    display: inline-flex;
+    gap: 3px;
+    flex-wrap: wrap;
+}
+.mytros-dashboard .stat-pill {
+    font-size: 0.78em;
+    font-weight: 600;
     padding: 1px 6px;
     border-radius: 3px;
+    background: var(--mytros-chip-bg);
+    border: 1px solid var(--mytros-chip-border);
+    color: var(--mytros-text-muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+.mytros-dashboard .stat-pill i {
+    font-size: 0.85em;
+    opacity: 0.75;
+}
+.mytros-dashboard .stat-pill.morale-high {
+    color: var(--mytros-success);
+    border-color: rgba(39, 174, 96, 0.35);
+    background: rgba(39, 174, 96, 0.1);
+}
+.mytros-dashboard .stat-pill.morale-mid {
+    color: var(--mytros-text);
+}
+.mytros-dashboard .stat-pill.morale-low {
+    color: var(--mytros-warning);
+    border-color: rgba(230, 126, 34, 0.35);
+    background: rgba(230, 126, 34, 0.1);
+}
+.mytros-dashboard .stat-pill.morale-critical {
+    color: var(--mytros-danger);
+    border-color: rgba(192, 57, 43, 0.4);
+    background: rgba(192, 57, 43, 0.12);
+}
+.mytros-dashboard .stat-pill.injuries-none {
+    color: var(--mytros-success);
+    border-color: rgba(39, 174, 96, 0.35);
+    background: rgba(39, 174, 96, 0.1);
+}
+.mytros-dashboard .stat-pill.injuries-light {
+    color: var(--mytros-text);
+}
+.mytros-dashboard .stat-pill.injuries-moderate {
+    color: var(--mytros-warning);
+    border-color: rgba(230, 126, 34, 0.35);
+    background: rgba(230, 126, 34, 0.1);
+}
+.mytros-dashboard .stat-pill.injuries-critical {
+    color: var(--mytros-danger);
+    border-color: rgba(192, 57, 43, 0.4);
+    background: rgba(192, 57, 43, 0.12);
 }
 .mytros-dashboard .legion-flag-btn {
     padding: 1px 5px;

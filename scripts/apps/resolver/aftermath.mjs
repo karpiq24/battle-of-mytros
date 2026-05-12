@@ -516,17 +516,27 @@ export async function commitAftermath(_event, _target) {
         }
     }
 
-    // Update section control to the winner; clear fortification if it changes hands
+    // Update section control to the winner; clear fortification if it changes hands.
+    // Auto-fortify when the same faction wins in this section two rounds in a row.
+    const winner = this.battleState.overallWinner;
     const currentControl = this.region.getFlag("battle-of-mytros", "control");
-    if (currentControl !== this.battleState.overallWinner) {
-        await this.region.setFlag("battle-of-mytros", "control", this.battleState.overallWinner);
+    const wonLastRound = this.region.getFlag("battle-of-mytros", "wonLastRound");
+    if (currentControl !== winner) {
+        await this.region.setFlag("battle-of-mytros", "control", winner);
         await this.region.setFlag("battle-of-mytros", "fortified", false);
         this.battleState.log.push({
-            text: `${this.battleState.overallWinner} claims the section. Fortification lost.`,
+            text: `${winner} claims the section. Fortification lost.`,
+        });
+    } else if (wonLastRound === winner && !this.region.getFlag("battle-of-mytros", "fortified")) {
+        await this.region.setFlag("battle-of-mytros", "fortified", true);
+        this.battleState.log.push({
+            text: `${winner} holds the section. Fortifications established (held two rounds running).`,
         });
     } else {
-        this.battleState.log.push({ text: `${this.battleState.overallWinner} holds the section.` });
+        this.battleState.log.push({ text: `${winner} holds the section.` });
     }
+    // Record this round's winner — copied to wonLastRound at round advance
+    await this.region.setFlag("battle-of-mytros", "wonThisRound", winner);
 
     // Mark both legions as having fought this round
     for (const side of ["allied", "sydon"]) {

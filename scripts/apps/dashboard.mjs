@@ -234,6 +234,12 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
                         }
                     }
 
+                    const morale = stats.morale ?? 0;
+                    const injuries = stats.injuries ?? 0;
+                    const moraleClass = morale <= 0 ? "critical" : morale <= 3 ? "low" : morale <= 6 ? "mid" : "high";
+                    const injuriesClass =
+                        injuries === 0 ? "none" : injuries <= 2 ? "light" : injuries <= 4 ? "moderate" : "critical";
+
                     return {
                         id: t.actor.id,
                         name: t.name,
@@ -242,10 +248,12 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
                         commanderName: commanderName,
                         commanderTags: commanderTags,
                         hasVanguard: hasVanguard,
-                        injuries: stats.injuries ?? 0,
-                        morale: stats.morale ?? "?",
+                        injuries: injuries,
+                        morale: morale,
                         vitality: stats.vitality ?? "?",
                         wit: stats.wit ?? "?",
+                        moraleClass: moraleClass,
+                        injuriesClass: injuriesClass,
                         isRouted: t.actor.getFlag("battle-of-mytros", "isRouted") ?? false,
                         isDestroyed: t.actor.getFlag("battle-of-mytros", "isDestroyed") ?? false,
                         movedThree: t.actor.getFlag("battle-of-mytros", "movedThree") ?? false,
@@ -258,7 +266,7 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
                     name: t.name,
                     actorId: t.actor.id,
                     faction: t.actor.getFlag("battle-of-mytros", "faction") || "allied",
-                    deploymentMode: t.getFlag("battle-of-mytros", "deploymentMode") || "none",
+                    deploymentMode: t.getFlag("battle-of-mytros", "deploymentMode") || "shock_assault",
                 }));
 
                 const hasActiveAllied = mappedLegions.some(
@@ -281,6 +289,18 @@ export class BattleDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
                     pendingBattle: pendingBattle,
                     routedContested: routedContested,
                 };
+            });
+
+            context.sections.sort((a, b) => {
+                const reNum = /\((\d+)\)\s*$/;
+                const ma = reNum.exec(a.name);
+                const mb = reNum.exec(b.name);
+                const na = ma ? parseInt(ma[1], 10) : null;
+                const nb = mb ? parseInt(mb[1], 10) : null;
+                if (na !== null && nb !== null) return na - nb;
+                if (na !== null) return -1;
+                if (nb !== null) return 1;
+                return a.name.localeCompare(b.name);
             });
         } else {
             context.sections = [];

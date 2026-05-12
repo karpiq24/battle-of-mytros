@@ -239,6 +239,8 @@ export async function resetBattle(_event, _target) {
         for (const region of sections) {
             await region.setFlag("battle-of-mytros", "control", "neutral");
             await region.setFlag("battle-of-mytros", "fortified", false);
+            await region.setFlag("battle-of-mytros", "wonLastRound", null);
+            await region.setFlag("battle-of-mytros", "wonThisRound", null);
         }
     }
 

@@ -48,7 +48,20 @@
                             <li class="legion-item faction-{{this.faction}}{{#if this.isRouted}} is-routed{{/if}}{{#if this.isDestroyed}} is-destroyed{{/if}}">
                                 <div class="legion-header">
                                     <span class="legion-name">{{this.name}}</span>
-                                    <span class="legion-stats">{{localize "MYTROS.InjShort"}} {{this.injuries}} · {{localize "MYTROS.MorShort"}} {{this.morale}}</span>
+                                    <span class="legion-stats">
+                                        <span class="stat-pill stat-vitality" title="{{localize 'MYTROS.StatVitality'}}">
+                                            <i class="fas fa-heart"></i> {{this.vitality}}
+                                        </span>
+                                        <span class="stat-pill stat-wit" title="{{localize 'MYTROS.StatWit'}}">
+                                            <i class="fas fa-brain"></i> {{this.wit}}
+                                        </span>
+                                        <span class="stat-pill morale-{{this.moraleClass}}" title="{{localize 'MYTROS.StatMorale'}}">
+                                            <i class="fas fa-flag"></i> {{this.morale}}
+                                        </span>
+                                        <span class="stat-pill injuries-{{this.injuriesClass}}" title="{{localize 'MYTROS.StatInjuries'}}">
+                                            <i class="fas fa-band-aid"></i> {{this.injuries}}
+                                        </span>
+                                    </span>
                                     {{#if @root.isGM}}
                                     {{#if this.hasVanguard}}
                                     <button type="button" data-action="toggleLegionFlag" data-legion-id="{{this.id}}" data-flag="movedThree" class="legion-flag-btn {{#if this.movedThree}}active{{/if}}" title="{{localize "MYTROS.VanguardLabel"}}">

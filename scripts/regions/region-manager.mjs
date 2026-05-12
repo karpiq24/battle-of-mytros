@@ -42,5 +42,7 @@ export class MytrosRegionManager {
         await region.setFlag(this.MODULE_ID, "control", "neutral"); // allied, sydon, neutral
         await region.setFlag(this.MODULE_ID, "fortified", false);
         await region.setFlag(this.MODULE_ID, "hasObjective", false);
+        await region.setFlag(this.MODULE_ID, "wonLastRound", null);
+        await region.setFlag(this.MODULE_ID, "wonThisRound", null);
     }
 }

@@ -370,8 +370,16 @@ export async function advanceRound(_event, _target) {
     for (const section of activeSections) {
         const supportTokens = globalThis.MytrosRegionManager.getSupportUnitsInSection(section);
         for (const token of supportTokens) {
-            await token.setFlag("battle-of-mytros", "deploymentMode", "none");
+            await token.setFlag("battle-of-mytros", "deploymentMode", "shock_assault");
         }
+    }
+
+    // Roll the "won this round" tracker forward. Sections without a battle this round
+    // get their streak cleared, so a faction must actually win two rounds in a row to fortify.
+    for (const section of activeSections) {
+        const wonThisRound = section.getFlag("battle-of-mytros", "wonThisRound") ?? null;
+        await section.setFlag("battle-of-mytros", "wonLastRound", wonThisRound);
+        await section.setFlag("battle-of-mytros", "wonThisRound", null);
     }
 
     // Commit death toll and advance round
@@ -420,7 +428,7 @@ export async function setDeploymentMode(event, target) {
     const mode = target.value;
     const token = canvas.scene.tokens.get(tokenId);
     if (!token) return;
-    if ((token.getFlag("battle-of-mytros", "deploymentMode") ?? "reinforce") === mode) return;
+    if ((token.getFlag("battle-of-mytros", "deploymentMode") ?? "shock_assault") === mode) return;
     await token.setFlag("battle-of-mytros", "deploymentMode", mode);
 }
 
